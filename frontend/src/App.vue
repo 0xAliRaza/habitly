@@ -8,6 +8,9 @@
       Log In
     </button>
 
+    <button class="btn btn-primary btn-margin" @click="publicMessage()">
+      Call Public
+    </button>
     <button
       class="btn btn-primary btn-margin"
       v-if="authenticated"
@@ -75,6 +78,13 @@ export default {
           console.log(response.data);
           this.message = response.data || '';
         });
+    },
+    publicMessage() {
+      const url = `${API_URL}/api/public/`;
+      return axios.get(url).then((response) => {
+        console.log(response.data);
+        this.message = response.data || '';
+      });
     },
   },
 };
