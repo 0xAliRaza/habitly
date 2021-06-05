@@ -1,5 +1,44 @@
 <template>
-  <div>
+  <nav class="navbar navbar-expand navbar-dark bg-dark">
+    <div class="container">
+      <a class="navbar-brand" href="#">Navbar</a>
+      <ul class="navbar-nav">
+        <li class="nav-item">
+          <router-link class="nav-link" active-class="active" to="/"
+            >Home</router-link
+          >
+        </li>
+        <li class="nav-item">
+          <router-link class="nav-link" active-class="active" to="/habits"
+            >Habits</router-link
+          >
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="#">Test</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="#">About</a>
+        </li>
+      </ul>
+      <ul class="navbar-nav ms-auto">
+        <li class="nav-item">
+          <a class="nav-link" href="#">Profile</a>
+        </li>
+      </ul>
+    </div>
+  </nav>
+
+  <main class="my-5">
+    <router-view></router-view>
+  </main>
+
+  <footer class="bg-dark mt-auto py-3">
+    <div class="container">
+      <span class="text-light">Coded by Ali Raza.</span>
+    </div>
+  </footer>
+
+  <!-- <div>
     <button
       class="btn btn-primary btn-margin"
       v-if="!authenticated"
@@ -34,7 +73,7 @@
       Log Out
     </button>
     {{ message }}
-  </div>
+  </div> -->
 </template>
 
 <style lang="scss">
