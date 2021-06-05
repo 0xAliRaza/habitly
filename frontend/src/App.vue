@@ -18,6 +18,13 @@
     >
       Call Private
     </button>
+    <button
+      class="btn btn-primary btn-margin"
+      v-if="authenticated"
+      @click="habits()"
+    >
+      Habits
+    </button>
 
     <button
       class="btn btn-primary btn-margin"
@@ -70,6 +77,17 @@ export default {
     },
     privateMessage() {
       const url = `${API_URL}/api/private/`;
+      return axios
+        .get(url, {
+          headers: { Authorization: `Bearer ${auth.getAuthToken()}` },
+        })
+        .then((response) => {
+          console.log(response.data);
+          this.message = response.data || '';
+        });
+    },
+    habits() {
+      const url = `${API_URL}/api/habits/`;
       return axios
         .get(url, {
           headers: { Authorization: `Bearer ${auth.getAuthToken()}` },
