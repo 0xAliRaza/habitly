@@ -55,6 +55,7 @@ export default class AuthService {
     this.profile = authResult.idTokenPayload;
     this.expiresAt = authResult.expiresIn * 1000 + new Date().getTime();
     this.authNotifier.emit('authChange', { authenticated: true });
+    console.log(this.accessToken);
   }
 
   // remove the access and ID tokens from the

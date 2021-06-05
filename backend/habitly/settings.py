@@ -29,7 +29,8 @@ INSTALLED_APPS = [
     'rest_framework',
     'corsheaders',
     'api',
-    'auth0authorization'
+    'auth0authorization',
+    'django_extensions',
 ]
 
 MIDDLEWARE = [

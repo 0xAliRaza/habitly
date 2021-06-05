@@ -15,6 +15,8 @@ def private(request):
     return HttpResponse("You should not see this message if not authenticated!")
 
 class HabitViewSet(viewsets.ModelViewSet):
-    queryset = Habit.objects.all().order_by('created_at')
+    def get_queryset(self):
+        return Habit.objects.filter(user_id=self.request.user.username)
+    
     serializer_class = HabitSerializer
     permission_classes = [permissions.IsAuthenticated]

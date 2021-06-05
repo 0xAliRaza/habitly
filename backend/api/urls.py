@@ -7,11 +7,11 @@ from . import views
 
 
 router = routers.DefaultRouter()
-router.register(r'habits', views.HabitViewSet)
+router.register(r'habits', views.HabitViewSet, basename='Habit')
 
 
 urlpatterns = [
-    path('api/', include(router.urls)),
-    url(r'^api/public/', views.public),
-    url(r'^api/private/', views.private),
+    path('', include(router.urls)),
+    url(r'^public/', views.public),
+    url(r'^private/', views.private),
 ]

@@ -10,3 +10,6 @@ class Habit(models.Model):
 
     def __str__(self):
         return self.title
+
+    class Meta:
+        unique_together = ['user_id', 'title']
