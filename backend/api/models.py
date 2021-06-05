@@ -1,7 +1,7 @@
 from django.db import models
 
 class Habit(models.Model):
-    user_id = models.CharField(max_length=32)
+    user_id = models.CharField(max_length=50)
     title = models.CharField(max_length=50)
     ritual = models.CharField(max_length=50, blank=True)
     description = models.CharField(max_length=250, blank=True)
@@ -10,4 +10,3 @@ class Habit(models.Model):
 
     def __str__(self):
         return self.title
-    
