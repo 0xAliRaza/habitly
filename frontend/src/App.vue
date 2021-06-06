@@ -76,10 +76,6 @@
   </div> -->
 </template>
 
-<style lang="scss">
-@import '~bootstrap/scss/bootstrap.scss';
-</style>
-
 <script>
 import AuthService from './auth/AuthService';
 import axios from 'axios';
@@ -146,3 +142,4 @@ export default {
   },
 };
 </script>
+<style lang="scss"></style>
