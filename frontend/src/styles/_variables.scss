@@ -1,8 +1,13 @@
 $color-primary: #1eb8ff;
 $color-primary-light: #40c3ff;
 $color-primary-dark: #00acfb;
-$color-body-bg: #f5f7f8;
+$color-body-bg: #f8fbfc;
 $color-green: #17be4f;
 $color-green-dark: #25c5a0;
 $color-green-light: #50debd;
 $color-red: #ff5252;
+$color-gray: #626e74;
+
+// bootstrap customizations
+$primary: $color-primary;
+$secondary: $color-green;

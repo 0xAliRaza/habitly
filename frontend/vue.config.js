@@ -4,7 +4,6 @@ module.exports = {
       sass: {
         prependData: `
                       @import "@/styles/styles.scss";
-                      @import "bootstrap/scss/bootstrap.scss";
                     `,
       },
     },
