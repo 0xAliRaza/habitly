@@ -143,8 +143,44 @@ export default {
 };
 </script>
 <style lang="scss">
+@import url('https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300;0,400;0,600;0,700;1,300;1,400&display=swap');
 @import 'bootstrap/scss/bootstrap.scss';
+
+html,
+body,
+#app {
+  height: 100%;
+}
+
 body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
+    Oxygen-Sans, Ubuntu, Cantarell, 'Helvetica Neue', sans-serif;
+  // font-family: 'Open Sans', sans-serif;
   background-color: $color-body-bg;
+}
+
+#app {
+  display: flex;
+  flex-direction: column;
+}
+
+/* The emerging W3C standard
+   that is currently Firefox-only */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: $gray-500 $gray-200;
+}
+
+/* Works on Chrome/Edge/Safari */
+*::-webkit-scrollbar {
+  width: pxToRem(10);
+  height: pxToRem(10);
+}
+*::-webkit-scrollbar-track {
+  background: $gray-200;
+}
+*::-webkit-scrollbar-thumb {
+  background-color: $gray-500;
+  border-radius: pxToRem(6);
 }
 </style>

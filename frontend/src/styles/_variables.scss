@@ -9,5 +9,12 @@ $color-red: #ff5252;
 $color-gray: #626e74;
 
 // bootstrap customizations
-$primary: $color-primary;
-$secondary: $color-green;
+// $primary: $color-primary;
+// $secondary: $color-green;
+// $modal-fade-transform: translateY(-100px);
+// $modal-backdrop-bg:  radial-gradient(circle, red, yellow, green);
+$modal-content-bg: $color-body-bg;
+$modal-header-border-width: pxToRem(0.5);
+$modal-footer-border-width: 0;
+// $modal-content-border-radius: pxToRem(12);
+$modal-backdrop-opacity: 0.8;
