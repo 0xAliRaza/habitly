@@ -31,10 +31,9 @@
           <h5 class="modal-title" id="exampleModalLabel">
             {{ title || 'Do seven pushups!' }}
           </h5>
-          <button class="btn ms-auto d-inline-flex align-items-center"></button>
           <button
             type="button"
-            class="ms-0 btn-close"
+            class="btn-close"
             data-bs-dismiss="modal"
             aria-label="Close"
           ></button>
@@ -162,18 +161,6 @@
     }
   }
 }
-
-// .habit-modal {
-//   .modal-header {
-//     border-bottom: pxToRem(0.5) solid rgba($color-green, 0.15);
-//   }
-//   &__paragraph {
-//     font-size: pxToRem(16);
-//   }
-// }
-// .modal-header--success {
-//   background-color: rgba($color-green, 0.08);
-// }
 </style>
 <script>
 import 'bootstrap/js/dist/modal';
@@ -184,13 +171,11 @@ export default {
   props: {
     id: { type: Number },
     title: { type: String },
-    //     ritual: { type: String, required: true },
-    //     description: { type: String, required: true },
-    //     type: { type: String, required: true },
-    //     created_at: { type: Date, required: true },
-    //     updated_at: { type: Date, required: true },
+    ritual: { type: String },
+    description: { type: String },
+    type: { type: String },
+    created_at: { type: Date },
+    updated_at: { type: Date },
   },
-  // setup() {
-  // },
 };
 </script>
