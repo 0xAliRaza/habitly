@@ -29,6 +29,42 @@
   </nav>
 
   <main class="my-5">
+    <div>
+      <button
+        class="btn btn-primary btn-margin"
+        v-if="!authenticated"
+        @click="login()"
+      >
+        Log In
+      </button>
+
+      <button class="btn btn-primary btn-margin" @click="publicMessage()">
+        Call Public
+      </button>
+      <button
+        class="btn btn-primary btn-margin"
+        v-if="authenticated"
+        @click="privateMessage()"
+      >
+        Call Private
+      </button>
+      <button
+        class="btn btn-primary btn-margin"
+        v-if="authenticated"
+        @click="habits()"
+      >
+        Habits
+      </button>
+
+      <button
+        class="btn btn-primary btn-margin"
+        v-if="authenticated"
+        @click="logout()"
+      >
+        Log Out
+      </button>
+      {{ message }}
+    </div>
     <router-view></router-view>
   </main>
 
@@ -37,43 +73,6 @@
       <span class="text-light">Coded by Ali Raza.</span>
     </div>
   </footer>
-
-  <!-- <div>
-    <button
-      class="btn btn-primary btn-margin"
-      v-if="!authenticated"
-      @click="login()"
-    >
-      Log In
-    </button>
-
-    <button class="btn btn-primary btn-margin" @click="publicMessage()">
-      Call Public
-    </button>
-    <button
-      class="btn btn-primary btn-margin"
-      v-if="authenticated"
-      @click="privateMessage()"
-    >
-      Call Private
-    </button>
-    <button
-      class="btn btn-primary btn-margin"
-      v-if="authenticated"
-      @click="habits()"
-    >
-      Habits
-    </button>
-
-    <button
-      class="btn btn-primary btn-margin"
-      v-if="authenticated"
-      @click="logout()"
-    >
-      Log Out
-    </button>
-    {{ message }}
-  </div> -->
 </template>
 
 <script>

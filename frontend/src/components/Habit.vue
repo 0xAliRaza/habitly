@@ -27,7 +27,7 @@
       "
     >
       <div class="modal-content">
-        <div class="modal-header">
+        <div class="modal-header modal-header--success">
           <h5 class="modal-title" id="exampleModalLabel">
             {{ title || 'Do seven pushups!' }}
           </h5>
@@ -151,11 +151,15 @@
 }
 
 .habit-modal {
-  &__heading {
+  .modal-header {
+    border-bottom: pxToRem(0.5) solid rgba($color-green, 0.15);
   }
   &__paragraph {
     font-size: pxToRem(16);
   }
+}
+.modal-header--success {
+  background-color: rgba($color-green, 0.08);
 }
 </style>
 <script>

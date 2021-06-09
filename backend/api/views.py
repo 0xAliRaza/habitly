@@ -17,6 +17,10 @@ def private(request):
 class HabitViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         return Habit.objects.filter(user_id=self.request.user.username)
+
+    def perform_create(self, serializer):
+        # Automatically append user_id from request
+        return serializer.save(user_id=self.request.user.username)
     
     serializer_class = HabitSerializer
     permission_classes = [permissions.IsAuthenticated]
