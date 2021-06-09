@@ -29,7 +29,7 @@
   </nav>
 
   <main class="my-5">
-    <div>
+    <!-- <div>
       <button
         class="btn btn-primary btn-margin"
         v-if="!authenticated"
@@ -64,7 +64,7 @@
         Log Out
       </button>
       {{ message }}
-    </div>
+    </div> -->
     <router-view></router-view>
   </main>
 
