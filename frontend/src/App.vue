@@ -13,12 +13,26 @@
             >Habits</router-link
           >
         </li>
-        <li class="nav-item">
-          <a class="nav-link" href="#">Test</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="#">About</a>
-        </li>
+        <div v-if="!$auth.loading.value">
+          <li class="nav-item">
+            <button
+              class="btn btn-primary"
+              v-if="!$auth.isAuthenticated.value"
+              @click="login"
+            >
+              Log in
+            </button>
+          </li>
+          <li class="nav-item">
+            <button
+              class="btn btn-primary"
+              v-if="$auth.isAuthenticated.value"
+              @click="logout"
+            >
+              Log out
+            </button>
+          </li>
+        </div>
       </ul>
       <ul class="navbar-nav ms-auto">
         <li class="nav-item">
@@ -76,68 +90,49 @@
 </template>
 
 <script>
-import AuthService from './auth/AuthService';
-import axios from 'axios';
+// import axios from 'axios';
 
-const API_URL = 'http://localhost:8000';
-
-const auth = new AuthService();
+// const API_URL = 'http://localhost:8000';
 
 export default {
   name: 'app',
-  data() {
-    this.handleAuthentication();
-    this.authenticated = false;
-
-    auth.authNotifier.on('authChange', (authState) => {
-      this.authenticated = authState.authenticated;
-    });
-
-    return {
-      authenticated: false,
-      message: '',
-    };
-  },
   methods: {
     // this method calls the AuthService login() method
     login() {
-      auth.login();
-    },
-    handleAuthentication() {
-      auth.handleAuthentication();
+      this.$auth.loginWithRedirect();
     },
     logout() {
-      auth.logout();
+      this.$auth.logout({ returnTo: window.location.origin });
     },
-    privateMessage() {
-      const url = `${API_URL}/api/private/`;
-      return axios
-        .get(url, {
-          headers: { Authorization: `Bearer ${auth.getAuthToken()}` },
-        })
-        .then((response) => {
-          console.log(response.data);
-          this.message = response.data || '';
-        });
-    },
-    habits() {
-      const url = `${API_URL}/api/habits/`;
-      return axios
-        .get(url, {
-          headers: { Authorization: `Bearer ${auth.getAuthToken()}` },
-        })
-        .then((response) => {
-          console.log(response.data);
-          this.message = response.data || '';
-        });
-    },
-    publicMessage() {
-      const url = `${API_URL}/api/public/`;
-      return axios.get(url).then((response) => {
-        console.log(response.data);
-        this.message = response.data || '';
-      });
-    },
+    // privateMessage() {
+    //   const url = `${API_URL}/api/private/`;
+    //   return axios
+    //     .get(url, {
+    //       headers: { Authorization: `Bearer ${auth.getAuthToken()}` },
+    //     })
+    //     .then((response) => {
+    //       console.log(response.data);
+    //       this.message = response.data || '';
+    //     });
+    // },
+    // habits() {
+    //   const url = `${API_URL}/api/habits/`;
+    //   return axios
+    //     .get(url, {
+    //       headers: { Authorization: `Bearer ${auth.getAuthToken()}` },
+    //     })
+    //     .then((response) => {
+    //       console.log(response.data);
+    //       this.message = response.data || '';
+    //     });
+    // },
+    // publicMessage() {
+    //   const url = `${API_URL}/api/public/`;
+    //   return axios.get(url).then((response) => {
+    //     console.log(response.data);
+    //     this.message = response.data || '';
+    //   });
+    // },
   },
 };
 </script>

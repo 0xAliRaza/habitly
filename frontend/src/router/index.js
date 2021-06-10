@@ -1,12 +1,14 @@
 import { createRouter, createWebHistory } from 'vue-router';
-import Home from '../views/Home.vue';
-
+import { routeGuard } from '@/auth';
+import Home from '@/views/Home.vue';
+import ErrorPage from '@/views/Error.vue';
+import Callback from '@/views/Callback.vue';
 const routes = [
   {
     path: '/',
     name: 'Home',
     component: Home,
-    redirect: '/habits',
+    beforeEnter: routeGuard,
   },
   // {
   //   path: '/about',
@@ -22,6 +24,17 @@ const routes = [
     name: 'Habits',
     component: () =>
       import(/* webpackChunkName: "habits" */ '../views/Habits.vue'),
+    beforeEnter: routeGuard,
+  },
+  {
+    path: '/callback',
+    name: 'Callback',
+    component: Callback,
+  },
+  {
+    path: '/error',
+    name: 'Error',
+    component: ErrorPage,
   },
 ];
 
