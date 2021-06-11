@@ -11,5 +11,5 @@ function callbackRedirect(appState) {
 }
 
 setupAuth(authConfig, callbackRedirect).then((auth) => {
-  app.use(auth).mount('#app');
+  app.provide('auth', auth).mount('#app');
 });

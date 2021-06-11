@@ -8,7 +8,6 @@ const routes = [
     path: '/',
     name: 'Home',
     component: Home,
-    beforeEnter: routeGuard,
   },
   // {
   //   path: '/about',

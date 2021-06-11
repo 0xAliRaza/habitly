@@ -13,12 +13,12 @@
             >Habits</router-link
           >
         </li>
-        <div v-if="!$auth.loading.value">
+        <div v-if="!auth.loading.value">
           <li class="nav-item">
             <button
               class="btn btn-primary"
-              v-if="!$auth.isAuthenticated.value"
-              @click="login"
+              v-if="!auth.isAuthenticated.value"
+              @click="auth.login"
             >
               Log in
             </button>
@@ -26,8 +26,8 @@
           <li class="nav-item">
             <button
               class="btn btn-primary"
-              v-if="$auth.isAuthenticated.value"
-              @click="logout"
+              v-if="auth.isAuthenticated.value"
+              @click="auth.logout"
             >
               Log out
             </button>
@@ -90,50 +90,53 @@
 </template>
 
 <script>
-// import axios from 'axios';
-
-// const API_URL = 'http://localhost:8000';
+import { inject, watchEffect } from 'vue';
 
 export default {
   name: 'app',
-  methods: {
-    // this method calls the AuthService login() method
-    login() {
-      this.$auth.loginWithRedirect();
-    },
-    logout() {
-      this.$auth.logout({ returnTo: window.location.origin });
-    },
-    // privateMessage() {
-    //   const url = `${API_URL}/api/private/`;
-    //   return axios
-    //     .get(url, {
-    //       headers: { Authorization: `Bearer ${auth.getAuthToken()}` },
-    //     })
-    //     .then((response) => {
-    //       console.log(response.data);
-    //       this.message = response.data || '';
-    //     });
-    // },
-    // habits() {
-    //   const url = `${API_URL}/api/habits/`;
-    //   return axios
-    //     .get(url, {
-    //       headers: { Authorization: `Bearer ${auth.getAuthToken()}` },
-    //     })
-    //     .then((response) => {
-    //       console.log(response.data);
-    //       this.message = response.data || '';
-    //     });
-    // },
-    // publicMessage() {
-    //   const url = `${API_URL}/api/public/`;
-    //   return axios.get(url).then((response) => {
-    //     console.log(response.data);
-    //     this.message = response.data || '';
-    //   });
-    // },
+  setup() {
+    const auth = inject('auth');
+    watchEffect(() => console.log(auth.isAuthenticated.value));
+    return { auth };
   },
+  // methods: {
+  //   // this method calls the AuthService login() method
+  //   login() {
+  //     this.$auth.loginWithRedirect();
+  //   },
+  //   logout() {
+  //     this.$auth.logout({ returnTo: window.location.origin });
+  //   },
+  //   // privateMessage() {
+  //   //   const url = `${API_URL}/api/private/`;
+  //   //   return axios
+  //   //     .get(url, {
+  //   //       headers: { Authorization: `Bearer ${auth.getAuthToken()}` },
+  //   //     })
+  //   //     .then((response) => {
+  //   //       console.log(response.data);
+  //   //       this.message = response.data || '';
+  //   //     });
+  //   // },
+  //   // habits() {
+  //   //   const url = `${API_URL}/api/habits/`;
+  //   //   return axios
+  //   //     .get(url, {
+  //   //       headers: { Authorization: `Bearer ${auth.getAuthToken()}` },
+  //   //     })
+  //   //     .then((response) => {
+  //   //       console.log(response.data);
+  //   //       this.message = response.data || '';
+  //   //     });
+  //   // },
+  //   // publicMessage() {
+  //   //   const url = `${API_URL}/api/public/`;
+  //   //   return axios.get(url).then((response) => {
+  //   //     console.log(response.data);
+  //   //     this.message = response.data || '';
+  //   //   });
+  //   // },
+  // },
 };
 </script>
 <style lang="scss">

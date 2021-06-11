@@ -127,9 +127,5 @@ export const setupAuth = async (options, callbackRedirect) => {
     state.loading = false;
   }
 
-  return {
-    install: (app) => {
-      app.config.globalProperties.$auth = authPlugin;
-    },
-  };
+  return authPlugin;
 };
