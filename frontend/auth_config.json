@@ -2,5 +2,7 @@
   "domain": "habitly.us.auth0.com",
   "client_id": "AYPDD1mfueoDzNMES8iKnwWn7yiHtdRq",
   "redirect_uri": "http://localhost:8080",
-  "audience": "https://0xali.com/habitly/api"
+  "audience": "https://0xali.com/habitly/api",
+  "response_type": "token id_token",
+  "scope": "openid profile"
 }

@@ -18,7 +18,7 @@
             <button
               class="btn btn-primary"
               v-if="!auth.isAuthenticated.value"
-              @click="auth.login"
+              @click="auth.loginWithRedirect"
             >
               Log in
             </button>
@@ -33,6 +33,9 @@
             </button>
           </li>
         </div>
+        <li class="nav-item">
+          <button class="btn btn-primary" @click="getHabits">Get Habits</button>
+        </li>
       </ul>
       <ul class="navbar-nav ms-auto">
         <li class="nav-item">
@@ -43,42 +46,6 @@
   </nav>
 
   <main class="my-5">
-    <!-- <div>
-      <button
-        class="btn btn-primary btn-margin"
-        v-if="!authenticated"
-        @click="login()"
-      >
-        Log In
-      </button>
-
-      <button class="btn btn-primary btn-margin" @click="publicMessage()">
-        Call Public
-      </button>
-      <button
-        class="btn btn-primary btn-margin"
-        v-if="authenticated"
-        @click="privateMessage()"
-      >
-        Call Private
-      </button>
-      <button
-        class="btn btn-primary btn-margin"
-        v-if="authenticated"
-        @click="habits()"
-      >
-        Habits
-      </button>
-
-      <button
-        class="btn btn-primary btn-margin"
-        v-if="authenticated"
-        @click="logout()"
-      >
-        Log Out
-      </button>
-      {{ message }}
-    </div> -->
     <router-view></router-view>
   </main>
 
@@ -91,52 +58,31 @@
 
 <script>
 import { inject, watchEffect } from 'vue';
-
+import axios from 'axios';
 export default {
   name: 'app',
   setup() {
     const auth = inject('auth');
-    watchEffect(() => console.log(auth.isAuthenticated.value));
-    return { auth };
+    watchEffect(async () => {
+      console.log(
+        'token set',
+        auth.isAuthenticated.value,
+        auth.user.value.access_token
+      );
+      // if (auth.isAuthenticated.value) {
+      //   auth.user.value.access_token = await auth.getTokenSilently();
+      // }
+    });
+    const getHabits = () => {
+      axios
+        .get('http://localhost:8000/api/habits/', {
+          headers: { Authorization: `Bearer ${auth.user.value.access_token}` },
+        })
+        .then((req) => console.log(req.data))
+        .catch((err) => console.error(err));
+    };
+    return { getHabits, auth };
   },
-  // methods: {
-  //   // this method calls the AuthService login() method
-  //   login() {
-  //     this.$auth.loginWithRedirect();
-  //   },
-  //   logout() {
-  //     this.$auth.logout({ returnTo: window.location.origin });
-  //   },
-  //   // privateMessage() {
-  //   //   const url = `${API_URL}/api/private/`;
-  //   //   return axios
-  //   //     .get(url, {
-  //   //       headers: { Authorization: `Bearer ${auth.getAuthToken()}` },
-  //   //     })
-  //   //     .then((response) => {
-  //   //       console.log(response.data);
-  //   //       this.message = response.data || '';
-  //   //     });
-  //   // },
-  //   // habits() {
-  //   //   const url = `${API_URL}/api/habits/`;
-  //   //   return axios
-  //   //     .get(url, {
-  //   //       headers: { Authorization: `Bearer ${auth.getAuthToken()}` },
-  //   //     })
-  //   //     .then((response) => {
-  //   //       console.log(response.data);
-  //   //       this.message = response.data || '';
-  //   //     });
-  //   // },
-  //   // publicMessage() {
-  //   //   const url = `${API_URL}/api/public/`;
-  //   //   return axios.get(url).then((response) => {
-  //   //     console.log(response.data);
-  //   //     this.message = response.data || '';
-  //   //   });
-  //   // },
-  // },
 };
 </script>
 <style lang="scss">
@@ -164,7 +110,6 @@ body {
 /* The emerging W3C standard
    that is currently Firefox-only */
 * {
-  scrollbar-width: thin;
   scrollbar-color: $gray-500 $gray-200;
 }
 

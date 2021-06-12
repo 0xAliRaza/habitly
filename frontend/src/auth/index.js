@@ -59,7 +59,7 @@ function logout(o) {
   return client.logout(o);
 }
 
-const authPlugin = {
+const auth = {
   isAuthenticated: computed(() => state.isAuthenticated),
   loading: computed(() => state.loading),
   user: computed(() => state.user),
@@ -73,7 +73,7 @@ const authPlugin = {
 };
 
 export const routeGuard = (to, from, next) => {
-  const { isAuthenticated, loading, loginWithRedirect } = authPlugin;
+  const { isAuthenticated, loading, loginWithRedirect } = auth;
   const verify = () => {
     // If the user is authenticated, continue with the route
     if (isAuthenticated.value) {
@@ -122,10 +122,13 @@ export const setupAuth = async (options, callbackRedirect) => {
     state.error = e;
   } finally {
     // Initialize our internal authentication state
-    state.isAuthenticated = await client.isAuthenticated();
+    const authenticated = (state.isAuthenticated =
+      await client.isAuthenticated());
     state.user = await client.getUser();
     state.loading = false;
+    if (authenticated === true) {
+      state.user.access_token = await client.getTokenSilently();
+    }
   }
-
-  return authPlugin;
+  return auth;
 };
