@@ -6,4 +6,7 @@ export default {
   index() {
     return instance.get('habits/');
   },
+  create(data) {
+    return instance.post('habits/', data);
+  },
 };

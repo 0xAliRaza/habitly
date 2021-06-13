@@ -61,26 +61,20 @@ export default {
   setup() {
     const store = useStore();
     const auth = inject('auth');
-    // const api = axios.create({
-    //   baseURL: 'http://localhost:8000/api/',
-    //   headers: {
-    //     Accept: 'application/json',
-    //   },
-    // });
-    // // const habitsService = new HabitsService();
-    // watchEffect(() => {
-    //   if (auth.isAuthenticated.value === true && auth.loading.value === false) {
-    //     api.defaults.headers = Object.assign(
-    //       { Authorization: `Bearer ${auth.user.value.access_token}` },
-    //       api.defaults.headers
-    //     );
-    //   }
-    // });
-    // provide('api', api);
     watchEffect(() => {
       if (auth.isAuthenticated.value === true && auth.loading.value === false) {
-        const res = store.dispatch('getHabits');
-        console.log(res);
+        store
+          .dispatch('getHabits')
+          .then((res) =>
+            console.log('%cApp.vue line:66 res', 'color: #26bfa5;', res)
+          )
+          .catch((err) =>
+            console.log(
+              '%cerror App.vue line:71 ',
+              'color: red; display: block; width: 100%;',
+              err
+            )
+          );
       }
     });
     return {

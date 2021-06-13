@@ -27,10 +27,10 @@
       "
     >
       <div class="modal-content">
-        <div class="modal-header justify-content-end">
-          <!-- <h5 class="modal-title">
-            Habit details
-          </h5> -->
+        <div class="modal-header">
+          <h5 class="modal-title" :id="'habit-' + habit.slug">
+            {{ habit.title }}
+          </h5>
           <button
             type="button"
             class="btn-close"
@@ -40,15 +40,10 @@
         </div>
         <div class="modal-body">
           <div>
-            <h5>Title</h5>
-            <p :id="'habit-' + habit.slug">Do seven pushups after lunch.</p>
-          </div>
-          <hr />
-          <div>
-            <h5>Ritual:</h5>
+            <h5>Ritual</h5>
             <p>{{ habit.ritual }}</p>
           </div>
-          <hr />
+          <hr size="0" />
           <div>
             <h5>Description</h5>
             <p>
@@ -58,7 +53,7 @@
               quidem quibusdam consequuntur cum voluptates eum dolorem numquam?
             </p>
           </div>
-          <hr />
+          <hr size="0" />
           <div>
             <h5>Description</h5>
             <p>
@@ -68,7 +63,7 @@
               quidem quibusdam consequuntur cum voluptates eum dolorem numquam?
             </p>
           </div>
-          <hr />
+          <hr size="0" />
           <div>
             <h5>Description</h5>
             <p>
@@ -78,7 +73,7 @@
               quidem quibusdam consequuntur cum voluptates eum dolorem numquam?
             </p>
           </div>
-          <hr />
+          <hr size="0" />
           <div>
             <h5>Description</h5>
             <p>
@@ -88,7 +83,7 @@
               quidem quibusdam consequuntur cum voluptates eum dolorem numquam?
             </p>
           </div>
-          <hr />
+          <hr size="0" />
           <div>
             <h5>Description</h5>
             <p>
@@ -98,7 +93,7 @@
               quidem quibusdam consequuntur cum voluptates eum dolorem numquam?
             </p>
           </div>
-          <hr />
+          <hr size="0" />
         </div>
         <div class="modal-footer">
           <button class="btn btn-danger d-inline-flex align-items-center">
@@ -120,7 +115,10 @@
               />
             </svg>
           </button>
-          <button class="btn btn-success d-inline-flex align-items-center">
+          <button
+            class="btn btn-success d-inline-flex align-items-center"
+            @click.prevent="onEdit"
+          >
             Edit
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -148,18 +146,16 @@
 <script>
 import 'bootstrap/js/dist/modal';
 
-// import { ref, watch } from 'vue';
 export default {
   name: 'Habit',
   props: {
     habit: { required: true, type: Object },
-    // id: { type: Number },
-    // title: { type: String },
-    // ritual: { type: String },
-    // description: { type: String },
-    // type: { type: String },
-    // created_at: { type: Date },
-    // updated_at: { type: Date },
+  },
+  setup(props, { emit }) {
+    const onEdit = () => {
+      emit('onEdit', props.habit);
+    };
+    return { onEdit };
   },
 };
 </script>
@@ -227,7 +223,8 @@ export default {
     }
   }
 }
-hr {
-  background-color: $gray-500;
-}
+// hr {
+//   height: 0px;
+//   background-color: $gray-500;
+// }
 </style>

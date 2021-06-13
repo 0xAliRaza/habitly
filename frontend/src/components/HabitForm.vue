@@ -41,7 +41,17 @@
     </div>
 
     <div class="d-flex justify-content-end">
-      <button type="submit" class="btn btn-dark">Submit</button>
+      <button type="submit" class="btn btn-dark" :disabled="loading">
+        <template v-if="loading">
+          <span
+            class="spinner-border spinner-border-sm"
+            role="status"
+            aria-hidden="true"
+          ></span>
+          Loading...
+        </template>
+        <template v-else> Submit </template>
+      </button>
     </div>
   </form>
 </template>
@@ -53,17 +63,15 @@ import { reactive } from 'vue';
 export default {
   name: 'HabitForm',
   props: {
-    title: { type: String, default: '' },
-    ritual: { type: String, default: '' },
-    description: { type: String, default: '' },
-    type: { type: String, default: '' },
+    habit: { type: Object, required: true },
+    loading: { type: Boolean, required: true },
   },
   setup(props, { emit }) {
     const form = reactive({
-      title: props.title,
-      ritual: props.ritual,
-      description: props.description,
-      type: props.type,
+      title: props.habit.title || '',
+      ritual: props.habit.ritual || '',
+      description: props.habit.description || '',
+      type: props.habit.type || '',
     });
 
     const onSubmit = () => {

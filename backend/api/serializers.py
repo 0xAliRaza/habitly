@@ -12,4 +12,4 @@ class HabitSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Habit
         fields = ['id', 'title', 'ritual',
-                  'description', 'created_at', 'updated_at', 'slug']
+                  'description', 'created_at', 'updated_at', 'slug', 'type']

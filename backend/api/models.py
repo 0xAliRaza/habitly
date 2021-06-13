@@ -17,6 +17,8 @@ class Habit(models.Model):
     slug = models.SlugField(max_length=50, blank=True)
     ritual = models.CharField(max_length=50, blank=True)
     description = models.CharField(max_length=250, blank=True)
+    type = models.CharField(max_length=1, choices=[
+                            ('G', 'good'), ('B', 'bad')])
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 

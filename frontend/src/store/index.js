@@ -17,27 +17,30 @@ export default createStore({
   },
   mutations: {
     addHabits(state, habits) {
-      console.log('inside addHabits', habits);
       state.habits.push(...habits);
     },
     setUser(state, user) {
       state.user = user;
+      console.log(
+        '%cindex.js line:24 user.access_token',
+        'color: white; background-color: #26bfa5;',
+        user.access_token
+      );
     },
     removeUser(state) {
       state.user = {};
     },
   },
   actions: {
-    getHabits({ commit, state }) {
-      habits
-        .index()
-        .then((res) => {
-          console.log(res.data);
-          commit('addHabits', res.data);
-        })
-        .catch((err) => {
-          state.errors.push(err);
-        });
+    async getHabits({ commit, state }) {
+      const _habits = (await habits.index()).data;
+      commit('addHabits', _habits);
+      return _habits;
+    },
+    async createHabit({ commit, state }, data) {
+      const _habit = (await habits.create(data)).data;
+      commit('addHabits', [_habit]);
+      return _habit;
     },
   },
   modules: {},
