@@ -14,7 +14,8 @@
     "core-js": "^3.6.5",
     "eventemitter3": "^4.0.7",
     "vue": "^3.0.0",
-    "vue-router": "^4.0.0-0"
+    "vue-router": "^4.0.0-0",
+    "vuex": "^4.0.1"
   },
   "devDependencies": {
     "@vue/cli-plugin-babel": "~4.5.0",

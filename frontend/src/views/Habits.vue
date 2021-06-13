@@ -26,9 +26,8 @@
       <div class="col-lg-6 mb-5">
         <habit-form
           title="test"
-          type="bad"
           description="tatti is good"
-          @onSubmit="habitFormSubmitted"
+          @onSubmit="onHabitFormSubmit"
         ></habit-form>
       </div>
     </div>
@@ -37,25 +36,21 @@
         <div class="text-center mb-3">
           <h3 class="text-success">Good habits</h3>
         </div>
-        <div class="habit-wrapper mb-2">
-          <habit></habit>
-        </div>
-        <div class="habit-wrapper mb-2">
-          <habit></habit>
-        </div>
-        <div class="habit-wrapper mb-2">
-          <habit></habit>
-        </div>
-        <div class="habit-wrapper mb-2">
-          <habit></habit>
+        <div
+          v-for="habit in goodHabits"
+          :key="habit.id"
+          class="habit-wrapper mb-2"
+        >
+          <habit :habit="habit"></habit>
         </div>
       </div>
       <div class="col-lg-6">
         <div class="text-center mb-3">
           <h3 class="text-danger">Bad habits</h3>
         </div>
+        <!--
         <div class="habit-wrapper mb-2">
-          <habit></habit>
+             <habit></habit>
         </div>
         <div class="habit-wrapper mb-2">
           <habit></habit>
@@ -68,7 +63,7 @@
         </div>
         <div class="habit-wrapper mb-2">
           <habit></habit>
-        </div>
+        </div> -->
       </div>
     </div>
   </div>
@@ -77,16 +72,26 @@
 <script>
 import Habit from '@/components/Habit.vue';
 import HabitForm from '@/components/HabitForm.vue';
-import { ref } from 'vue';
+import { ref, provide, watchEffect, inject, computed } from 'vue';
+import { useStore } from 'vuex';
 export default {
   name: 'Habits',
   components: { Habit, HabitForm },
   setup() {
+    const store = useStore();
     const habitFormVisible = ref(false);
-    const habitFormSubmitted = (e) => {
-      console.log('submited:>>>>>>>', e.value);
+    const onHabitFormSubmit = (data) => {
+      console.log('submited:>>>>>>>', data);
     };
-    return { habitFormVisible, habitFormSubmitted };
+    const goodHabits = computed(() => {
+      console.log(store.getters.goodHabits);
+      return store.getters.goodHabits;
+    });
+    return {
+      habitFormVisible,
+      onHabitFormSubmit,
+      goodHabits,
+    };
   },
 };
 </script>

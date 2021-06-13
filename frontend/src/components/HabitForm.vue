@@ -2,7 +2,14 @@
   <form @submit.prevent="onSubmit">
     <div class="mb-3">
       <label for="title" class="form-label">Title</label>
-      <input type="text" class="form-control" id="title" v-model="form.title" />
+      <input
+        required
+        type="text"
+        class="form-control"
+        id="title"
+        v-model="form.title"
+        maxlength="50"
+      />
     </div>
     <div class="mb-3">
       <label for="ritual" class="form-label">Ritual</label>
@@ -11,6 +18,7 @@
         class="form-control"
         id="ritual"
         v-model="form.ritual"
+        maxlength="50"
       />
     </div>
     <div class="mb-3">
@@ -19,12 +27,14 @@
         class="form-control"
         id="description"
         v-model="form.description"
+        maxlength="250"
       >
       </textarea>
     </div>
     <div class="mb-3">
       <label for="type" class="form-label">Type</label>
-      <select class="form-select" id="type" v-model="form.type">
+      <select required class="form-select" id="type" v-model="form.type">
+        <option selected disabled value>------</option>
         <option value="good">Good</option>
         <option value="bad">Bad</option>
       </select>
@@ -39,7 +49,7 @@
 <style lang="sass" scoped></style>
 
 <script>
-import { ref } from 'vue';
+import { reactive } from 'vue';
 export default {
   name: 'HabitForm',
   props: {
@@ -49,13 +59,16 @@ export default {
     type: { type: String, default: '' },
   },
   setup(props, { emit }) {
-    const form = ref({
+    const form = reactive({
       title: props.title,
       ritual: props.ritual,
       description: props.description,
       type: props.type,
     });
-    const onSubmit = () => emit('onSubmit', form);
+
+    const onSubmit = () => {
+      emit('onSubmit', form);
+    };
 
     return { form, onSubmit };
   },

@@ -3,9 +3,9 @@
     <div
       class="habit__text"
       data-bs-toggle="modal"
-      :data-bs-target="`#modalTarget-${id}`"
+      :data-bs-target="`#${habit.slug}`"
     >
-      <span>Lorem ipsum dolor sit amet consectetur</span>
+      <span>{{ habit.title }}</span>
     </div>
     <div class="habit__checkbox">
       <input type="checkbox" class="form-check-input" />
@@ -16,9 +16,9 @@
   <div
     ref="modal"
     class="habit-modal modal fade"
-    :id="'modalTarget-' + id"
+    :id="habit.slug"
     tabindex="-1"
-    :aria-labelledby="'exampleModalLabel-' + id"
+    :aria-labelledby="'habit-' + habit.slug"
     aria-hidden="true"
   >
     <div
@@ -27,10 +27,10 @@
       "
     >
       <div class="modal-content">
-        <div class="modal-header modal-header--success">
-          <h5 class="modal-title" id="exampleModalLabel">
-            {{ title || 'Do seven pushups!' }}
-          </h5>
+        <div class="modal-header justify-content-end">
+          <!-- <h5 class="modal-title">
+            Habit details
+          </h5> -->
           <button
             type="button"
             class="btn-close"
@@ -39,17 +39,66 @@
           ></button>
         </div>
         <div class="modal-body">
-          <!-- <h5 class="habit-modal__heading">Title</h5>
-          <p class="habit-modal__paragraph">Do seven pushups after lunch.</p> -->
-          <h5 class="habit-modal__heading">Ritual</h5>
-          <p class="habit-modal__paragraph">Washing hands at wash-bason.</p>
-          <h5 class="habit-modal__heading">Description</h5>
-          <p class="habit-modal__paragraph">
-            Lorem ipsum dolor sit amet consectetur adipisicing elit. Maiores,
-            cupiditate quod dignissimos voluptatibus quisquam eveniet dolorum
-            inventore consequuntur. Vero at enim id maiores cum illum eos totam!
-            Maiores, voluptatum excepturi.
-          </p>
+          <div>
+            <h5>Title</h5>
+            <p :id="'habit-' + habit.slug">Do seven pushups after lunch.</p>
+          </div>
+          <hr />
+          <div>
+            <h5>Ritual:</h5>
+            <p>{{ habit.ritual }}</p>
+          </div>
+          <hr />
+          <div>
+            <h5>Description</h5>
+            <p>
+              {{ habit.description }} Lorem ipsum dolor sit amet consectetur
+              adipisicing elit. Expedita, veniam repellendus! Hic quo asperiores
+              porro fugit impedit eos, consectetur delectus quibusdam. Tempore
+              quidem quibusdam consequuntur cum voluptates eum dolorem numquam?
+            </p>
+          </div>
+          <hr />
+          <div>
+            <h5>Description</h5>
+            <p>
+              {{ habit.description }} Lorem ipsum dolor sit amet consectetur
+              adipisicing elit. Expedita, veniam repellendus! Hic quo asperiores
+              porro fugit impedit eos, consectetur delectus quibusdam. Tempore
+              quidem quibusdam consequuntur cum voluptates eum dolorem numquam?
+            </p>
+          </div>
+          <hr />
+          <div>
+            <h5>Description</h5>
+            <p>
+              {{ habit.description }} Lorem ipsum dolor sit amet consectetur
+              adipisicing elit. Expedita, veniam repellendus! Hic quo asperiores
+              porro fugit impedit eos, consectetur delectus quibusdam. Tempore
+              quidem quibusdam consequuntur cum voluptates eum dolorem numquam?
+            </p>
+          </div>
+          <hr />
+          <div>
+            <h5>Description</h5>
+            <p>
+              {{ habit.description }} Lorem ipsum dolor sit amet consectetur
+              adipisicing elit. Expedita, veniam repellendus! Hic quo asperiores
+              porro fugit impedit eos, consectetur delectus quibusdam. Tempore
+              quidem quibusdam consequuntur cum voluptates eum dolorem numquam?
+            </p>
+          </div>
+          <hr />
+          <div>
+            <h5>Description</h5>
+            <p>
+              {{ habit.description }} Lorem ipsum dolor sit amet consectetur
+              adipisicing elit. Expedita, veniam repellendus! Hic quo asperiores
+              porro fugit impedit eos, consectetur delectus quibusdam. Tempore
+              quidem quibusdam consequuntur cum voluptates eum dolorem numquam?
+            </p>
+          </div>
+          <hr />
         </div>
         <div class="modal-footer">
           <button class="btn btn-danger d-inline-flex align-items-center">
@@ -96,7 +145,24 @@
     </div>
   </div>
 </template>
+<script>
+import 'bootstrap/js/dist/modal';
 
+// import { ref, watch } from 'vue';
+export default {
+  name: 'Habit',
+  props: {
+    habit: { required: true, type: Object },
+    // id: { type: Number },
+    // title: { type: String },
+    // ritual: { type: String },
+    // description: { type: String },
+    // type: { type: String },
+    // created_at: { type: Date },
+    // updated_at: { type: Date },
+  },
+};
+</script>
 <style lang="scss" scoped>
 .habit {
   cursor: pointer;
@@ -161,21 +227,7 @@
     }
   }
 }
+hr {
+  background-color: $gray-500;
+}
 </style>
-<script>
-import 'bootstrap/js/dist/modal';
-
-// import { ref, watch } from 'vue';
-export default {
-  name: 'Habit',
-  props: {
-    id: { type: Number },
-    title: { type: String },
-    ritual: { type: String },
-    description: { type: String },
-    type: { type: String },
-    created_at: { type: Date },
-    updated_at: { type: Date },
-  },
-};
-</script>

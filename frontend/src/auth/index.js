@@ -1,4 +1,6 @@
+import store from '@/store';
 import createAuth0Client from '@auth0/auth0-spa-js';
+import axios from 'axios';
 import { computed, reactive, watchEffect } from 'vue';
 
 let client;
@@ -125,10 +127,13 @@ export const setupAuth = async (options, callbackRedirect) => {
     const authenticated = (state.isAuthenticated =
       await client.isAuthenticated());
     state.user = await client.getUser();
-    state.loading = false;
     if (authenticated === true) {
       state.user.access_token = await client.getTokenSilently();
+      store.commit('setUser', state.user);
+    } else {
+      store.commit('removeUser');
     }
+    state.loading = false;
   }
   return auth;
 };

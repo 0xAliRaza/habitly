@@ -33,9 +33,6 @@
             </button>
           </li>
         </div>
-        <li class="nav-item">
-          <button class="btn btn-primary" @click="getHabits">Get Habits</button>
-        </li>
       </ul>
       <ul class="navbar-nav ms-auto">
         <li class="nav-item">
@@ -57,31 +54,38 @@
 </template>
 
 <script>
-import { inject, watchEffect } from 'vue';
-import axios from 'axios';
+import { inject, provide, watchEffect } from 'vue';
+import { useStore } from 'vuex';
 export default {
   name: 'app',
   setup() {
+    const store = useStore();
     const auth = inject('auth');
-    watchEffect(async () => {
-      console.log(
-        'token set',
-        auth.isAuthenticated.value,
-        auth.user.value.access_token
-      );
-      // if (auth.isAuthenticated.value) {
-      //   auth.user.value.access_token = await auth.getTokenSilently();
-      // }
+    // const api = axios.create({
+    //   baseURL: 'http://localhost:8000/api/',
+    //   headers: {
+    //     Accept: 'application/json',
+    //   },
+    // });
+    // // const habitsService = new HabitsService();
+    // watchEffect(() => {
+    //   if (auth.isAuthenticated.value === true && auth.loading.value === false) {
+    //     api.defaults.headers = Object.assign(
+    //       { Authorization: `Bearer ${auth.user.value.access_token}` },
+    //       api.defaults.headers
+    //     );
+    //   }
+    // });
+    // provide('api', api);
+    watchEffect(() => {
+      if (auth.isAuthenticated.value === true && auth.loading.value === false) {
+        const res = store.dispatch('getHabits');
+        console.log(res);
+      }
     });
-    const getHabits = () => {
-      axios
-        .get('http://localhost:8000/api/habits/', {
-          headers: { Authorization: `Bearer ${auth.user.value.access_token}` },
-        })
-        .then((req) => console.log(req.data))
-        .catch((err) => console.error(err));
+    return {
+      auth,
     };
-    return { getHabits, auth };
   },
 };
 </script>
@@ -115,8 +119,8 @@ body {
 
 /* Works on Chrome/Edge/Safari */
 *::-webkit-scrollbar {
-  width: pxToRem(10);
-  height: pxToRem(10);
+  width: pxToRem(8);
+  height: pxToRem(8);
 }
 *::-webkit-scrollbar-track {
   background: $gray-200;
