@@ -31,24 +31,24 @@
       >
       </textarea>
     </div>
-    <div class="mb-3">
+    <div class="mb-4">
       <label for="type" class="form-label">Type</label>
       <select required class="form-select" id="type" v-model="form.type">
         <option selected disabled value>------</option>
-        <option value="good">Good</option>
-        <option value="bad">Bad</option>
+        <option value="G">Good</option>
+        <option value="B">Bad</option>
       </select>
     </div>
 
     <div class="d-flex justify-content-end">
-      <button type="submit" class="btn btn-dark" :disabled="loading">
+      <button type="submit" class="btn btn-primary" :disabled="loading">
         <template v-if="loading">
+          Submitting
           <span
-            class="spinner-border spinner-border-sm"
+            class="spinner-border spinner-border-sm ms-1"
             role="status"
             aria-hidden="true"
           ></span>
-          Loading...
         </template>
         <template v-else> Submit </template>
       </button>

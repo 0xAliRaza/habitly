@@ -10,11 +10,7 @@
           >
             Create habit
           </button>
-          <button
-            v-else
-            class="btn-close"
-            @click="habitFormVisible = false"
-          ></button>
+          <button v-else class="btn-close" @click="onHideHabitForm"></button>
         </div>
       </div>
     </div>
@@ -29,47 +25,47 @@
       </div>
     </div>
     <div class="row">
-      <template v-if="habits.length < 1">
+      <template v-if="habits.length < 1 && !habitFormVisible">
         <div class="col-sm-12">
-          <div
-            class="alert alert-info alert-dismissible fade show"
-            role="alert"
-          >
-            You haven't added any habits yet. Please add some to see them here.
-            <button
-              type="button"
-              class="btn-close"
-              data-bs-dismiss="alert"
-              aria-label="Close"
-            ></button>
-          </div>
+          <p class="alert-info fade show d-inline-flex fade show" role="alert">
+            You haven't added any habits yet. Please add some to see them
+            here...
+          </p>
         </div>
       </template>
-      <template v-else>
+      <template v-else-if="habits.length > 0">
         <div class="col-lg-6 mb-4 mb-lg-0">
           <div class="text-center mb-3">
-            <h3 class="text-success">Good habits</h3>
+            <h5 class="text-success">GOOD</h5>
           </div>
           <div
             v-for="habit in goodHabits"
             :key="habit.id"
             class="habit-wrapper mb-2"
           >
-            <habit :habit="habit" @onEdit="onHabitEdit"></habit>
+            <habit
+              :habit="habit"
+              @edit="onHabitEdit"
+              @delete="onHabitDelete"
+            ></habit>
           </div>
         </div>
-        <!-- <div class="col-lg-6">
+        <div class="col-lg-6">
           <div class="text-center mb-3">
-            <h3 class="text-danger">Bad habits</h3>
+            <h5 class="text-danger">BAD</h5>
           </div>
           <div
             v-for="habit in badHabits"
             :key="habit.id"
             class="habit-wrapper mb-2"
           >
-            <habit :habit="habit"></habit>
+            <habit
+              :habit="habit"
+              @edit="onHabitEdit"
+              @delete="onHabitDelete"
+            ></habit>
           </div>
-        </div> -->
+        </div>
       </template>
     </div>
   </div>
@@ -78,8 +74,8 @@
 <script>
 import Habit from '@/components/Habit.vue';
 import HabitForm from '@/components/HabitForm.vue';
-import { ref, provide, watchEffect, inject, computed } from 'vue';
-import { useStore, mapState, mapGetters } from 'vuex';
+import { ref, computed } from 'vue';
+import { useStore } from 'vuex';
 import 'bootstrap/js/dist/alert';
 
 export default {
@@ -93,7 +89,17 @@ export default {
     const onHabitFormSubmit = async (formData) => {
       habitFormLoading.value = true;
       try {
-        const res = await store.dispatch('createHabit', formData);
+        let res;
+        if (beingEditedHabit.value.id) {
+          res = await store.dispatch('addHabit', {
+            formData: formData,
+            pk: beingEditedHabit.value.id,
+          });
+        } else {
+          res = await store.dispatch('addHabit', {
+            formData: formData,
+          });
+        }
         console.log(
           '%cHabits.vue line:91 data',
           'color: white; background-color: #26bfa5;',
@@ -108,11 +114,19 @@ export default {
       } finally {
         habitFormLoading.value = false;
         habitFormVisible.value = false;
+        beingEditedHabit.value = {};
       }
     };
     const onHabitEdit = (habit) => {
       beingEditedHabit.value = habit;
       habitFormVisible.value = true;
+    };
+    const onHabitDelete = async (habitId) => {
+      await store.dispatch('deleteHabit', { pk: habitId });
+    };
+    const onHideHabitForm = () => {
+      beingEditedHabit.value = {};
+      habitFormVisible.value = false;
     };
 
     return {
@@ -121,6 +135,8 @@ export default {
       beingEditedHabit,
       onHabitFormSubmit,
       onHabitEdit,
+      onHabitDelete,
+      onHideHabitForm,
       goodHabits: computed(() => store.getters.goodHabits),
       badHabits: computed(() => store.getters.badHabits),
       habits: computed(() => store.state.habits),

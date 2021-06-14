@@ -1,25 +1,29 @@
 <template>
-  <div class="habit habit--good" tabindex="0">
-    <div
-      class="habit__text"
-      data-bs-toggle="modal"
-      :data-bs-target="`#${habit.slug}`"
-    >
+  <!-- Habit start -->
+  <div
+    class="habit"
+    tabindex="0"
+    :class="{
+      'habit--good': habit.type === 'G',
+      'habit--bad': habit.type === 'B',
+    }"
+  >
+    <div class="habit__text" @click="showModal">
       <span>{{ habit.title }}</span>
     </div>
     <div class="habit__checkbox">
       <input type="checkbox" class="form-check-input" />
     </div>
   </div>
-
-  <!-- Modal -->
+  <!-- Habit end -->
+  <!-- Bootstrap Modal start -->
   <div
     ref="modal"
     class="habit-modal modal fade"
     :id="habit.slug"
     tabindex="-1"
     :aria-labelledby="'habit-' + habit.slug"
-    aria-hidden="true"
+    v-if="habitModalVisible"
   >
     <div
       class="
@@ -40,80 +44,67 @@
         </div>
         <div class="modal-body">
           <div>
-            <h5>Ritual</h5>
-            <p>{{ habit.ritual }}</p>
+            <h5>Type</h5>
+            <p v-if="habit.type === 'G'">Good</p>
+            <p v-else-if="habit.type === 'B'">Bad</p>
           </div>
-          <hr size="0" />
+          <!-- <hr size="0" /> -->
+          <template v-if="habit.ritual">
+            <div>
+              <h5>Ritual</h5>
+              <p>{{ habit.ritual }}</p>
+            </div>
+            <!-- <hr size="0" /> -->
+          </template>
+          <template v-if="habit.description">
+            <div>
+              <h5>Description</h5>
+              <p>{{ habit.description }}</p>
+            </div>
+            <!-- <hr size="0" /> -->
+          </template>
           <div>
-            <h5>Description</h5>
-            <p>
-              {{ habit.description }} Lorem ipsum dolor sit amet consectetur
-              adipisicing elit. Expedita, veniam repellendus! Hic quo asperiores
-              porro fugit impedit eos, consectetur delectus quibusdam. Tempore
-              quidem quibusdam consequuntur cum voluptates eum dolorem numquam?
-            </p>
+            <h5>Created at</h5>
+            <p>{{ new Date(habit.created_at) }}</p>
           </div>
-          <hr size="0" />
+          <!-- <hr size="0" /> -->
           <div>
-            <h5>Description</h5>
-            <p>
-              {{ habit.description }} Lorem ipsum dolor sit amet consectetur
-              adipisicing elit. Expedita, veniam repellendus! Hic quo asperiores
-              porro fugit impedit eos, consectetur delectus quibusdam. Tempore
-              quidem quibusdam consequuntur cum voluptates eum dolorem numquam?
-            </p>
+            <h5>Updated at</h5>
+            <p>{{ new Date(habit.updated_at) }}</p>
           </div>
-          <hr size="0" />
-          <div>
-            <h5>Description</h5>
-            <p>
-              {{ habit.description }} Lorem ipsum dolor sit amet consectetur
-              adipisicing elit. Expedita, veniam repellendus! Hic quo asperiores
-              porro fugit impedit eos, consectetur delectus quibusdam. Tempore
-              quidem quibusdam consequuntur cum voluptates eum dolorem numquam?
-            </p>
-          </div>
-          <hr size="0" />
-          <div>
-            <h5>Description</h5>
-            <p>
-              {{ habit.description }} Lorem ipsum dolor sit amet consectetur
-              adipisicing elit. Expedita, veniam repellendus! Hic quo asperiores
-              porro fugit impedit eos, consectetur delectus quibusdam. Tempore
-              quidem quibusdam consequuntur cum voluptates eum dolorem numquam?
-            </p>
-          </div>
-          <hr size="0" />
-          <div>
-            <h5>Description</h5>
-            <p>
-              {{ habit.description }} Lorem ipsum dolor sit amet consectetur
-              adipisicing elit. Expedita, veniam repellendus! Hic quo asperiores
-              porro fugit impedit eos, consectetur delectus quibusdam. Tempore
-              quidem quibusdam consequuntur cum voluptates eum dolorem numquam?
-            </p>
-          </div>
-          <hr size="0" />
         </div>
         <div class="modal-footer">
-          <button class="btn btn-danger d-inline-flex align-items-center">
-            Delete
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="16"
-              height="16"
-              fill="currentColor"
-              class="bi bi-trash ms-1"
-              viewBox="0 0 16 16"
-            >
-              <path
-                d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z"
-              />
-              <path
-                fill-rule="evenodd"
-                d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z"
-              />
-            </svg>
+          <button
+            class="btn btn-danger d-inline-flex align-items-center"
+            @click.prevent="onDelete"
+          >
+            <template v-if="loading">
+              Deleting
+              <span
+                class="spinner-border spinner-border-sm ms-1"
+                role="status"
+                aria-hidden="true"
+              ></span>
+            </template>
+            <template v-else>
+              Delete
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="16"
+                height="16"
+                fill="currentColor"
+                class="bi bi-trash ms-1"
+                viewBox="0 0 16 16"
+              >
+                <path
+                  d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z"
+                />
+                <path
+                  fill-rule="evenodd"
+                  d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z"
+                />
+              </svg>
+            </template>
           </button>
           <button
             class="btn btn-success d-inline-flex align-items-center"
@@ -137,25 +128,53 @@
               />
             </svg>
           </button>
-          <!-- <button type="button" class="btn btn-dark">Save</button> -->
         </div>
       </div>
     </div>
   </div>
+  <!-- Bootstrap Modal End -->
 </template>
 <script>
-import 'bootstrap/js/dist/modal';
-
+import Modal from 'bootstrap/js/dist/modal';
+import { ref, nextTick } from 'vue';
 export default {
   name: 'Habit',
   props: {
     habit: { required: true, type: Object },
   },
+  emits: ['edit', 'delete'],
   setup(props, { emit }) {
-    const onEdit = () => {
-      emit('onEdit', props.habit);
+    const habitModalVisible = ref(false);
+    const modal = ref(null);
+    const loading = ref(false);
+    let bsModal;
+    const showModal = async () => {
+      habitModalVisible.value = true;
+      await nextTick;
+      bsModal = new Modal(modal.value);
+      bsModal.show();
+      modal.value.addEventListener('hidden.bs.modal', () => {
+        habitModalVisible.value = false;
+      });
     };
-    return { onEdit };
+    const onEdit = () => {
+      bsModal.hide();
+      emit('edit', props.habit);
+    };
+    const onDelete = async () => {
+      loading.value = true;
+      bsModal.hide();
+      await nextTick();
+      emit('delete', props.habit.id);
+    };
+    return {
+      habitModalVisible,
+      modal,
+      loading,
+      showModal,
+      onEdit,
+      onDelete,
+    };
   },
 };
 </script>
@@ -223,8 +242,4 @@ export default {
     }
   }
 }
-// hr {
-//   height: 0px;
-//   background-color: $gray-500;
-// }
 </style>

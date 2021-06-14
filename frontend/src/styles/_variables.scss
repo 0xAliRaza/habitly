@@ -10,7 +10,7 @@ $color-gray: #626e74;
 
 // bootstrap customizations
 $primary: $color-primary;
-// $secondary: $color-green;
+
 // $modal-fade-transform: translateY(-100px);
 // $modal-backdrop-bg:  radial-gradient(circle, red, yellow, green);
 $modal-content-bg: $color-body-bg;
@@ -20,4 +20,4 @@ $modal-footer-padding: pxToRem(8);
 $modal-header-border-width: pxToRem(0.5);
 $modal-footer-border-width: 0;
 $modal-content-border-radius: pxToRem(12);
-$modal-backdrop-opacity: 0.8;
+$modal-backdrop-opacity: 0.6;
