@@ -5,9 +5,9 @@ from rest_framework import routers
 from . import views
 
 
-
 router = routers.DefaultRouter()
 router.register(r'habits', views.HabitViewSet, basename='Habit')
+router.register(r'stacks', views.StackViewSet, basename="Stack")
 
 
 urlpatterns = [

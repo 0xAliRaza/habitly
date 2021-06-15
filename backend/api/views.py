@@ -1,9 +1,10 @@
 from rest_framework.decorators import api_view
 from django.http import HttpResponse
 from rest_framework import viewsets, permissions
+from rest_framework.generics import CreateAPIView
 
-from .serializers import HabitSerializer
-from .models import Habit
+from .serializers import HabitSerializer, StackSerializer
+from .models import Habit, Stack
 
 
 def public(request):
@@ -14,6 +15,7 @@ def public(request):
 def private(request):
     return HttpResponse("You should not see this message if not authenticated!")
 
+
 class HabitViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         return Habit.objects.filter(user_id=self.request.user.username)
@@ -21,6 +23,18 @@ class HabitViewSet(viewsets.ModelViewSet):
     def perform_create(self, serializer):
         # Automatically append user_id from request
         return serializer.save(user_id=self.request.user.username)
-    
+
     serializer_class = HabitSerializer
     permission_classes = [permissions.IsAuthenticated]
+
+
+class StackViewSet(viewsets.ModelViewSet):
+    serializer_class = StackSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get_queryset(self):
+        user_id = self.request.user.username
+        return Stack.objects.filter(user_id=user_id, first_habit__user_id=user_id, second_habit__user_id=user_id)
+
+    def perform_create(self, serializer):
+        return serializer.save(user_id=self.request.user.username)
