@@ -63,5 +63,11 @@ class StackSerializer(serializers.ModelSerializer):
 
     def to_representation(self, instance):
         representation = super().to_representation(instance)
+        first_habit = Habit.objects.get(pk=representation['first_habit'])
+        second_habit = Habit.objects.get(pk=representation['second_habit'])
         del representation['user_id']
+        representation['first_habit'] = {
+            "id": first_habit.id, "title": first_habit.title}
+        representation['second_habit'] = {
+            "id": second_habit.id, "title": second_habit.title}
         return representation

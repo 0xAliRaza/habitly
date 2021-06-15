@@ -1,5 +1,5 @@
 import { createApp } from 'vue';
-import authConfig from '../auth_config';
+import authConfig from '../auth_config.json';
 import App from './App.vue';
 import { setupAuth } from './auth';
 import router from './router';
