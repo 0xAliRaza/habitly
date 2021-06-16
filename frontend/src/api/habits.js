@@ -6,7 +6,7 @@ export default {
   create(data) {
     return instance.post('habits/', data);
   },
-  update(data, pk) {
+  update(pk, data) {
     return instance.put(`habits/${pk}/`, data);
   },
   delete(pk) {

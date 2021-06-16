@@ -91,12 +91,12 @@ export default {
       try {
         let res;
         if (beingEditedHabit.value.id) {
-          res = await store.dispatch('addHabit', {
+          res = await store.dispatch('habits/update', {
             formData: formData,
             pk: beingEditedHabit.value.id,
           });
         } else {
-          res = await store.dispatch('addHabit', {
+          res = await store.dispatch('habits/create', {
             formData: formData,
           });
         }
@@ -122,7 +122,7 @@ export default {
       habitFormVisible.value = true;
     };
     const onHabitDelete = async (habitId) => {
-      await store.dispatch('deleteHabit', { pk: habitId });
+      await store.dispatch('habits/delete', { pk: habitId });
     };
     const onHideHabitForm = () => {
       beingEditedHabit.value = {};
@@ -137,9 +137,12 @@ export default {
       onHabitEdit,
       onHabitDelete,
       onHideHabitForm,
-      goodHabits: computed(() => store.getters.goodHabits),
-      badHabits: computed(() => store.getters.badHabits),
-      habits: computed(() => store.state.habits),
+      goodHabits: computed(() => store.getters['habits/good']),
+      badHabits: computed(() => store.getters['habits/bad']),
+      habits: computed(() => {
+        console.log('habits>', store.state.habits.models);
+        return store.state.habits.models;
+      }),
     };
   },
 };

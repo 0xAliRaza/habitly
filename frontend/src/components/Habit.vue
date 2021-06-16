@@ -150,7 +150,7 @@ export default {
     let bsModal;
     const showModal = async () => {
       habitModalVisible.value = true;
-      await nextTick;
+      await nextTick();
       bsModal = new Modal(modal.value);
       bsModal.show();
       modal.value.addEventListener('hidden.bs.modal', () => {

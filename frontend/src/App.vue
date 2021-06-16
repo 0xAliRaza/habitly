@@ -69,7 +69,7 @@ export default {
     watchEffect(() => {
       if (auth.isAuthenticated.value === true && auth.loading.value === false) {
         store
-          .dispatch('getHabits')
+          .dispatch('habits/refresh')
           .catch((err) =>
             console.log(
               '%cerror App.vue (getHabits) line:71 ',
