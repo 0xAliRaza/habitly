@@ -219,7 +219,7 @@ export default {
       error.value = null;
       submitting.value = true;
       store
-        .dispatch('createStack', {
+        .dispatch('stacks/create', {
           formData: {
             current_habit: currentHabit.value.id,
             new_habit: newHabit.value.id,
@@ -245,7 +245,7 @@ export default {
       error.value = null;
       deleting.value = pk;
       store
-        .dispatch('deleteStack', {
+        .dispatch('stacks/delete', {
           pk: pk,
         })
         .then((res) => {
@@ -266,8 +266,8 @@ export default {
       deleting,
       onDelete,
       error,
-      stacks: computed(() => store.state.stacks),
-      goodHabits: computed(() => store.getters.goodHabits),
+      stacks: computed(() => store.state.stacks.models),
+      goodHabits: computed(() => store.getters['habits/good']),
     };
   },
 };
@@ -275,9 +275,7 @@ export default {
 
 <style lang="scss" scoped>
 @import '~vue-multiselect/dist/vue-multiselect.css';
-p {
-  font-size: pxToRem(18);
-}
+
 .btn--stack-delete {
   color: $gray-400;
   transition: color 0.2s ease;

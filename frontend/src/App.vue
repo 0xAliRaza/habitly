@@ -78,7 +78,7 @@ export default {
             )
           );
         store
-          .dispatch('getStacks')
+          .dispatch('stacks/refresh')
           .catch((err) =>
             console.log(
               '%cerror App.vue (getStacks) line:79 ',
