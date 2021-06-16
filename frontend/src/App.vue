@@ -18,11 +18,11 @@
             >Stacks</router-link
           >
         </li>
-        <div v-if="!auth.loading.value">
+        <div v-if="!loading">
           <li class="nav-item">
             <button
               class="btn btn-primary"
-              v-if="!auth.isAuthenticated.value"
+              v-if="!authenticated"
               @click="auth.loginWithRedirect"
             >
               Log in
@@ -31,7 +31,7 @@
           <li class="nav-item">
             <button
               class="btn btn-primary"
-              v-if="auth.isAuthenticated.value"
+              v-if="authenticated"
               @click="auth.logout"
             >
               Log out
@@ -59,7 +59,7 @@
 </template>
 
 <script>
-import { inject, provide, watchEffect } from 'vue';
+import { computed, inject, provide, watchEffect } from 'vue';
 import { useStore } from 'vuex';
 export default {
   name: 'app',
@@ -67,7 +67,10 @@ export default {
     const store = useStore();
     const auth = inject('auth');
     watchEffect(() => {
-      if (auth.isAuthenticated.value === true && auth.loading.value === false) {
+      // if (!store.getters['user/isAuthenticated'] && !store.state.user.loading) {
+      //   auth.loginWithRedirect();
+      // } else 
+      if (store.getters['user/isAuthenticated']) {
         store
           .dispatch('habits/refresh')
           .catch((err) =>
@@ -90,6 +93,8 @@ export default {
     });
     return {
       auth,
+      loading: computed(() => store.state.user.loading),
+      authenticated: computed(() => store.getters['user/isAuthenticated']),
     };
   },
 };

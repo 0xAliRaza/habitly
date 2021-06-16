@@ -1,6 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router';
-import { routeGuard } from '@/auth';
+import { guard } from '@/router/guard.js';
 import Home from '@/views/Home.vue';
+import Login from '@/components/Login.vue';
 const routes = [
   {
     path: '/',
@@ -12,14 +13,19 @@ const routes = [
     name: 'Habits',
     component: () =>
       import(/* webpackChunkName: "habits" */ '../views/Habits.vue'),
-    beforeEnter: routeGuard,
+    beforeEnter: guard,
   },
   {
     path: '/stacks',
-    name: 'stacks',
+    name: 'Stacks',
     component: () =>
       import(/* webpackChunkName: "stacks" */ '../views/Stacks.vue'),
-    beforeEnter: routeGuard,
+    beforeEnter: guard,
+  },
+  {
+    path: '/login',
+    name: 'Login',
+    component: Login,
   },
 ];
 

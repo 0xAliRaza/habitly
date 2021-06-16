@@ -10,9 +10,8 @@ const instance = axios.create({
 
 // Add a request interceptor
 instance.interceptors.request.use(function (config) {
-  const state = store.state;
-  if (state.user && state.user.access_token) {
-    config.headers.Authorization = `Bearer ${state.user.access_token}`;
+  if (store.getters['user/isAuthenticated']) {
+    config.headers.Authorization = `Bearer ${store.state.user.access_token}`;
   }
   return config;
 });

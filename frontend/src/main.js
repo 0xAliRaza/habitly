@@ -4,7 +4,6 @@ import App from './App.vue';
 import { setupAuth } from './auth';
 import router from './router';
 import store from './store';
-
 const app = createApp(App).use(store).use(router);
 
 function callbackRedirect(appState) {
