@@ -6,13 +6,19 @@ const routes = [
     path: '/',
     name: 'Home',
     component: Home,
-    redirect: '/habits',
   },
   {
     path: '/habits',
     name: 'Habits',
     component: () =>
       import(/* webpackChunkName: "habits" */ '../views/Habits.vue'),
+    beforeEnter: routeGuard,
+  },
+  {
+    path: '/stacks',
+    name: 'stacks',
+    component: () =>
+      import(/* webpackChunkName: "stacks" */ '../views/Stacks.vue'),
     beforeEnter: routeGuard,
   },
 ];

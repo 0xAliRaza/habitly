@@ -13,6 +13,11 @@
             >Habits</router-link
           >
         </li>
+        <li class="nav-item">
+          <router-link class="nav-link" active-class="active" to="/stacks"
+            >Stacks</router-link
+          >
+        </li>
         <div v-if="!auth.loading.value">
           <li class="nav-item">
             <button
@@ -65,12 +70,18 @@ export default {
       if (auth.isAuthenticated.value === true && auth.loading.value === false) {
         store
           .dispatch('getHabits')
-          .then((res) =>
-            console.log('%cApp.vue line:66 res', 'color: #26bfa5;', res)
-          )
           .catch((err) =>
             console.log(
-              '%cerror App.vue line:71 ',
+              '%cerror App.vue (getHabits) line:71 ',
+              'color: red; display: block; width: 100%;',
+              err
+            )
+          );
+        store
+          .dispatch('getStacks')
+          .catch((err) =>
+            console.log(
+              '%cerror App.vue (getStacks) line:79 ',
               'color: red; display: block; width: 100%;',
               err
             )

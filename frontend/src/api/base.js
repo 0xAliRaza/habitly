@@ -1,8 +1,8 @@
 import store from '@/store/index.js';
 import axios from 'axios';
-import api_uri from '../../api_config.json';
+import api_config from '../../api_config.json';
 const instance = axios.create({
-  baseURL: api_uri,
+  baseURL: api_config.api_uri,
   headers: {
     Accept: 'application/json',
   },

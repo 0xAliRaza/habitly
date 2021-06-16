@@ -36,10 +36,10 @@ class Habit(models.Model):
 
 class Stack(models.Model):
     user_id = models.CharField(max_length=50)
-    first_habit = models.ForeignKey(
-        Habit, on_delete=models.CASCADE, related_name='first_habit')
-    second_habit = models.ForeignKey(
-        Habit, on_delete=models.CASCADE, related_name='second_habit')
+    current_habit = models.ForeignKey(
+        Habit, on_delete=models.CASCADE, related_name='current_habit')
+    new_habit = models.ForeignKey(
+        Habit, on_delete=models.CASCADE, related_name='new_habit')
 
     class Meta:
-        unique_together = ['user_id', 'first_habit', 'second_habit']
+        unique_together = ['user_id', 'current_habit', 'new_habit']

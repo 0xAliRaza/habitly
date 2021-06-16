@@ -1,10 +1,12 @@
 import habits from '@/api/habits';
+import stacks from '@/api/stacks';
 import { createStore } from 'vuex';
 
 export default createStore({
   state: {
     user: {},
     habits: [],
+    stacks: [],
     errors: [],
   },
   getters: {
@@ -16,6 +18,9 @@ export default createStore({
     },
     habitIndex: (state) => (id) => {
       return state.habits.findIndex((habit) => habit.id === id);
+    },
+    stackIndex: (state) => (id) => {
+      return state.stacks.findIndex((stack) => stack.id === id);
     },
   },
   mutations: {
@@ -39,13 +44,17 @@ export default createStore({
       state.user = {};
     },
     removeHabit(state, payload) {
-      console.log(
-        '%cindex.js line:44 i',
-        'color: white; background-color: #26bfa5;',
-        payload.pk
-      );
       if (payload.pk > -1) {
         state.habits.splice(payload.pk, 1);
+      }
+    },
+    addStacks(state, payload) {
+      state.stacks.push(...payload.stacks);
+      console.log('stacks added', state.stacks);
+    },
+    removeStack(state, payload) {
+      if (payload.pk > -1) {
+        state.stacks.splice(payload.pk, 1);
       }
     },
   },
@@ -79,6 +88,22 @@ export default createStore({
       const i = getters.habitIndex(payload.pk);
       await habits.delete(payload.pk);
       commit('removeHabit', { pk: i });
+      return i;
+    },
+    async getStacks({ commit, state }) {
+      const _stacks = (await stacks.index()).data;
+      commit('addStacks', { stacks: _stacks });
+      return _stacks;
+    },
+    async createStack({ commit, state }, payload) {
+      const _stack = (await stacks.create(payload.formData)).data;
+      commit('addStacks', { stacks: [_stack] });
+      return _stack;
+    },
+    async deleteStack({ commit, getters }, payload) {
+      const i = getters.stackIndex(payload.pk);
+      await stacks.delete(payload.pk);
+      commit('removeStack', { pk: i });
       return i;
     },
   },

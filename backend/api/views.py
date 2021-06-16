@@ -34,7 +34,7 @@ class StackViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         user_id = self.request.user.username
-        return Stack.objects.filter(user_id=user_id, first_habit__user_id=user_id, second_habit__user_id=user_id)
+        return Stack.objects.filter(user_id=user_id, current_habit__user_id=user_id, new_habit__user_id=user_id)
 
     def perform_create(self, serializer):
         return serializer.save(user_id=self.request.user.username)
