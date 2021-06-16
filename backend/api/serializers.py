@@ -1,13 +1,10 @@
-from enum import unique
-from django.db.models import fields
-from django.db.models.fields import CharField
+from django.utils import timezone
 from rest_framework import serializers
-from rest_framework import validators
 from rest_framework.relations import PrimaryKeyRelatedField
 from rest_framework.validators import UniqueTogetherValidator
 
 
-from .models import Habit, Stack
+from .models import Habit, Intention, Stack
 
 
 class HabitSerializer(serializers.HyperlinkedModelSerializer):
@@ -26,6 +23,11 @@ class StackSerializer(serializers.ModelSerializer):
 
     def validate(self, attrs):
         user_id = self.context.get('request').user.username
+
+        # Check if any habit is bad
+        if attrs['current_habit'].type == 'B' or attrs['new_habit'].type == 'B':
+            raise serializers.ValidationError({'Stack': [
+                'Can\'t stack bad habit(s).']})
 
         # Check if both habits are the same
         if attrs['current_habit'].id == attrs['new_habit'].id:
@@ -73,13 +75,13 @@ class StackSerializer(serializers.ModelSerializer):
 
         # Validate if current_habit model is owned by the current user
         if attrs['current_habit'].user_id != user_id:
-            raise serializers.ValidationError({'current_habit': [
-                'Model was not found.']})
+            raise serializers.ValidationError({'Stack': [
+                'Current habit was not found.']})
 
         # Validate if habit models is owned by the current user
         if attrs['new_habit'].user_id != user_id:
-            raise serializers.ValidationError({'new_habit': [
-                'Model was not found.']})
+            raise serializers.ValidationError({'Stack': [
+                'New habit was not found.']})
         else:
             return attrs
 
@@ -96,4 +98,55 @@ class StackSerializer(serializers.ModelSerializer):
             "id": current_habit.id, "title": current_habit.title}
         representation['new_habit'] = {
             "id": new_habit.id, "title": new_habit.title}
+        return representation
+
+
+class IntentionSerializer(serializers.ModelSerializer):
+    user_id = serializers.SerializerMethodField('get_request_user_id')
+
+    def get_request_user_id(self, obj):
+        return self.context.get('request').user.username
+
+    def validate(self, attrs):
+        user_id = self.context.get('request').user.username
+        # Verify if habit is good
+        if attrs['habit'].type == 'B':
+            raise serializers.ValidationError(
+                {'Intention': ['Can\'t create intention for a bad habit.']})
+
+        # Check if intention already exists
+        try:
+            Intention.objects.get(user_id=user_id,
+                                  habit=attrs['habit'], time=attrs['time'], location=attrs['location'])
+        except Intention.DoesNotExist:
+            pass
+        else:
+            if not (self.instance and self.instance.id):
+                raise serializers.ValidationError({'Intention': [
+                    'Model with given fields already exists.']})
+            else:
+                pass
+
+        # Validate if habit model is owned by the current user
+        if attrs['habit'].user_id != user_id:
+            raise serializers.ValidationError({'Intention': [
+                'Habit was not found.']})
+
+        # Check if given time is in the future
+        if timezone.now() > attrs['time']:
+            raise serializers.ValidationError(
+                {'Intention': ['Intention time cannot be in the past.']})
+
+        return attrs
+
+    class Meta:
+        model = Intention
+        fields = ['id', 'user_id', 'habit', 'time', 'location', 'done']
+
+    def to_representation(self, instance):
+        representation = super().to_representation(instance)
+        habit = Habit.objects.get(pk=representation['habit'])
+        del representation['user_id']
+        representation['habit'] = {
+            "id": habit.id, "title": habit.title}
         return representation

@@ -3,8 +3,8 @@ from django.http import HttpResponse
 from rest_framework import viewsets, permissions
 from rest_framework.generics import CreateAPIView
 
-from .serializers import HabitSerializer, StackSerializer
-from .models import Habit, Stack
+from .serializers import HabitSerializer, IntentionSerializer, StackSerializer
+from .models import Habit, Intention, Stack
 
 
 def public(request):
@@ -35,6 +35,18 @@ class StackViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         user_id = self.request.user.username
         return Stack.objects.filter(user_id=user_id, current_habit__user_id=user_id, new_habit__user_id=user_id)
+
+    def perform_create(self, serializer):
+        return serializer.save(user_id=self.request.user.username)
+
+
+class IntentionViewSet(viewsets.ModelViewSet):
+    serializer_class = IntentionSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get_queryset(self):
+        user_id = self.request.user.username
+        return Intention.objects.filter(user_id=user_id, habit__user_id=user_id)
 
     def perform_create(self, serializer):
         return serializer.save(user_id=self.request.user.username)

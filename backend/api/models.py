@@ -43,3 +43,12 @@ class Stack(models.Model):
 
     class Meta:
         unique_together = ['user_id', 'current_habit', 'new_habit']
+
+
+class Intention(models.Model):
+    user_id = models.CharField(max_length=50)
+    habit = models.ForeignKey(
+        Habit, on_delete=models.CASCADE, related_name='habit')
+    time = models.DateTimeField()
+    location = models.CharField(max_length=50)
+    done = models.BooleanField(default=False)
