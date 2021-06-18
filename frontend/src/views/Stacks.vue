@@ -2,7 +2,6 @@
   <div class="container">
     <div class="row">
       <div class="d-flex justify-content-end align-items-center mb-4">
-        </div> -->
         <toggle
           color="dark"
           btn-text="Create stack"
