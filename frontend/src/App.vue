@@ -18,6 +18,11 @@
             >Stacks</router-link
           >
         </li>
+        <li class="nav-item">
+          <router-link class="nav-link" active-class="active" to="/intentions"
+            >Intentions</router-link
+          >
+        </li>
         <div v-if="!loading">
           <li class="nav-item">
             <button
@@ -67,9 +72,6 @@ export default {
     const store = useStore();
     const auth = inject('auth');
     watchEffect(() => {
-      // if (!store.getters['user/isAuthenticated'] && !store.state.user.loading) {
-      //   auth.loginWithRedirect();
-      // } else 
       if (store.getters['user/isAuthenticated']) {
         store
           .dispatch('habits/refresh')
@@ -85,6 +87,15 @@ export default {
           .catch((err) =>
             console.log(
               '%cerror App.vue (getStacks) line:79 ',
+              'color: red; display: block; width: 100%;',
+              err
+            )
+          );
+        store
+          .dispatch('intentions/refresh')
+          .catch((err) =>
+            console.log(
+              '%cerror App.vue (intentions) line:95 ',
               'color: red; display: block; width: 100%;',
               err
             )

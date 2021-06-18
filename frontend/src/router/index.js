@@ -23,6 +23,13 @@ const routes = [
     beforeEnter: guard,
   },
   {
+    path: '/intentions',
+    name: 'Intentions',
+    component: () =>
+      import(/* webpackChunkName: "stacks" */ '../views/Intentions.vue'),
+    beforeEnter: guard,
+  },
+  {
     path: '/login',
     name: 'Login',
     component: Login,

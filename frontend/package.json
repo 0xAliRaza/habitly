@@ -13,6 +13,8 @@
     "bootstrap": "^5.0.1",
     "core-js": "^3.6.5",
     "eventemitter3": "^4.0.7",
+    "luxon": "^1.27.0",
+    "v-calendar": "^3.0.0-alpha.4",
     "vue": "^3.0.0",
     "vue-multiselect": "^3.0.0-alpha.2",
     "vue-router": "^4.0.0-0",
