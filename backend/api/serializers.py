@@ -188,4 +188,5 @@ class RepetitionSerializer(serializers.ModelSerializer):
         habit = instance.habit
         representation['habit'] = {
             "id": habit.id, "title": habit.title}
+        representation['date'] = representation['date'] + ' UTC'
         return representation
