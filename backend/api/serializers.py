@@ -14,6 +14,13 @@ class HabitSerializer(serializers.HyperlinkedModelSerializer):
         fields = ['id', 'title', 'ritual',
                   'description', 'created_at', 'updated_at', 'slug', 'type']
 
+    def to_representation(self, instance):
+
+        representation = super().to_representation(instance)
+        repetitions_count = Repetition.objects.filter(habit=instance).count()
+        representation['repetitions'] = repetitions_count
+        return representation
+
 
 class StackSerializer(serializers.ModelSerializer):
     user_id = serializers.SerializerMethodField('get_request_user_id')
