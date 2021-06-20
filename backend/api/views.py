@@ -1,10 +1,9 @@
 from rest_framework.decorators import api_view
 from django.http import HttpResponse
 from rest_framework import viewsets, permissions
-from rest_framework.generics import CreateAPIView
 
-from .serializers import HabitSerializer, IntentionSerializer, StackSerializer
-from .models import Habit, Intention, Stack
+from .serializers import HabitSerializer, IntentionSerializer, RepetitionSerializer, StackSerializer
+from .models import Habit, Intention, Repetition, Stack
 
 
 def public(request):
@@ -50,3 +49,26 @@ class IntentionViewSet(viewsets.ModelViewSet):
 
     def perform_create(self, serializer):
         return serializer.save(user_id=self.request.user.username)
+
+
+class RepetitionViewSet(viewsets.ModelViewSet):
+    serializer_class = RepetitionSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get_queryset(self):
+        user_id = self.request.user.username
+        queryset = Repetition.objects.all()
+        queryset.filter(habit__user_id=user_id)
+        habit = self.request.query_params.get('habit')
+        year = self.request.query_params.get('year')
+        month = self.request.query_params.get('month')
+        if habit:
+            queryset = queryset.filter(habit=habit)
+
+        if month and year:
+            queryset = queryset.filter(
+                date__month=month, date__year=year)
+        elif year:
+            queryset = queryset.filter(date__year=year)
+
+        return queryset

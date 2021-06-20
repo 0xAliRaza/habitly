@@ -4,7 +4,7 @@ from rest_framework.relations import PrimaryKeyRelatedField
 from rest_framework.validators import UniqueTogetherValidator
 
 
-from .models import Habit, Intention, Stack
+from .models import Habit, Intention, Repetition, Stack
 
 
 class HabitSerializer(serializers.HyperlinkedModelSerializer):
@@ -90,9 +90,10 @@ class StackSerializer(serializers.ModelSerializer):
         fields = ['id', 'user_id', 'current_habit', 'new_habit']
 
     def to_representation(self, instance):
+
         representation = super().to_representation(instance)
-        current_habit = Habit.objects.get(pk=representation['current_habit'])
-        new_habit = Habit.objects.get(pk=representation['new_habit'])
+        current_habit = instance.current_habit
+        new_habit = instance.new_habit
         del representation['user_id']
         representation['current_habit'] = {
             "id": current_habit.id, "title": current_habit.title}
@@ -123,7 +124,7 @@ class IntentionSerializer(serializers.ModelSerializer):
         else:
             if not (self.instance and self.instance.id):
                 raise serializers.ValidationError({'Intention': [
-                    'Model with given fields already exists.']})
+                    'Intention with the given fields already exists.']})
             else:
                 pass
 
@@ -145,8 +146,49 @@ class IntentionSerializer(serializers.ModelSerializer):
 
     def to_representation(self, instance):
         representation = super().to_representation(instance)
-        habit = Habit.objects.get(pk=representation['habit'])
+        habit = instance.habit
         del representation['user_id']
+        representation['habit'] = {
+            "id": habit.id, "title": habit.title}
+        return representation
+
+
+class RepetitionSerializer(serializers.ModelSerializer):
+
+    def validate(self, attrs):
+        user_id = self.context.get('request').user.username
+
+        # Validate if intention doesn't already exist
+        try:
+            Repetition.objects.get(habit=attrs['habit'], date=attrs['date'])
+        except Repetition.DoesNotExist:
+            pass
+        else:
+            if not (self.instance and self.instance.id):
+                raise serializers.ValidationError({'Repetition': [
+                    'Repetition with the given fields already exists.']})
+            else:
+                pass
+
+        # Validate if habit model is owned by the current user
+        if attrs['habit'].user_id != user_id:
+            raise serializers.ValidationError({'Repetition': [
+                'Habit was not found.']})
+
+        # Validate if given time is in the past
+        if timezone.now().date() < attrs['date']:
+            raise serializers.ValidationError(
+                {'Repetition': ['Repetition date cannot be in the future.']})
+
+        return attrs
+
+    class Meta:
+        model = Repetition
+        fields = ['id', 'habit', 'date']
+
+    def to_representation(self, instance):
+        representation = super().to_representation(instance)
+        habit = instance.habit
         representation['habit'] = {
             "id": habit.id, "title": habit.title}
         return representation

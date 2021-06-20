@@ -9,6 +9,7 @@ router = routers.DefaultRouter()
 router.register(r'habits', views.HabitViewSet, basename='Habit')
 router.register(r'stacks', views.StackViewSet, basename="Stack")
 router.register(r'intentions', views.IntentionViewSet, basename="Intention")
+router.register(r'repetitions', views.RepetitionViewSet, basename="Repetition")
 
 
 urlpatterns = [

@@ -37,9 +37,9 @@ class Habit(models.Model):
 class Stack(models.Model):
     user_id = models.CharField(max_length=50)
     current_habit = models.ForeignKey(
-        Habit, on_delete=models.CASCADE, related_name='current_habit')
+        Habit, on_delete=models.CASCADE, related_name='stack_current_habit')
     new_habit = models.ForeignKey(
-        Habit, on_delete=models.CASCADE, related_name='new_habit')
+        Habit, on_delete=models.CASCADE, related_name='stack_new_habit')
 
     class Meta:
         unique_together = ['user_id', 'current_habit', 'new_habit']
@@ -48,7 +48,13 @@ class Stack(models.Model):
 class Intention(models.Model):
     user_id = models.CharField(max_length=50)
     habit = models.ForeignKey(
-        Habit, on_delete=models.CASCADE, related_name='habit')
+        Habit, on_delete=models.CASCADE, related_name='intention_habit')
     time = models.DateTimeField()
     location = models.CharField(max_length=50)
     done = models.BooleanField(default=False)
+
+
+class Repetition(models.Model):
+    habit = models.ForeignKey(
+        Habit, on_delete=models.CASCADE, related_name='repetition_habit')
+    date = models.DateField()
