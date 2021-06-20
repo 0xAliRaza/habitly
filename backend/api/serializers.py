@@ -173,7 +173,7 @@ class RepetitionSerializer(serializers.ModelSerializer):
                 'Habit was not found.']})
 
         # Validate if given time is in the past
-        if timezone.now().date() < attrs['date']:
+        if timezone.now() < attrs['date']:
             raise serializers.ValidationError(
                 {'Repetition': ['Repetition date cannot be in the future.']})
 
@@ -188,5 +188,4 @@ class RepetitionSerializer(serializers.ModelSerializer):
         habit = instance.habit
         representation['habit'] = {
             "id": habit.id, "title": habit.title}
-        representation['date'] = representation['date'] + ' UTC'
         return representation
