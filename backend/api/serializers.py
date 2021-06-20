@@ -23,10 +23,6 @@ class HabitSerializer(serializers.HyperlinkedModelSerializer):
 
 
 class StackSerializer(serializers.ModelSerializer):
-    user_id = serializers.SerializerMethodField('get_request_user_id')
-
-    def get_request_user_id(self, obj):
-        return self.context.get('request').user.username
 
     def validate(self, attrs):
         user_id = self.context.get('request').user.username
@@ -94,14 +90,13 @@ class StackSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Stack
-        fields = ['id', 'user_id', 'current_habit', 'new_habit']
+        fields = ['id', 'current_habit', 'new_habit']
 
     def to_representation(self, instance):
 
         representation = super().to_representation(instance)
         current_habit = instance.current_habit
         new_habit = instance.new_habit
-        del representation['user_id']
         representation['current_habit'] = {
             "id": current_habit.id, "title": current_habit.title}
         representation['new_habit'] = {
@@ -110,10 +105,6 @@ class StackSerializer(serializers.ModelSerializer):
 
 
 class IntentionSerializer(serializers.ModelSerializer):
-    user_id = serializers.SerializerMethodField('get_request_user_id')
-
-    def get_request_user_id(self, obj):
-        return self.context.get('request').user.username
 
     def validate(self, attrs):
         user_id = self.context.get('request').user.username
@@ -149,12 +140,11 @@ class IntentionSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Intention
-        fields = ['id', 'user_id', 'habit', 'time', 'location', 'done']
+        fields = ['id', 'habit', 'time', 'location', 'done']
 
     def to_representation(self, instance):
         representation = super().to_representation(instance)
         habit = instance.habit
-        del representation['user_id']
         representation['habit'] = {
             "id": habit.id, "title": habit.title}
         return representation
