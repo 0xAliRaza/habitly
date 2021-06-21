@@ -16,6 +16,13 @@ const routes = [
     beforeEnter: guard,
   },
   {
+    path: '/habits/:id',
+    name: 'HabitDetail',
+    component: () =>
+      import(/* webpackChunkName: "habits" */ '../views/HabitDetail.vue'),
+    beforeEnter: guard,
+  },
+  {
     path: '/stacks',
     name: 'Stacks',
     component: () =>

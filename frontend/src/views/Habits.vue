@@ -18,7 +18,6 @@
     <div v-if="habitFormVisible" class="row justify-content-center habit-form">
       <div class="col-lg-6 mb-5">
         <habit-form
-          :habit="beingEditedHabit"
           @onSubmit="onHabitFormSubmit"
           :loading="habitFormLoading"
         ></habit-form>
@@ -43,11 +42,7 @@
             :key="habit.id"
             class="habit-wrapper mb-2"
           >
-            <habit
-              :habit="habit"
-              @edit="onHabitEdit"
-              @delete="onHabitDelete"
-            ></habit>
+            <habit :habit="habit"></habit>
           </div>
         </div>
         <div class="col-lg-6">
@@ -59,11 +54,7 @@
             :key="habit.id"
             class="habit-wrapper mb-2"
           >
-            <habit
-              :habit="habit"
-              @edit="onHabitEdit"
-              @delete="onHabitDelete"
-            ></habit>
+            <habit :habit="habit"></habit>
           </div>
         </div>
       </template>
@@ -85,21 +76,13 @@ export default {
     const store = useStore();
     const habitFormVisible = ref(false);
     const habitFormLoading = ref(false);
-    const beingEditedHabit = ref({});
     const onHabitFormSubmit = async (formData) => {
       habitFormLoading.value = true;
       try {
-        let res;
-        if (beingEditedHabit.value.id) {
-          res = await store.dispatch('habits/update', {
-            formData: formData,
-            pk: beingEditedHabit.value.id,
-          });
-        } else {
-          res = await store.dispatch('habits/create', {
-            formData: formData,
-          });
-        }
+        const res = await store.dispatch('habits/create', {
+          formData: formData,
+        });
+
         console.log(
           '%cHabits.vue line:91 data',
           'color: white; background-color: #26bfa5;',
@@ -114,28 +97,16 @@ export default {
       } finally {
         habitFormLoading.value = false;
         habitFormVisible.value = false;
-        beingEditedHabit.value = {};
       }
     };
-    const onHabitEdit = (habit) => {
-      beingEditedHabit.value = habit;
-      habitFormVisible.value = true;
-    };
-    const onHabitDelete = async (habitId) => {
-      await store.dispatch('habits/delete', { pk: habitId });
-    };
     const onHideHabitForm = () => {
-      beingEditedHabit.value = {};
       habitFormVisible.value = false;
     };
 
     return {
       habitFormVisible,
       habitFormLoading,
-      beingEditedHabit,
       onHabitFormSubmit,
-      onHabitEdit,
-      onHabitDelete,
       onHideHabitForm,
       goodHabits: computed(() => store.getters['habits/good']),
       badHabits: computed(() => store.getters['habits/bad']),

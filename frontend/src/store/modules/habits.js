@@ -15,7 +15,11 @@ export default {
       return state.models.filter((model) => model.type === 'B');
     },
     getIndex: (state) => (id) => {
-      return state.models.findIndex((model) => model.id === id);
+      return state.models.findIndex((model) => model.id == id);
+    },
+    get: (state, getters) => (id) => {
+      const i = getters.getIndex(id);
+      return state.models[i];
     },
   },
   mutations: {

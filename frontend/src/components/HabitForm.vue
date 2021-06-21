@@ -63,15 +63,20 @@ import { reactive } from 'vue';
 export default {
   name: 'HabitForm',
   props: {
-    habit: { type: Object, required: true },
+    habit: {
+      type: Object,
+      default() {
+        return { title: '', ritual: '', description: '', type: '' };
+      },
+    },
     loading: { type: Boolean, required: true },
   },
   setup(props, { emit }) {
     const form = reactive({
-      title: props.habit.title || '',
-      ritual: props.habit.ritual || '',
-      description: props.habit.description || '',
-      type: props.habit.type || '',
+      title: props.habit.title,
+      ritual: props.habit.ritual,
+      description: props.habit.description,
+      type: props.habit.type,
     });
 
     const onSubmit = () => {
