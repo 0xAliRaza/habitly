@@ -167,11 +167,8 @@ class RepetitionSerializer(serializers.ModelSerializer):
         except Repetition.DoesNotExist:
             pass
         else:
-            if not (self.instance and self.instance.id):
-                raise serializers.ValidationError({'Repetition': [
-                    'Repetition with the given fields already exists.']})
-            else:
-                pass
+            raise serializers.ValidationError({'Repetition': [
+                'Repetition with the given fields already exists.']})
 
         # Validate if given time is in the past
         if timezone.now().date() < attrs['date']:

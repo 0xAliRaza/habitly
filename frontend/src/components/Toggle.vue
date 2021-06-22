@@ -5,6 +5,7 @@
       v-else
       :class="{
         btn: true,
+        'btn-sm': small,
         'btn-primary': color === 'primary',
         'btn-dark': color === 'dark',
         'btn-success': color === 'success',
@@ -24,6 +25,7 @@ export default {
   emits: ['show', 'hide', 'toggle'],
   props: {
     color: String,
+    small: Boolean,
     btnText: { type: String, required: true },
     visibility: { Boolean, required: true },
   },

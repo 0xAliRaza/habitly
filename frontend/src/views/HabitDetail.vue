@@ -1,32 +1,6 @@
 <template>
   <div class="container">
     <div class="row justify-content-center">
-      <!-- <div class="col-sm-12">
-        <div class="d-flex align-items-center justify-content-end mb-4">
-          <toggle
-            color="dark"
-            btn-text="Create intention"
-            @toggle="onFormToggle"
-            :visibility="formVisible"
-          ></toggle>
-        </div>
-      </div> -->
-      <div v-if="formVisible" class="col-lg-6 mb-5">
-        <form @submit.prevent>
-          <div class="mb-3">
-            <label for="habit" class="form-label">Habit</label>
-          </div>
-
-          <div class="d-flex justify-content-end">
-            <submit-button
-              :loading="formSubmitting"
-              :disabled="formInvalid"
-              color="primary"
-              @submit="onFormSubmit"
-            ></submit-button>
-          </div>
-        </form>
-      </div>
       <div class="col-sm-12">
         <div
           class="
@@ -90,9 +64,59 @@
           </template>
         </div>
       </div>
+      <div class="d-flex justify-content-end align-items-center mb-4 mx-md-5 px-md-5">
+        <toggle
+          class=""
+          color="dark"
+          small
+          btn-text="Add repetition"
+          @toggle="toggleRepForm"
+          :visibility="repFormVisible"
+        ></toggle>
+      </div>
+      <div class="col-sm-12 mb-5" v-if="repFormVisible">
+        <form @submit.prevent>
+          <div class="row align-items-center justify-content-center">
+            <div class="col-sm-10 col-md-7 col-xl-4">
+              <date-picker
+                v-model="repFormDate"
+                color="blue"
+                mode="date"
+                :max-date="new Date()"
+              >
+                <template v-slot="{ inputValue, inputEvents }">
+                  <input
+                    class="form-control"
+                    :value="inputValue"
+                    v-on="inputEvents"
+                    placeholder="Select a date when you repeated this habit..."
+                  />
+                </template>
+              </date-picker>
+            </div>
+            <div
+              class="
+                col-sm-2
+                d-flex
+                justify-content-sm-center justify-content-end
+                mt-2 mt-sm-0
+              "
+            >
+              <submit-button
+                :loading="repFormSubmitting"
+                color="primary"
+                :disabled="!repFormDate || !habit"
+                @submit="submitRepForm"
+              ></submit-button>
+            </div>
+          </div>
+        </form>
+      </div>
       <div class="col-md-8 col-lg-6 col-xl-5 py-2" v-if="habit">
-        <h3 class="text-center mb-2">Repetitions</h3>
+        <h3 class="text-center mb-3">Repetitions</h3>
+
         <calendar
+          ref="calendar"
           class="calendar"
           is-expanded
           :max-date="new Date()"
@@ -138,49 +162,50 @@ export default {
   setup() {
     const route = useRoute();
     const store = useStore();
-    let pk = computed(() => {
-      const id = route.params.id;
-      console.log('pk watch>>>', id);
-      return id;
-    });
+    let pk = computed(() => route.params.id);
     const habit = ref(null);
     watchEffect(() => {
       if (pk.value) {
         habit.value = store.getters['habits/get'](pk.value);
-        console.log('habitt computed>>>>', habit.value);
       }
     });
-    const formInitialState = {
-      habit: habit.value,
-      date: null,
-    };
-    const form = reactive({ ...formInitialState });
-    const formVisible = ref(false);
-    const formSubmitting = ref(false);
-    const formInvalid = computed(() => !form.date);
+    const repFormDate = ref(null);
+    const repFormVisible = ref(false);
+    const repFormSubmitting = ref(false);
 
-    const onFormToggle = () => {
-      Object.assign(form, formInitialState);
-      formVisible.value = !formVisible.value;
+    const toggleRepForm = () => {
+      repFormDate.value = null;
+      repFormVisible.value = !repFormVisible.value;
     };
 
-    const onFormSubmit = async () => {
-      formSubmitting.value = true;
-
+    const submitRepForm = async () => {
+      // If Form is empty, return
+      if (!repFormDate.value || !habit.value) {
+        return;
+      }
+      const date = DateTime.fromJSDate(repFormDate.value);
+      repFormSubmitting.value = true;
       try {
-        setTimeout(() => {
-          return;
-        }, 3000);
-      } catch (e) {
-        console.log('%cIntentions.vue line:112 e', 'color: #007acc;', e);
+        await repetitions.create({
+          date: date.toISODate(),
+          habit: habit.value.id,
+        });
       } finally {
-        onFormToggle();
-        formSubmitting.value = false;
+        await calendar.value.move({
+          year: date.year,
+          month: date.month,
+        });
+        refreshCalendarAttrs({
+          year: date.year,
+          month: date.month,
+        });
+        repFormSubmitting.value = false;
+        toggleRepForm();
       }
     };
 
     const calendarLoading = ref(null);
-
+    const calendar = ref(null);
     const onDelete = async (day) => {
       if (
         !day.attributesMap.day ||
@@ -216,7 +241,10 @@ export default {
             const attr = {};
             attr.key = 'day';
             attr.dates = [rep.date];
-            attr.highlight = { color: 'green', fillMode: 'solid' };
+            attr.highlight = {
+              color: habit.value.type == 'G' ? 'green' : 'red',
+              fillMode: 'solid',
+            };
             attr.customData = { repetition: rep.id };
             return attr;
           });
@@ -240,14 +268,14 @@ export default {
 
     return {
       habit,
-      form,
-      formVisible,
-      formSubmitting,
-      formInvalid,
+      repFormDate,
+      repFormVisible,
+      repFormSubmitting,
       onDelete,
       calendarLoading,
-      onFormToggle,
-      onFormSubmit,
+      toggleRepForm,
+      submitRepForm,
+      calendar,
       calendarAttrs,
       refreshCalendarAttrs,
       getFormattedDate,
