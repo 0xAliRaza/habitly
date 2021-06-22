@@ -5,10 +5,11 @@
         <div class="d-flex justify-content-end align-items-center mb-4">
           <toggle
             color="dark"
-            btn-text="Create habit"
             @toggle="toggleHabitsForm"
             :visibility="habitFormVisible"
-          ></toggle>
+          >
+            Create habit
+          </toggle>
         </div>
       </div>
     </div>

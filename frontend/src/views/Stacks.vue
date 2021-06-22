@@ -2,12 +2,9 @@
   <div class="container">
     <div class="row">
       <div class="d-flex justify-content-end align-items-center mb-4">
-        <toggle
-          color="dark"
-          btn-text="Create stack"
-          @toggle="toggleForm"
-          :visibility="formVisible"
-        ></toggle>
+        <toggle color="dark" @toggle="toggleForm" :visibility="formVisible">
+          Create stack
+        </toggle>
       </div>
       <div class="col-sm-12 mb-5" v-if="formVisible">
         <form @submit.prevent>

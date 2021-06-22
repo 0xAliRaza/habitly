@@ -3,12 +3,9 @@
     <div class="row justify-content-center">
       <div class="col-sm-12">
         <div class="d-flex align-items-center justify-content-end mb-4">
-          <toggle
-            color="dark"
-            btn-text="Create intention"
-            @toggle="onFormToggle"
-            :visibility="formVisible"
-          ></toggle>
+          <toggle color="dark" @toggle="onFormToggle" :visibility="formVisible">
+            Create intention
+          </toggle>
         </div>
       </div>
       <div v-if="formVisible" class="col-lg-6 mb-5">

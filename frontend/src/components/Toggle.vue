@@ -14,7 +14,7 @@
       }"
       @click.prevent="toggle"
     >
-      {{ btnText }}
+      <slot>Create</slot>
     </button>
   </div>
 </template>
@@ -26,7 +26,6 @@ export default {
   props: {
     color: String,
     small: Boolean,
-    btnText: { type: String, required: true },
     visibility: { Boolean, required: true },
   },
   setup(props, { emit }) {
