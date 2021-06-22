@@ -4,6 +4,7 @@
       @click.prevent="submit"
       class="d-inline-flex justify-content-center align-items-center btn"
       :class="{
+        'btn-small': small,
         'btn-primary': color === 'primary',
         'btn-dark': color === 'dark',
         'btn-success': color === 'success',
@@ -13,7 +14,7 @@
       :disabled="loading || disabled"
     >
       <template v-if="loading">
-        {{ btnLoadingText || 'Submitting' }}
+        <slot name="loading">Submitting</slot>
         <span
           class="spinner-border spinner-border-sm ms-1"
           role="status"
@@ -21,7 +22,7 @@
         ></span>
       </template>
       <template v-else>
-        {{ btnLoadingText || 'Submit' }}
+        <slot>Submit</slot>
       </template>
     </button>
   </div>
@@ -33,9 +34,8 @@ export default {
   props: {
     loading: { type: Boolean, required: true },
     disabled: Boolean,
+    small: Boolean,
     color: String,
-    btnText: String,
-    btnLoadingText: String,
   },
   setup(props, { emit }) {
     const submit = () => {
