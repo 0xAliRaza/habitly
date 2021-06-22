@@ -1,16 +1,14 @@
 <template>
   <div class="container">
     <div class="row">
-      <div class="col-sm-12 mb-4">
-        <div class="d-flex justify-content-end">
-          <button
-            v-if="!habitFormVisible"
-            class="btn btn-dark"
-            @click="habitFormVisible = true"
-          >
-            Create habit
-          </button>
-          <button v-else class="btn-close" @click="onHideHabitForm"></button>
+      <div class="col-sm-12">
+        <div class="d-flex justify-content-end align-items-center mb-4">
+          <toggle
+            color="dark"
+            btn-text="Create habit"
+            @toggle="toggleHabitsForm"
+            :visibility="habitFormVisible"
+          ></toggle>
         </div>
       </div>
     </div>
@@ -65,13 +63,14 @@
 <script>
 import Habit from '@/components/Habit.vue';
 import HabitForm from '@/components/HabitForm.vue';
+import Toggle from '@/components/Toggle.vue';
 import { ref, computed } from 'vue';
 import { useStore } from 'vuex';
 import 'bootstrap/js/dist/alert';
 
 export default {
   name: 'Habits',
-  components: { Habit, HabitForm },
+  components: { Habit, HabitForm, Toggle },
   setup() {
     const store = useStore();
     const habitFormVisible = ref(false);
@@ -79,35 +78,23 @@ export default {
     const onHabitFormSubmit = async (formData) => {
       habitFormLoading.value = true;
       try {
-        const res = await store.dispatch('habits/create', {
+        await store.dispatch('habits/create', {
           formData: formData,
         });
-
-        console.log(
-          '%cHabits.vue line:91 data',
-          'color: white; background-color: #26bfa5;',
-          res
-        );
-      } catch (error) {
-        console.log(
-          '%cerror Habits.vue line:94 ',
-          'color: red; display: block; width: 100%;',
-          error
-        );
       } finally {
         habitFormLoading.value = false;
         habitFormVisible.value = false;
       }
     };
-    const onHideHabitForm = () => {
-      habitFormVisible.value = false;
+    const toggleHabitsForm = () => {
+      habitFormVisible.value = !habitFormVisible.value;
     };
 
     return {
       habitFormVisible,
       habitFormLoading,
       onHabitFormSubmit,
-      onHideHabitForm,
+      toggleHabitsForm,
       goodHabits: computed(() => store.getters['habits/good']),
       badHabits: computed(() => store.getters['habits/bad']),
       habits: computed(() => {

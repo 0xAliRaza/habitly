@@ -2,6 +2,82 @@
   <div class="container">
     <div class="row justify-content-center">
       <div class="col-sm-12">
+        <div class="d-flex align-items-center justify-content-end mb-4">
+          <!-- <button
+            type="button"
+            class="
+              btn btn-success btn-sm
+              d-inline-flex
+              align-items-center
+              justify-content-center
+            "
+            @click="habitFormVisible = !habitFormVisible"
+          >
+            Edit
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="16"
+              height="16"
+              fill="currentColor"
+              class="bi bi-pencil-square ms-1"
+              viewBox="0 0 16 16"
+            >
+              <path
+                d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z"
+              />
+              <path
+                fill-rule="evenodd"
+                d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5v11z"
+              />
+            </svg>
+          </button> -->
+          <toggle
+            small
+            color="success"
+            btn-text="Edit"
+            @toggle="habitFormVisible = !habitFormVisible"
+            :visibility="habitFormVisible"
+          ></toggle>
+          <button
+            v-if="!habitFormVisible"
+            type="button"
+            class="
+              btn btn-sm btn-danger
+              ms-2
+              d-inline-flex
+              align-items-center
+              justify-content-center
+            "
+          >
+            Delete
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="16"
+              height="16"
+              fill="currentColor"
+              class="bi bi-trash ms-1"
+              viewBox="0 0 16 16"
+            >
+              <path
+                d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z"
+              />
+              <path
+                fill-rule="evenodd"
+                d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z"
+              />
+            </svg>
+          </button>
+        </div>
+      </div>
+      <div v-if="habitFormVisible" class="col-lg-6 mb-5">
+        <habit-form
+          @onSubmit="submitHabit"
+          :loading="habitFormLoading"
+          :habit="habit"
+        ></habit-form>
+      </div>
+
+      <div class="col-sm-12" v-if="!habitFormVisible">
         <div
           class="
             py-2
@@ -33,7 +109,7 @@
                         <span v-else class="badge bg-danger">Bad</span>
                       </td>
                     </tr>
-                    <tr>
+                    <tr v-if="habit.ritual">
                       <th scope="row">Ritual:</th>
                       <td>{{ habit.ritual }}</td>
                     </tr>
@@ -64,7 +140,16 @@
           </template>
         </div>
       </div>
-      <div class="d-flex justify-content-end align-items-center mb-4 mx-md-5 px-md-5">
+      <div
+        class="
+          d-flex
+          justify-content-end
+          align-items-center
+          mb-4
+          mx-md-5
+          px-md-5
+        "
+      >
         <toggle
           class=""
           color="dark"
@@ -122,7 +207,7 @@
           :max-date="new Date()"
           :attributes="calendarAttrs"
           @update:from-page="refreshCalendarAttrs"
-          @dayclick="onDelete"
+          @dayclick="onRepDelete"
         >
         </calendar>
         <p class="calendar__loading">
@@ -146,6 +231,7 @@
 <script>
 import Toggle from '@/components/Toggle.vue';
 import SubmitButton from '@/components/SubmitButton.vue';
+import HabitForm from '@/components/HabitForm.vue';
 import { reactive, ref, computed, watch, watchEffect } from 'vue';
 import { DatePicker, Calendar } from 'v-calendar';
 import { DateTime } from 'luxon';
@@ -158,6 +244,7 @@ export default {
     SubmitButton,
     DatePicker,
     Calendar,
+    HabitForm,
   },
   setup() {
     const route = useRoute();
@@ -206,7 +293,7 @@ export default {
 
     const calendarLoading = ref(null);
     const calendar = ref(null);
-    const onDelete = async (day) => {
+    const onRepDelete = async (day) => {
       if (
         !day.attributesMap.day ||
         !day.attributesMap.day.customData.repetition
@@ -254,6 +341,26 @@ export default {
       }, 1000);
     };
 
+    const habitFormVisible = ref(false);
+    const habitFormLoading = ref(false);
+    const submitHabit = async (formData) => {
+      if (!habit.value) {
+        return;
+      }
+      const today = DateTime.now();
+      habitFormLoading.value = true;
+      try {
+        await store.dispatch('habits/update', {
+          pk: habit.value.id,
+          formData: formData,
+        });
+      } finally {
+        await refreshCalendarAttrs({ year: today.year, month: today.month });
+        habitFormLoading.value = false;
+        habitFormVisible.value = false;
+      }
+    };
+
     const getFormattedDate = (ISOString, long = false) => {
       if (long) {
         return DateTime.fromISO(ISOString).toLocaleString(
@@ -271,13 +378,16 @@ export default {
       repFormDate,
       repFormVisible,
       repFormSubmitting,
-      onDelete,
+      onRepDelete,
       calendarLoading,
       toggleRepForm,
       submitRepForm,
       calendar,
       calendarAttrs,
       refreshCalendarAttrs,
+      habitFormVisible,
+      habitFormLoading,
+      submitHabit,
       getFormattedDate,
     };
   },
