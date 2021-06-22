@@ -108,6 +108,12 @@ class IntentionSerializer(serializers.ModelSerializer):
 
     def validate(self, attrs):
         user_id = self.context.get('request').user.username
+
+        # Validate if habit model is owned by the current user
+        if attrs['habit'].user_id != user_id:
+            raise serializers.ValidationError({'Intention': [
+                'Habit was not found.']})
+
         # Verify if habit is good
         if attrs['habit'].type == 'B':
             raise serializers.ValidationError(
@@ -125,11 +131,6 @@ class IntentionSerializer(serializers.ModelSerializer):
                     'Intention with the given fields already exists.']})
             else:
                 pass
-
-        # Validate if habit model is owned by the current user
-        if attrs['habit'].user_id != user_id:
-            raise serializers.ValidationError({'Intention': [
-                'Habit was not found.']})
 
         # Check if given time is in the future
         if timezone.now() > attrs['time']:
@@ -155,7 +156,12 @@ class RepetitionSerializer(serializers.ModelSerializer):
     def validate(self, attrs):
         user_id = self.context.get('request').user.username
 
-        # Validate if intention doesn't already exist
+        # Validate if habit model is owned by the current user
+        if attrs['habit'].user_id != user_id:
+            raise serializers.ValidationError({'Repetition': [
+                'Habit was not found.']})
+
+        # Validate if repetition doesn't already exist
         try:
             Repetition.objects.get(habit=attrs['habit'], date=attrs['date'])
         except Repetition.DoesNotExist:
@@ -167,13 +173,8 @@ class RepetitionSerializer(serializers.ModelSerializer):
             else:
                 pass
 
-        # Validate if habit model is owned by the current user
-        if attrs['habit'].user_id != user_id:
-            raise serializers.ValidationError({'Repetition': [
-                'Habit was not found.']})
-
         # Validate if given time is in the past
-        if timezone.now() < attrs['date']:
+        if timezone.now().date() < attrs['date']:
             raise serializers.ValidationError(
                 {'Repetition': ['Repetition date cannot be in the future.']})
 
@@ -188,4 +189,5 @@ class RepetitionSerializer(serializers.ModelSerializer):
         habit = instance.habit
         representation['habit'] = {
             "id": habit.id, "title": habit.title}
+        representation['date'] = representation['date'] + ' UTC'
         return representation

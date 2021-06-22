@@ -57,4 +57,4 @@ class Intention(models.Model):
 class Repetition(models.Model):
     habit = models.ForeignKey(
         Habit, on_delete=models.CASCADE, related_name='repetition_habit')
-    date = models.DateTimeField()
+    date = models.DateField()
