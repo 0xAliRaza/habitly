@@ -93,7 +93,11 @@
                 class="d-flex justify-content-between align-items-center mb-3"
               >
                 <p class="m-0">
-                  I will <a href="#">{{ intention.habit.title }}</a> at
+                  I will
+                  <router-link :to="`/habits/${intention.habit.id}`">{{
+                    intention.habit.title
+                  }}</router-link>
+                  at
                   <span
                     :title="getFormattedDate(intention.time, true)"
                     class="text-primary"
@@ -185,9 +189,9 @@
                 <tbody>
                   <tr v-for="intention in intentions" :key="intention.id">
                     <td style="min-width: 200px">
-                      <a href="#" class="text-decoration-none">{{
+                      <router-link :to="`/habits/${intention.habit.id}`">{{
                         intention.habit.title
-                      }}</a>
+                      }}</router-link>
                     </td>
                     <td :title="getFormattedDate(intention.time, true)">
                       {{ getFormattedDate(intention.time) }}

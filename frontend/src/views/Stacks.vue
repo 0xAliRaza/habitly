@@ -74,8 +74,14 @@
                 class="d-flex align-items-center mb-3"
               >
                 <p class="m-0">
-                  After I <a href="#">{{ stack.current_habit.title }}</a
-                  >, I will <a href="#">{{ stack.new_habit.title }}</a
+                  After I
+                  <router-link :to="`/habits/${stack.current_habit.id}`">{{
+                    stack.current_habit.title
+                  }}</router-link
+                  >, I will
+                  <router-link :to="`/habits/${stack.new_habit.id}`">{{
+                    stack.new_habit.title
+                  }}</router-link
                   >.
                 </p>
                 <button
@@ -116,7 +122,7 @@
                 </button>
               </div>
             </div>
-            <div class="table-responsive" v-else>
+            <div class="table-responsive py-3" v-else>
               <table class="table text-center table-bordered">
                 <thead class="">
                   <tr>
@@ -128,14 +134,14 @@
                 <tbody>
                   <tr v-for="stack in stacks" :key="stack.id">
                     <td>
-                      <a href="#" class="text-decoration-none">{{
+                      <router-link :to="`/habits/${stack.current_habit.id}`">{{
                         stack.current_habit.title
-                      }}</a>
+                      }}</router-link>
                     </td>
                     <td>
-                      <a href="#" class="text-decoration-none">{{
+                      <router-link :to="`/habits/${stack.new_habit.id}`">{{
                         stack.new_habit.title
-                      }}</a>
+                      }}</router-link>
                     </td>
                     <td>
                       <button
