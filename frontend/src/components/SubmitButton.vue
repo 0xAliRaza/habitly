@@ -4,7 +4,7 @@
       @click.prevent="submit"
       class="d-inline-flex justify-content-center align-items-center btn"
       :class="{
-        'btn-small': small,
+        'btn-sm': small,
         'btn-primary': color === 'primary',
         'btn-dark': color === 'dark',
         'btn-success': color === 'success',

@@ -3,39 +3,11 @@
     <div class="row justify-content-center">
       <div class="col-sm-12">
         <div class="d-flex align-items-center justify-content-end mb-4">
-          <!-- <button
-            type="button"
-            class="
-              btn btn-success btn-sm
-              d-inline-flex
-              align-items-center
-              justify-content-center
-            "
-            @click="habitFormVisible = !habitFormVisible"
-          >
-            Edit
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="16"
-              height="16"
-              fill="currentColor"
-              class="bi bi-pencil-square ms-1"
-              viewBox="0 0 16 16"
-            >
-              <path
-                d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z"
-              />
-              <path
-                fill-rule="evenodd"
-                d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5v11z"
-              />
-            </svg>
-          </button> -->
           <toggle
             small
             color="success"
-            @toggle="habitFormVisible = !habitFormVisible"
-            :visibility="habitFormVisible"
+            @toggle="habitForm.visible = !habitForm.visible"
+            :visibility="habitForm.visible"
           >
             Edit
             <svg
@@ -55,16 +27,13 @@
               />
             </svg>
           </toggle>
-          <button
-            v-if="!habitFormVisible"
-            type="button"
-            class="
-              btn btn-sm btn-danger
-              ms-2
-              d-inline-flex
-              align-items-center
-              justify-content-center
-            "
+          <submit-button
+            v-if="!habitForm.visible"
+            class="ms-2"
+            :loading="deleting"
+            @submit="deleteHabit"
+            small
+            color="danger"
           >
             Delete
             <svg
@@ -83,18 +52,18 @@
                 d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z"
               />
             </svg>
-          </button>
+          </submit-button>
         </div>
       </div>
-      <div v-if="habitFormVisible" class="col-lg-6 mb-5">
+      <div v-if="habitForm.visible" class="col-lg-6 mb-5">
         <habit-form
-          @onSubmit="submitHabit"
-          :loading="habitFormLoading"
-          :habit="habit"
+          @onSubmit="updateHabit"
+          :loading="habitForm.loading"
+          :habit="habitForm.habit"
         ></habit-form>
       </div>
 
-      <div class="col-sm-12" v-if="!habitFormVisible">
+      <div class="col-sm-12" v-if="!habitForm.visible">
         <div
           class="
             py-2
@@ -104,7 +73,9 @@
             justify-content-center
           "
         >
-          <p class="alert-info my-3 p-2" v-if="!habit">Habit does not exist.</p>
+          <p class="alert-info my-3 p-2" v-if="!habitForm.habit">
+            Habit does not exist.
+          </p>
           <template v-else>
             <h1>Habit Details</h1>
             <div class="py-3">
@@ -114,25 +85,27 @@
                     <tr>
                       <th scope="row">Title:</th>
                       <td>
-                        {{ habit.title }}
+                        {{ habitForm.habit.title }}
                       </td>
                     </tr>
                     <tr>
                       <th scope="row">Type:</th>
                       <td>
-                        <span v-if="habit.type == 'G'" class="badge bg-success"
+                        <span
+                          v-if="habitForm.habit.type == 'G'"
+                          class="badge bg-success"
                           >Good</span
                         >
                         <span v-else class="badge bg-danger">Bad</span>
                       </td>
                     </tr>
-                    <tr v-if="habit.ritual">
+                    <tr v-if="habitForm.habit.ritual">
                       <th scope="row">Ritual:</th>
-                      <td>{{ habit.ritual }}</td>
+                      <td>{{ habitForm.habit.ritual }}</td>
                     </tr>
-                    <tr v-if="habit.description">
+                    <tr v-if="habitForm.habit.description">
                       <th scope="row">Description:</th>
-                      <td>{{ habit.description }}</td>
+                      <td>{{ habitForm.habit.description }}</td>
                     </tr>
                     <tr>
                       <th scope="row">Total repetitions:</th>
@@ -140,14 +113,22 @@
                     </tr>
                     <tr>
                       <th scope="row">Created at:</th>
-                      <td :title="getFormattedDate(habit.created_at, true)">
-                        {{ getFormattedDate(habit.created_at) }}
+                      <td
+                        :title="
+                          getFormattedDate(habitForm.habit.created_at, true)
+                        "
+                      >
+                        {{ getFormattedDate(habitForm.habit.created_at) }}
                       </td>
                     </tr>
                     <tr>
                       <th scope="row">Updated at:</th>
-                      <td :title="getFormattedDate(habit.updated_at, true)">
-                        {{ getFormattedDate(habit.updated_at) }}
+                      <td
+                        :title="
+                          getFormattedDate(habitForm.habit.updated_at, true)
+                        "
+                      >
+                        {{ getFormattedDate(habitForm.habit.updated_at) }}
                       </td>
                     </tr>
                   </tbody>
@@ -172,17 +153,17 @@
           color="dark"
           small
           @toggle="toggleRepForm"
-          :visibility="repFormVisible"
+          :visibility="repetitionForm.visible"
         >
           Add repetition
         </toggle>
       </div>
-      <div class="col-sm-12 mb-5" v-if="repFormVisible">
+      <div class="col-sm-12 mb-5" v-if="repetitionForm.visible">
         <form @submit.prevent>
           <div class="row align-items-center justify-content-center">
             <div class="col-sm-10 col-md-7 col-xl-4">
               <date-picker
-                v-model="repFormDate"
+                v-model="repetitionForm.date"
                 color="blue"
                 mode="date"
                 :max-date="new Date()"
@@ -206,31 +187,31 @@
               "
             >
               <submit-button
-                :loading="repFormSubmitting"
+                :loading="repetitionForm.loading"
                 color="primary"
-                :disabled="!repFormDate || !habit"
-                @submit="submitRepForm"
+                :disabled="!repetitionForm.date || !habitForm.habit"
+                @submit="createRepetition"
               ></submit-button>
             </div>
           </div>
         </form>
       </div>
-      <div class="col-md-8 col-lg-6 col-xl-5 py-2" v-if="habit">
+      <div class="col-md-8 col-lg-6 col-xl-5 py-2" v-if="habitForm.habit">
         <h3 class="text-center mb-3">Repetitions</h3>
 
         <calendar
-          ref="calendar"
+          ref="calendarEl"
           class="calendar"
           is-expanded
           :max-date="new Date()"
-          :attributes="calendarAttrs"
+          :attributes="calendar.attributes"
           @update:from-page="refreshCalendarAttrs"
-          @dayclick="onRepDelete"
+          @dayclick="deleteRepetition"
         >
         </calendar>
         <p class="calendar__loading">
-          <template v-if="calendarLoading">
-            {{ calendarLoading }}
+          <template v-if="calendar.loading">
+            {{ calendar.loading }}
             <span
               class="spinner-border spinner-border-sm ms-1"
               role="status"
@@ -238,7 +219,7 @@
             ></span>
           </template>
           <template v-else>
-            Note: Click a date to delete its repetition.
+            Note: Click colored a date to delete its repetition.
           </template>
         </p>
       </div>
@@ -253,7 +234,7 @@ import HabitForm from '@/components/HabitForm.vue';
 import { reactive, ref, computed, watch, watchEffect } from 'vue';
 import { DatePicker, Calendar } from 'v-calendar';
 import { DateTime } from 'luxon';
-import { useRoute } from 'vue-router';
+import { useRoute, useRouter } from 'vue-router';
 import { useStore } from 'vuex';
 import repetitions from '@/api/repetitions';
 export default {
@@ -266,37 +247,65 @@ export default {
   },
   setup() {
     const route = useRoute();
+    const router = useRouter();
     const store = useStore();
     let pk = computed(() => route.params.id);
-    const habit = ref(null);
+    const habitForm = reactive({ habit: null, visible: false, loading: false });
     watchEffect(() => {
       if (pk.value) {
-        habit.value = store.getters['habits/get'](pk.value);
+        habitForm.habit = store.getters['habits/get'](pk.value);
       }
     });
-    const repFormDate = ref(null);
-    const repFormVisible = ref(false);
-    const repFormSubmitting = ref(false);
-
-    const toggleRepForm = () => {
-      repFormDate.value = null;
-      repFormVisible.value = !repFormVisible.value;
-    };
-
-    const submitRepForm = async () => {
-      // If Form is empty, return
-      if (!repFormDate.value || !habit.value) {
+    const updateHabit = async (formData) => {
+      if (!habitForm.habit) {
         return;
       }
-      const date = DateTime.fromJSDate(repFormDate.value);
-      repFormSubmitting.value = true;
+      const today = DateTime.now();
+      habitForm.loading = true;
+      try {
+        await store.dispatch('habits/update', {
+          pk: habitForm.habit.id,
+          formData: formData,
+        });
+      } finally {
+        await refreshCalendarAttrs({ year: today.year, month: today.month });
+        habitForm.loading = false;
+        habitForm.visible = false;
+      }
+    };
+
+    const deleting = ref(false);
+    const deleteHabit = async () => {
+      deleting.value = true;
+      await store.dispatch('habits/delete', { pk: habitForm.habit.id });
+      router.push({ name: 'Habits' });
+    };
+
+    const repetitionForm = reactive({
+      date: null,
+      visible: false,
+      loading: false,
+    });
+
+    const toggleRepForm = () => {
+      repetitionForm.date = null;
+      repetitionForm.visible = !repetitionForm.visible;
+    };
+
+    const createRepetition = async () => {
+      // If Form is empty, return
+      if (!repetitionForm.date || !habitForm.habit) {
+        return;
+      }
+      const date = DateTime.fromJSDate(repetitionForm.date);
+      repetitionForm.loading = true;
       try {
         await repetitions.create({
           date: date.toISODate(),
-          habit: habit.value.id,
+          habit: habitForm.habit.id,
         });
       } finally {
-        await calendar.value.move({
+        await calendarEl.value.move({
           year: date.year,
           month: date.month,
         });
@@ -304,79 +313,56 @@ export default {
           year: date.year,
           month: date.month,
         });
-        repFormSubmitting.value = false;
+        repetitionForm.loading = false;
         toggleRepForm();
       }
     };
-
-    const calendarLoading = ref(null);
-    const calendar = ref(null);
-    const onRepDelete = async (day) => {
+    const calendarEl = ref(null);
+    const calendar = reactive({ loading: false, attributes: [] });
+    const deleteRepetition = async (day) => {
       if (
         !day.attributesMap.day ||
         !day.attributesMap.day.customData.repetition
       ) {
         return;
       }
-      calendarLoading.value = 'Deleting';
+      calendar.loading = 'Deleting';
       try {
         await repetitions.delete(day.attributesMap.day.customData.repetition);
         refreshCalendarAttrs({ year: day.year, month: day.month });
       } finally {
-        calendarLoading.value = null;
+        calendar.loading = null;
       }
     };
-
-    const calendarAttrs = ref([]);
 
     let timeout;
     const refreshCalendarAttrs = async (page) => {
       clearTimeout(timeout);
       timeout = setTimeout(async () => {
-        calendarLoading.value = 'Updating';
+        calendar.loading = 'Updating';
         try {
           const res = (
             await repetitions.index({
               year: page.year,
               month: page.month,
-              habit: habit.value.id,
+              habit: habitForm.habit.id,
             })
           ).data;
-          calendarAttrs.value = res.map((rep) => {
+          calendar.attributes = res.map((rep) => {
             const attr = {};
             attr.key = 'day';
             attr.dates = [rep.date];
             attr.highlight = {
-              color: habit.value.type == 'G' ? 'green' : 'red',
+              color: habitForm.habit.type == 'G' ? 'green' : 'red',
               fillMode: 'solid',
             };
             attr.customData = { repetition: rep.id };
             return attr;
           });
         } finally {
-          calendarLoading.value = null;
+          calendar.loading = null;
         }
       }, 1000);
-    };
-
-    const habitFormVisible = ref(false);
-    const habitFormLoading = ref(false);
-    const submitHabit = async (formData) => {
-      if (!habit.value) {
-        return;
-      }
-      const today = DateTime.now();
-      habitFormLoading.value = true;
-      try {
-        await store.dispatch('habits/update', {
-          pk: habit.value.id,
-          formData: formData,
-        });
-      } finally {
-        await refreshCalendarAttrs({ year: today.year, month: today.month });
-        habitFormLoading.value = false;
-        habitFormVisible.value = false;
-      }
     };
 
     const getFormattedDate = (ISOString, long = false) => {
@@ -392,20 +378,17 @@ export default {
     };
 
     return {
-      habit,
-      repFormDate,
-      repFormVisible,
-      repFormSubmitting,
-      onRepDelete,
-      calendarLoading,
+      habitForm,
+      updateHabit,
+      deleting,
+      deleteHabit,
+      repetitionForm,
       toggleRepForm,
-      submitRepForm,
+      createRepetition,
+      deleteRepetition,
+      calendarEl,
       calendar,
-      calendarAttrs,
       refreshCalendarAttrs,
-      habitFormVisible,
-      habitFormLoading,
-      submitHabit,
       getFormattedDate,
     };
   },
