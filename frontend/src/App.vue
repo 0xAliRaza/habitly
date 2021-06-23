@@ -23,30 +23,25 @@
             >Intentions</router-link
           >
         </li>
-        <div v-if="!loading">
-          <li class="nav-item">
-            <button
-              class="btn btn-primary"
-              v-if="!authenticated"
-              @click="auth.loginWithRedirect"
-            >
-              Log in
-            </button>
-          </li>
-          <li class="nav-item">
-            <button
-              class="btn btn-primary"
-              v-if="authenticated"
-              @click="auth.logout"
-            >
-              Log out
-            </button>
-          </li>
-        </div>
       </ul>
-      <ul class="navbar-nav ms-auto">
+      <ul class="navbar-nav ms-auto" v-if="!loading">
         <li class="nav-item">
-          <a class="nav-link" href="#">Profile</a>
+          <button
+            class="btn btn-primary"
+            v-if="!authenticated"
+            @click="auth.loginWithRedirect"
+          >
+            Log in
+          </button>
+        </li>
+        <li class="nav-item">
+          <button
+            class="btn btn-link"
+            v-if="authenticated"
+            @click="auth.logout"
+          >
+            Log out
+          </button>
         </li>
       </ul>
     </div>

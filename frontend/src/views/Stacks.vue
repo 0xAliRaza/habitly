@@ -46,7 +46,13 @@
 
       <div class="col-sm-12">
         <div
-          class="d-flex flex-column align-items-center justify-content-center"
+          class="
+            d-flex
+            flex-column
+            align-items-center
+            justify-content-center
+            py-2
+          "
         >
           <h1 class="">Habit Stacks</h1>
           <div class="py-3" v-if="stacks.length < 1">

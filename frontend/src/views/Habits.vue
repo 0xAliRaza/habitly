@@ -23,40 +23,48 @@
       </div>
     </div>
     <div class="row">
-      <template v-if="habits.length < 1 && !habitFormVisible">
-        <div class="col-sm-12">
-          <p class="alert-info fade show d-inline-flex fade show" role="alert">
-            You haven't added any habits yet. Please add some to see them
-            here...
-          </p>
-        </div>
-      </template>
-      <template v-else-if="habits.length > 0">
-        <div class="col-lg-6 mb-4 mb-lg-0">
-          <div class="text-center mb-3">
-            <h5 class="text-success">GOOD</h5>
-          </div>
-          <div
-            v-for="habit in goodHabits"
-            :key="habit.id"
-            class="habit-wrapper mb-2"
-          >
-            <habit :habit="habit"></habit>
+      <div class="col-sm-12">
+        <div
+          class="
+            d-flex
+            flex-column
+            align-items-center
+            justify-content-center
+            py-2
+          "
+        >
+          <h1 class="">Habits</h1>
+          <div class="py-3" v-if="habits.length < 1">
+            <p class="alert-info p-1">You haven't created any habits yet.</p>
           </div>
         </div>
-        <div class="col-lg-6">
-          <div class="text-center mb-3">
-            <h5 class="text-danger">BAD</h5>
+        <div class="row py-4" v-if="habits.length > 0">
+          <div class="col-lg-6 mb-4 mb-lg-0">
+            <div class="text-center mb-3">
+              <h5 class="text-success">GOOD</h5>
+            </div>
+            <div
+              v-for="habit in goodHabits"
+              :key="habit.id"
+              class="habit-wrapper mb-2"
+            >
+              <habit :habit="habit"></habit>
+            </div>
           </div>
-          <div
-            v-for="habit in badHabits"
-            :key="habit.id"
-            class="habit-wrapper mb-2"
-          >
-            <habit :habit="habit"></habit>
+          <div class="col-lg-6">
+            <div class="text-center mb-3">
+              <h5 class="text-danger">BAD</h5>
+            </div>
+            <div
+              v-for="habit in badHabits"
+              :key="habit.id"
+              class="habit-wrapper mb-2"
+            >
+              <habit :habit="habit"></habit>
+            </div>
           </div>
         </div>
-      </template>
+      </div>
     </div>
   </div>
 </template>

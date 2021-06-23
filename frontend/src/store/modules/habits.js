@@ -23,6 +23,9 @@ export default {
     },
   },
   mutations: {
+    reset(state, payload) {
+      state.models = [];
+    },
     add(state, payload) {
       state.models.push(...payload.models);
     },
@@ -39,6 +42,7 @@ export default {
   },
   actions: {
     async refresh({ commit, state }) {
+      commit('reset');
       const models = (await habits.index()).data;
       commit('add', { models: models });
       return models;
@@ -48,16 +52,20 @@ export default {
       commit('add', { models: [model] });
       return model;
     },
-    async update({ commit, getters }, payload) {
+    async update({ commit, getters, dispatch }, payload) {
       const i = getters.getIndex(payload.pk);
       const model = (await habits.update(payload.pk, payload.formData)).data;
       commit('update', { index: i, model: model });
+      await dispatch('intentions/refresh', null, { root: true });
+      await dispatch('stacks/refresh', null, { root: true });
       return model;
     },
-    async delete({ commit, getters }, payload) {
+    async delete({ commit, getters, dispatch }, payload) {
       const i = getters.getIndex(payload.pk);
       await habits.delete(payload.pk);
       commit('remove', { index: i });
+      await dispatch('intentions/refresh', null, { root: true });
+      await dispatch('stacks/refresh', null, { root: true });
       return i;
     },
   },

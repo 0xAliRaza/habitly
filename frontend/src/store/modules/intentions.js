@@ -13,6 +13,9 @@ export default {
     },
   },
   mutations: {
+    reset(state) {
+      state.models = [];
+    },
     add(state, payload) {
       state.models.push(...payload.models);
     },
@@ -29,6 +32,7 @@ export default {
   },
   actions: {
     async refresh({ commit, state }) {
+      commit('reset');
       const models = (await intentions.index()).data;
       commit('add', { models: models });
       return models;
