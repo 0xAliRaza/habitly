@@ -141,14 +141,10 @@ class IntentionSerializer(serializers.ModelSerializer):
                 raise serializers.ValidationError({'Intention': [
                     'Intention with the given fields already exists.']})
 
-        if timezone.now() > attrs['time']:
-            # Check if given time is in the future
-            if self.instance and self.instance.id:
-                raise serializers.ValidationError(
-                    {'Intention': ['You can\'t edit an intention after it\'s time has gone.']})
-            else:
-                raise serializers.ValidationError(
-                    {'Intention': ['Intention time cannot be in the past.']})
+        # Check if given time is in the future
+        if timezone.now() > attrs['time'] and not (self.instance and self.instance.id):
+            raise serializers.ValidationError(
+                {'Intention': ['Intention time cannot be in the past.']})
 
         return attrs
 

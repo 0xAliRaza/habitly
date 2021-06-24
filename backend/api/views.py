@@ -45,11 +45,18 @@ class IntentionViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         user_id = self.request.user.username
-        return Intention.objects.filter(user_id=user_id, habit__user_id=user_id)
+        queryset = Intention.objects.all()
+        queryset = queryset.filter(user_id=user_id, habit__user_id=user_id)
+        completed = self.request.query_params.get('completed')
+        if completed:
+            queryset = queryset.filter(done=True)
+        else:
+            queryset = queryset.filter(done=False)
+
+        return queryset
 
     def perform_create(self, serializer):
         serializer.save(user_id=self.request.user.username)
-
 
 
 class RepetitionViewSet(viewsets.ModelViewSet):

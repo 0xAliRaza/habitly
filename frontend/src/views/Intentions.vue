@@ -321,6 +321,130 @@
               </table>
             </div>
           </template>
+          <div class="my-2 align-self-start">
+            <button
+              class="
+                btn btn-link
+                text-decoration-none
+                d-flex
+                justify-content-center
+                align-items-center
+              "
+              @click.prevent="toggleCompletedIntentions"
+            >
+              Show completed
+              <svg
+                v-if="completedIntentionsVisible"
+                xmlns="http://www.w3.org/2000/svg"
+                width="16"
+                height="16"
+                fill="currentColor"
+                class="bi bi-caret-down-fill ms-1"
+                viewBox="0 0 16 16"
+              >
+                <path
+                  d="M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z"
+                />
+              </svg>
+              <svg
+                v-else
+                xmlns="http://www.w3.org/2000/svg"
+                width="16"
+                height="16"
+                fill="currentColor"
+                class="bi bi-caret-right-fill ms-1"
+                viewBox="0 0 16 16"
+              >
+                <path
+                  d="m12.14 8.753-5.482 4.796c-.646.566-1.658.106-1.658-.753V3.204a1 1 0 0 1 1.659-.753l5.48 4.796a1 1 0 0 1 0 1.506z"
+                />
+              </svg>
+            </button>
+          </div>
+          <transition name="slide-in">
+            <template v-if="completedIntentionsVisible">
+              <div class="py-3" v-if="completedIntentions.length < 1">
+                <p class="alert-info p-1">No completed intentions found.</p>
+              </div>
+              <div class="py-3" v-else>
+                <div
+                  v-for="intention in completedIntentions"
+                  :key="intention.id"
+                  class="d-flex justify-content-between align-items-center mb-3"
+                >
+                  <p class="m-0 text-decoration-line-through">
+                    I will
+                    <router-link :to="`/habits/${intention.habit.id}`">{{
+                      intention.habit.title
+                    }}</router-link>
+                    at
+                    <span
+                      :title="getFormattedDate(intention.time, true)"
+                      class="text-primary"
+                      >{{ getFormattedDate(intention.time) }}</span
+                    >
+                    in
+                    <span class="text-primary">{{ intention.location }}</span
+                    >.
+                  </p>
+                  <div
+                    class="
+                      text-nowrap
+                      px-2
+                      d-flex
+                      align-items-center
+                      justify-content-center
+                    "
+                  >
+                    <input
+                      type="checkbox"
+                      class="form-check-input m-0 intention-done-checkbox"
+                      @click.prevent
+                      :disabled="true"
+                      :checked="true"
+                    />
+                    <button
+                      class="
+                        btn btn--intention-delete
+                        d-inline-flex
+                        align-items-center
+                        px-0
+                        ms-2
+                      "
+                      @click.prevent="onDelete(intention.id, true)"
+                      :disabled="isDisabled"
+                    >
+                      <template v-if="deleting == intention.id">
+                        <span
+                          class="spinner-border spinner-border-sm"
+                          role="status"
+                          aria-hidden="true"
+                        ></span>
+                      </template>
+                      <template v-else>
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          width="16"
+                          height="16"
+                          fill="currentColor"
+                          class="bi bi-trash"
+                          viewBox="0 0 16 16"
+                        >
+                          <path
+                            d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z"
+                          />
+                          <path
+                            fill-rule="evenodd"
+                            d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z"
+                          />
+                        </svg>
+                      </template>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </template>
+          </transition>
         </div>
       </div>
     </div>
@@ -331,7 +455,7 @@
 import Toggle from '@/components/Toggle.vue';
 import VueMultiselect from 'vue-multiselect';
 import SubmitButton from '@/components/SubmitButton.vue';
-import { reactive, ref, computed } from 'vue';
+import { ref, computed } from 'vue';
 import store from '@/store';
 import { DatePicker } from 'v-calendar';
 import { DateTime } from 'luxon';
@@ -389,11 +513,15 @@ export default {
     const completing = ref(null);
     const editing = ref(false);
 
-    const onDelete = async (pk) => {
+    const onDelete = async (pk, completed = false) => {
       deleting.value = pk;
 
       try {
-        await store.dispatch('intentions/delete', { pk });
+        if (completed) {
+          await store.dispatch('intentions/deleteCompleted', { pk });
+        } else {
+          await store.dispatch('intentions/delete', { pk });
+        }
       } catch (e) {
         console.log('%cIntentions.vue line:245 e', 'color: #007acc;', e);
       } finally {
@@ -426,6 +554,14 @@ export default {
       }
     };
 
+    const completedIntentionsVisible = ref(false);
+    const toggleCompletedIntentions = async () => {
+      if (!store.state.intentions.completedRefreshed) {
+        await store.dispatch('intentions/refreshCompleted');
+      }
+      completedIntentionsVisible.value = !completedIntentionsVisible.value;
+    };
+
     const getFormattedDate = (ISOString, long = false) => {
       if (long) {
         return DateTime.fromISO(ISOString).toLocaleString(
@@ -440,6 +576,9 @@ export default {
 
     const goodHabits = computed(() => store.getters['habits/good']);
     const intentions = computed(() => store.state.intentions.models);
+    const completedIntentions = computed(
+      () => store.state.intentions.completedModels
+    );
 
     const isDisabled = computed(
       () =>
@@ -459,8 +598,11 @@ export default {
       onFormToggle,
       onFormSubmit,
       completeIntention,
+      completedIntentionsVisible,
+      toggleCompletedIntentions,
       goodHabits,
       intentions,
+      completedIntentions,
       getFormattedDate,
       isDisabled,
     };
