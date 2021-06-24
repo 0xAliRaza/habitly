@@ -403,7 +403,7 @@ export default {
       clearTimeout(timeout);
       calendar.loading = 'Updating';
       timeout = setTimeout(async () => {
-        calendar.loading = 'Loading';
+        calendar.loading = 'Updating';
         try {
           if (!habitForm.habit) {
             return;
