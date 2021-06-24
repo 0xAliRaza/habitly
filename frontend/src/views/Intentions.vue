@@ -109,7 +109,30 @@
                   <span class="text-primary">{{ intention.location }}</span
                   >.
                 </p>
-                <div class="text-nowrap px-2">
+                <div
+                  class="
+                    text-nowrap
+                    px-2
+                    d-flex
+                    align-items-center
+                    justify-content-center
+                  "
+                >
+                  <input
+                    v-if="completing != intention.id"
+                    type="checkbox"
+                    class="form-check-input m-0 intention-done-checkbox"
+                    @click.prevent="completeIntention(intention)"
+                    :disabled="isDisabled"
+                    title="Toggle intention status"
+                    :checked="intention.done"
+                  />
+                  <span
+                    v-else
+                    class="spinner-border spinner-border-sm text-primary"
+                    role="status"
+                    aria-hidden="true"
+                  ></span>
                   <button
                     class="
                       btn btn--intention-edit
@@ -119,7 +142,7 @@
                       ms-2
                     "
                     @click.prevent="onEdit(intention)"
-                    :disabled="editing"
+                    :disabled="isDisabled"
                   >
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
@@ -147,7 +170,7 @@
                       ms-2
                     "
                     @click.prevent="onDelete(intention.id)"
-                    :disabled="deleting || editing"
+                    :disabled="isDisabled"
                   >
                     <template v-if="deleting == intention.id">
                       <span
@@ -162,7 +185,7 @@
                         width="16"
                         height="16"
                         fill="currentColor"
-                        class="bi bi-trash ms-1"
+                        class="bi bi-trash"
                         viewBox="0 0 16 16"
                       >
                         <path
@@ -202,67 +225,96 @@
                       {{ intention.location }}
                     </td>
                     <td class="text-nowrap">
-                      <button
+                      <div
                         class="
-                          btn btn--intention-edit
-                          d-inline-flex
+                          text-nowrap
+                          px-2
+                          d-flex
                           align-items-center
+                          justify-content-center
                         "
-                        @click.prevent="onEdit(intention)"
-                        :disabled="editing || deleting"
                       >
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          width="16"
-                          height="16"
-                          fill="currentColor"
-                          class="bi bi-pencil-square"
-                          viewBox="0 0 16 16"
+                        <input
+                          v-if="completing != intention.id"
+                          type="checkbox"
+                          class="form-check-input m-0 intention-done-checkbox"
+                          @click.prevent="completeIntention(intention)"
+                          :disabled="isDisabled"
+                          :checked="intention.done"
+                          title="Toggle intention status"
+                        />
+                        <span
+                          v-else
+                          class="spinner-border spinner-border-sm text-primary"
+                          role="status"
+                          aria-hidden="true"
+                        ></span>
+                        <button
+                          class="
+                            btn btn--intention-edit
+                            d-inline-flex
+                            align-items-center
+                            px-0
+                            ms-2
+                          "
+                          @click.prevent="onEdit(intention)"
+                          :disabled="isDisabled"
                         >
-                          <path
-                            d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z"
-                          />
-                          <path
-                            fill-rule="evenodd"
-                            d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5v11z"
-                          />
-                        </svg>
-                      </button>
-                      <button
-                        class="
-                          btn btn--intention-delete
-                          d-inline-flex
-                          align-items-center
-                        "
-                        @click.prevent="onDelete(intention.id)"
-                        :disabled="deleting || editing"
-                      >
-                        <template v-if="deleting == intention.id">
-                          <span
-                            class="spinner-border spinner-border-sm"
-                            role="status"
-                            aria-hidden="true"
-                          ></span>
-                        </template>
-                        <template v-else>
                           <svg
                             xmlns="http://www.w3.org/2000/svg"
                             width="16"
                             height="16"
                             fill="currentColor"
-                            class="bi bi-trash"
+                            class="bi bi-pencil-square"
                             viewBox="0 0 16 16"
                           >
                             <path
-                              d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z"
+                              d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z"
                             />
                             <path
                               fill-rule="evenodd"
-                              d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z"
+                              d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5v11z"
                             />
                           </svg>
-                        </template>
-                      </button>
+                        </button>
+                        <button
+                          class="
+                            btn btn--intention-delete
+                            d-inline-flex
+                            align-items-center
+                            px-0
+                            ms-2
+                          "
+                          @click.prevent="onDelete(intention.id)"
+                          :disabled="isDisabled"
+                        >
+                          <template v-if="deleting == intention.id">
+                            <span
+                              class="spinner-border spinner-border-sm"
+                              role="status"
+                              aria-hidden="true"
+                            ></span>
+                          </template>
+                          <template v-else>
+                            <svg
+                              xmlns="http://www.w3.org/2000/svg"
+                              width="16"
+                              height="16"
+                              fill="currentColor"
+                              class="bi bi-trash"
+                              viewBox="0 0 16 16"
+                            >
+                              <path
+                                d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z"
+                              />
+                              <path
+                                fill-rule="evenodd"
+                                d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z"
+                              />
+                            </svg>
+                          </template>
+                        </button>
+                      </div>
                     </td>
                   </tr>
                 </tbody>
@@ -296,24 +348,25 @@ export default {
       time: null,
       location: null,
     };
-    const form = reactive({ ...formInitialState });
+    const form = ref({ ...formInitialState });
 
     const formVisible = ref(false);
     const formSubmitting = ref(false);
     const formInvalid = computed(
-      () => !form.habit || !form.time || !form.location
+      () => !form.value.habit || !form.value.time || !form.value.location
     );
 
     const tableView = ref(false);
     const onFormToggle = () => {
-      Object.assign(form, formInitialState);
+      form.value = { ...formInitialState };
       formVisible.value = !formVisible.value;
       editing.value = false;
     };
 
     const onFormSubmit = async () => {
       formSubmitting.value = true;
-      const formData = form;
+      // Make a non-reactive duplicate of form object
+      const formData = { ...form.value };
       formData.habit = formData.habit.id;
       try {
         if (formData.id) {
@@ -333,6 +386,7 @@ export default {
     };
 
     const deleting = ref(null);
+    const completing = ref(null);
     const editing = ref(false);
 
     const onDelete = async (pk) => {
@@ -348,10 +402,28 @@ export default {
     };
 
     const onEdit = (intention) => {
-      editing.value = intention.id;
-      intention.time = new Date(intention.time);
-      Object.assign(form, intention);
+      const model = { ...intention };
+      editing.value = model.id;
+      model.time = new Date(model.time);
+      form.value = model;
       formVisible.value = true;
+    };
+
+    const completeIntention = async (intention) => {
+      const formData = { ...intention };
+      completing.value = formData.id;
+      formData.habit = formData.habit.id;
+      formData.done = true;
+      try {
+        await store.dispatch('intentions/update', {
+          formData: formData,
+          pk: formData.id,
+        });
+      } catch (e) {
+        console.log(e);
+      } finally {
+        completing.value = null;
+      }
     };
 
     const getFormattedDate = (ISOString, long = false) => {
@@ -368,6 +440,11 @@ export default {
 
     const goodHabits = computed(() => store.getters['habits/good']);
     const intentions = computed(() => store.state.intentions.models);
+
+    const isDisabled = computed(
+      () =>
+        editing.value || deleting.value || completing.value || formVisible.value
+    );
     return {
       form,
       formVisible,
@@ -378,11 +455,14 @@ export default {
       onEdit,
       editing,
       deleting,
+      completing,
       onFormToggle,
       onFormSubmit,
+      completeIntention,
       goodHabits,
       intentions,
       getFormattedDate,
+      isDisabled,
     };
   },
 };
@@ -409,5 +489,11 @@ export default {
   span.spinner-border {
     color: $color-green;
   }
+}
+
+.intention-done-checkbox {
+  border-color: $gray-400;
+  margin: 0;
+  cursor: pointer;
 }
 </style>

@@ -80,7 +80,9 @@ export default {
     });
 
     const onSubmit = () => {
-      emit('onSubmit', form);
+      // Make a duplicate of form object by spreading it inside an empty object
+      // - because other it would stay reactive
+      emit('onSubmit', { form: { ...form } });
     };
 
     return { form, onSubmit };

@@ -57,6 +57,11 @@ export default {
     updateTodaysRepetition(state, payload) {
       if (payload.index >= 0) {
         state.models[payload.index].todays_repetition = payload.repetition;
+        if (payload.repetition) {
+          state.models[payload.index].repetitions++;
+        } else {
+          state.models[payload.index].repetitions--;
+        }
       }
     },
   },
@@ -91,7 +96,7 @@ export default {
     async createRepetition({ commit, getters }, payload) {
       const repetition = (await repetitions.create(payload.repetition)).data;
       const index = getters.getIndex(payload.habit);
-      commit('incrementRepetitions', { index });
+
       if (
         DateTime.fromJSDate(new Date(payload.repetition.date)).toISODate() ===
         DateTime.now().toISODate()
@@ -100,18 +105,21 @@ export default {
           repetition: repetition,
           index: index,
         });
+      } else {
+        commit('incrementRepetitions', { index });
       }
     },
     async deleteRepetition({ commit, getters }, payload) {
       await repetitions.delete(payload.pk);
       const index = getters.getIndex(payload.habit);
-      commit('decrementRepetitions', { index });
       if (
         payload.repetition &&
         DateTime.fromJSDate(new Date(payload.repetition.date)).toISODate() ===
           DateTime.now().toISODate()
       ) {
         commit('updateTodaysRepetition', { repetition: null, index: index });
+      } else {
+        commit('decrementRepetitions', { index });
       }
     },
   },

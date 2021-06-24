@@ -1,6 +1,6 @@
 from rest_framework.decorators import api_view
 from django.http import HttpResponse
-from rest_framework import viewsets, permissions
+from rest_framework import viewsets, permissions, mixins
 
 from .serializers import HabitSerializer, IntentionSerializer, RepetitionSerializer, StackSerializer
 from .models import Habit, Intention, Repetition, Stack
@@ -21,7 +21,7 @@ class HabitViewSet(viewsets.ModelViewSet):
 
     def perform_create(self, serializer):
         # Automatically append user_id from request
-        return serializer.save(user_id=self.request.user.username)
+        serializer.save(user_id=self.request.user.username)
 
     serializer_class = HabitSerializer
     permission_classes = [permissions.IsAuthenticated]
@@ -36,7 +36,7 @@ class StackViewSet(viewsets.ModelViewSet):
         return Stack.objects.filter(user_id=user_id, current_habit__user_id=user_id, new_habit__user_id=user_id)
 
     def perform_create(self, serializer):
-        return serializer.save(user_id=self.request.user.username)
+        serializer.save(user_id=self.request.user.username)
 
 
 class IntentionViewSet(viewsets.ModelViewSet):
@@ -48,7 +48,8 @@ class IntentionViewSet(viewsets.ModelViewSet):
         return Intention.objects.filter(user_id=user_id, habit__user_id=user_id)
 
     def perform_create(self, serializer):
-        return serializer.save(user_id=self.request.user.username)
+        serializer.save(user_id=self.request.user.username)
+
 
 
 class RepetitionViewSet(viewsets.ModelViewSet):
