@@ -1,69 +1,74 @@
 <template>
   <div class="container">
     <div class="row justify-content-center">
-      <div class="col-sm-12">
-        <div class="d-flex align-items-center justify-content-end mb-4">
-          <toggle
-            small
-            color="success"
-            @toggle="habitForm.visible = !habitForm.visible"
-            :visibility="habitForm.visible"
-          >
-            Edit
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="16"
-              height="16"
-              fill="currentColor"
-              class="bi bi-pencil-square ms-1"
-              viewBox="0 0 16 16"
+      <template v-if="habitForm.habit">
+        <div class="col-sm-12">
+          <div class="d-flex align-items-center justify-content-end mb-4">
+            <toggle
+              small
+              color="success"
+              @toggle="habitForm.visible = !habitForm.visible"
+              :visibility="habitForm.visible"
             >
-              <path
-                d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z"
-              />
-              <path
-                fill-rule="evenodd"
-                d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5v11z"
-              />
-            </svg>
-          </toggle>
-          <submit-button
-            v-if="!habitForm.visible"
-            class="ms-2"
-            :loading="deleting"
-            @submit="deleteHabit"
-            small
-            color="danger"
-          >
-            Delete
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="16"
-              height="16"
-              fill="currentColor"
-              class="bi bi-trash ms-1"
-              viewBox="0 0 16 16"
+              Edit
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="16"
+                height="16"
+                fill="currentColor"
+                class="bi bi-pencil-square ms-1"
+                viewBox="0 0 16 16"
+              >
+                <path
+                  d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z"
+                />
+                <path
+                  fill-rule="evenodd"
+                  d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5v11z"
+                />
+              </svg>
+            </toggle>
+            <submit-button
+              v-if="!habitForm.visible"
+              class="ms-2"
+              :loading="deleting"
+              @submit="deleteHabit"
+              small
+              color="danger"
             >
-              <path
-                d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z"
-              />
-              <path
-                fill-rule="evenodd"
-                d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z"
-              />
-            </svg>
-          </submit-button>
+              <template v-slot:loading>Deleting</template>
+              <template v-slot:default>
+                Delete
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="16"
+                  height="16"
+                  fill="currentColor"
+                  class="bi bi-trash ms-1"
+                  viewBox="0 0 16 16"
+                >
+                  <path
+                    d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z"
+                  />
+                  <path
+                    fill-rule="evenodd"
+                    d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z"
+                  />
+                </svg>
+              </template>
+            </submit-button>
+          </div>
         </div>
-      </div>
-      <transition name="slide-in">
-        <div v-if="habitForm.visible" class="col-lg-6 mb-5">
-          <habit-form
-            @onSubmit="updateHabit"
-            :loading="habitForm.loading"
-            :habit="habitForm.habit"
-          ></habit-form>
-        </div>
-      </transition>
+        <transition name="slide-in">
+          <div v-if="habitForm.visible" class="col-lg-6 mb-5">
+            <habit-form
+              @onSubmit="updateHabit"
+              :loading="habitForm.loading"
+              :habit="habitForm.habit"
+            ></habit-form>
+          </div>
+        </transition>
+      </template>
       <div class="col-sm-12">
         <div
           class="
@@ -110,11 +115,43 @@
                     </tr>
                     <tr>
                       <th scope="row">Repetitions:</th>
-                      <td>{{ habitForm.habit.repetitions }}</td>
+                      <td>
+                        <span
+                          class="badge"
+                          :class="{
+                            'bg-success':
+                              habitForm.habit.repetitions > 0 &&
+                              habitForm.habit.type === 'G',
+                            'bg-danger':
+                              habitForm.habit.repetitions > 0 &&
+                              habitForm.habit.type === 'B',
+                            'bg-secondary': habitForm.habit.repetitions <= 0,
+                          }"
+                          >{{ habitForm.habit.repetitions }}</span
+                        >
+                      </td>
                     </tr>
                     <tr>
                       <th scope="row">Streak:</th>
-                      <td>{{ habitForm.habit.streak }} days</td>
+                      <td>
+                        <span
+                          v-if="!needsReload"
+                          class="badge"
+                          :class="{
+                            'bg-success':
+                              habitForm.habit.streak > 0 &&
+                              habitForm.habit.type === 'G',
+                            'bg-danger':
+                              habitForm.habit.streak > 0 &&
+                              habitForm.habit.type === 'B',
+                            'bg-secondary': habitForm.habit.streak <= 0,
+                          }"
+                          >{{ habitForm.habit.streak }} days</span
+                        >
+                        <span v-else class="text-secondary p-1">
+                          (Needs reload)</span
+                        >
+                      </td>
                     </tr>
                     <tr>
                       <th scope="row">Created at:</th>
@@ -212,7 +249,7 @@
           class="calendar"
           is-expanded
           :max-date="new Date()"
-          :attributes="calendar.attributes"
+          :attributes="[...calendar.attributes]"
           @update:from-page="refreshCalendarAttrs"
           @dayclick="deleteRepetition"
         >
@@ -261,7 +298,12 @@ export default {
     const habitForm = reactive({ habit: null, visible: false, loading: false });
     watchEffect(() => {
       if (pk.value) {
-        habitForm.habit = store.getters['habits/get'](pk.value);
+        const habit = store.getters['habits/get'](pk.value);
+        if (habit) {
+          habitForm.habit = habit;
+        } else {
+          router.push({ name: 'Habits' });
+        }
       }
     });
     const updateHabit = async (formData) => {
@@ -300,11 +342,14 @@ export default {
       repetitionForm.visible = !repetitionForm.visible;
     };
 
+    const needsReload = ref(false);
+
     const createRepetition = async () => {
       // If Form is empty, return
       if (!repetitionForm.date || !habitForm.habit) {
         return;
       }
+      needsReload.value = true;
       const date = DateTime.fromJSDate(repetitionForm.date);
       repetitionForm.loading = true;
       try {
@@ -340,23 +385,25 @@ export default {
       ) {
         return;
       }
+      needsReload.value = true;
       calendar.loading = 'Deleting';
       try {
         await store.dispatch('habits/deleteRepetition', {
           habit: habitForm.habit.id,
           pk: day.attributesMap.day.customData.repetition,
         });
-        refreshCalendarAttrs({ year: day.year, month: day.month });
+        await refreshCalendarAttrs({ year: day.year, month: day.month }, 1500);
       } finally {
         calendar.loading = null;
       }
     };
 
     let timeout;
-    const refreshCalendarAttrs = async (page) => {
+    const refreshCalendarAttrs = async (page, defaultTimeoutMs = 500) => {
       clearTimeout(timeout);
       calendar.loading = 'Updating';
       timeout = setTimeout(async () => {
+        calendar.loading = 'Loading';
         try {
           if (!habitForm.habit) {
             return;
@@ -372,7 +419,7 @@ export default {
           calendar.attributes = res.map((rep) => {
             const attr = {};
             attr.key = 'day';
-            attr.dates = [rep.date];
+            attr.dates = new Date(rep.date);
             attr.highlight = {
               color: habitForm.habit.type == 'G' ? 'green' : 'red',
               fillMode: 'solid',
@@ -383,7 +430,7 @@ export default {
         } finally {
           calendar.loading = null;
         }
-      }, 1000);
+      }, defaultTimeoutMs);
     };
 
     const getFormattedDate = (ISOString, long = false) => {
@@ -410,6 +457,7 @@ export default {
       calendarEl,
       calendar,
       refreshCalendarAttrs,
+      needsReload,
       getFormattedDate,
     };
   },
