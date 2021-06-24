@@ -74,7 +74,7 @@
             justify-content-center
           "
         >
-          <p class="alert-info my-3 p-2" v-if="!habitForm.habit">
+          <p class="alert alert-info my-3 p-2" v-if="!habitForm.habit">
             Habit does not exist.
           </p>
           <template v-else>
@@ -111,6 +111,10 @@
                     <tr>
                       <th scope="row">Repetitions:</th>
                       <td>{{ habitForm.habit.repetitions }}</td>
+                    </tr>
+                    <tr>
+                      <th scope="row">Streak:</th>
+                      <td>{{ habitForm.habit.streak }} days</td>
                     </tr>
                     <tr>
                       <th scope="row">Created at:</th>

@@ -2,8 +2,7 @@ from django.utils import timezone
 from rest_framework import serializers
 from rest_framework.relations import PrimaryKeyRelatedField
 from rest_framework.validators import UniqueTogetherValidator
-from datetime import datetime
-
+import datetime
 from .models import Habit, Intention, Repetition, Stack
 
 
@@ -18,7 +17,7 @@ class HabitSerializer(serializers.HyperlinkedModelSerializer):
 
         try:
             todays_repetition = Repetition.objects.get(
-                habit=instance, date=datetime.now().date())
+                habit=instance, date=datetime.datetime.now().date())
         except Repetition.DoesNotExist:
             todays_repetition = None
 
@@ -30,6 +29,35 @@ class HabitSerializer(serializers.HyperlinkedModelSerializer):
         else:
             representation['todays_repetition'] = None
         representation['repetitions'] = repetitions_count
+
+        # Calculate streak for habit
+        total_streak = 0
+        current_streak = 0
+        today = datetime.date.today()
+        compareDate = today + datetime.timedelta(1)  # Tomorrow
+
+        # Using list() here pulls all the entries from the DB at once
+        # Gets all repetition dates for this habit and whose dates are <= today
+        entry_dates = list(Repetition.objects.values("date").filter(
+            habit=instance, date__lte=today).order_by("-date"))
+
+        for date in entry_dates:
+            # Get the difference btw the dates
+            delta = compareDate - date.get('date')
+
+            if delta.days == 1:  # Keep the streak going!
+                current_streak += 1
+            elif delta.days == 0:  # Don't bother increasing the day if there's multiple ones on the same day
+                pass
+            else:  # Awwww...
+                break  # The current streak is done, exit the loop
+
+            compareDate = date['date']
+
+        if current_streak > total_streak:
+            total_streak = current_streak
+
+        representation['streak'] = total_streak
         return representation
 
 

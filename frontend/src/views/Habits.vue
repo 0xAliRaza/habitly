@@ -40,7 +40,9 @@
         >
           <h1 class="">Habits</h1>
           <div class="py-3" v-if="habits.length < 1">
-            <p class="alert-info p-1">You haven't created any habits yet.</p>
+            <p class="alert alert-info p-2">
+              You haven't created any habits yet.
+            </p>
           </div>
         </div>
         <div class="row py-4" v-if="habits.length > 0">

@@ -77,7 +77,7 @@
         >
           <h1>Intentions</h1>
           <div class="py-3" v-if="intentions.length < 1">
-            <p class="alert-info p-1">
+            <p class="alert alert-info p-2">
               You haven't created any intentions yet.
             </p>
           </div>
@@ -364,7 +364,9 @@
           <transition name="slide-in">
             <template v-if="completedIntentionsVisible">
               <div class="py-3" v-if="completedIntentions.length < 1">
-                <p class="alert-info p-1">No completed intentions found.</p>
+                <p class="alert alert-info p-2">
+                  No completed intentions found.
+                </p>
               </div>
               <div class="py-3" v-else>
                 <div
