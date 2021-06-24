@@ -6,43 +6,45 @@
           Create stack
         </toggle>
       </div>
-      <div class="col-sm-12 mb-5" v-if="formVisible">
-        <form @submit.prevent>
-          <div class="row align-items-center">
-            <div class="col-lg-5">
-              <VueMultiselect
-                v-model="currentHabit"
-                :options="goodHabits"
-                placeholder="Select current habit"
-                label="title"
-                track-by="id"
-              />
-            </div>
-            <div class="col-lg-5 mt-2 mt-lg-0">
-              <VueMultiselect
-                v-model="newHabit"
-                :options="goodHabits"
-                placeholder="Select new habit"
-                label="title"
-                trackBy="id"
-              />
-            </div>
-            <div class="col-lg-2 text-lg-center text-end mt-2 mt-lg-0">
-              <submit-button
-                :loading="submitting"
-                color="primary"
-                :disabled="!currentHabit || !newHabit"
-                @submit="onSubmit"
-              ></submit-button>
-            </div>
-            <div class="col-12 mt-2" v-if="error">
-              <div class="">
-                <p class="text-danger p-2 m-0">Error: {{ error }}</p>
+      <transition name="slide-in">
+        <div class="col-sm-12 mb-5" v-if="formVisible">
+          <form @submit.prevent>
+            <div class="row align-items-center">
+              <div class="col-lg-5">
+                <VueMultiselect
+                  v-model="currentHabit"
+                  :options="goodHabits"
+                  placeholder="Select current habit"
+                  label="title"
+                  track-by="id"
+                />
+              </div>
+              <div class="col-lg-5 mt-2 mt-lg-0">
+                <VueMultiselect
+                  v-model="newHabit"
+                  :options="goodHabits"
+                  placeholder="Select new habit"
+                  label="title"
+                  trackBy="id"
+                />
+              </div>
+              <div class="col-lg-2 text-lg-center text-end mt-2 mt-lg-0">
+                <submit-button
+                  :loading="submitting"
+                  color="primary"
+                  :disabled="!currentHabit || !newHabit"
+                  @submit="onSubmit"
+                ></submit-button>
+              </div>
+              <div class="col-12 mt-2" v-if="error">
+                <div class="">
+                  <p class="text-danger p-2 m-0">Error: {{ error }}</p>
+                </div>
               </div>
             </div>
-          </div>
-        </form>
-      </div>
+          </form>
+        </div>
+      </transition>
 
       <div class="col-sm-12">
         <div

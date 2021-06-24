@@ -8,61 +8,63 @@
           </toggle>
         </div>
       </div>
-      <div v-if="formVisible" class="col-lg-6 mb-5">
-        <form @submit.prevent>
-          <div class="mb-3">
-            <label for="habit" class="form-label">Habit</label>
-            <vue-multiselect
-              v-model="form.habit"
-              :options="goodHabits"
-              placeholder="Select a habit"
-              label="title"
-              track-by="id"
-              id="habit"
-            />
-          </div>
+      <transition name="slide-in">
+        <div v-if="formVisible" class="col-lg-6 mb-5">
+          <form @submit.prevent>
+            <div class="mb-3">
+              <label for="habit" class="form-label">Habit</label>
+              <vue-multiselect
+                v-model="form.habit"
+                :options="goodHabits"
+                placeholder="Select a habit"
+                label="title"
+                track-by="id"
+                id="habit"
+              />
+            </div>
 
-          <div class="mb-3">
-            <label for="location" class="form-label">Location</label>
-            <input
-              required
-              type="text"
-              class="form-control"
-              id="location"
-              v-model="form.location"
-              maxlength="50"
-              placeholder="E.g. The kitchen..."
-            />
-          </div>
-          <div class="mb-3">
-            <label for="time" class="form-label">Date and Time</label>
-            <date-picker
-              id="time"
-              v-model="form.time"
-              color="blue"
-              mode="dateTime"
-              :min-date="new Date()"
-            >
-              <template v-slot="{ inputValue, inputEvents }">
-                <input
-                  class="form-control"
-                  :value="inputValue"
-                  v-on="inputEvents"
-                  placeholder="Give your habit time to live in this world..."
-                />
-              </template>
-            </date-picker>
-          </div>
-          <div class="d-flex justify-content-end">
-            <submit-button
-              :loading="formSubmitting"
-              :disabled="formInvalid"
-              color="primary"
-              @submit="onFormSubmit"
-            ></submit-button>
-          </div>
-        </form>
-      </div>
+            <div class="mb-3">
+              <label for="location" class="form-label">Location</label>
+              <input
+                required
+                type="text"
+                class="form-control"
+                id="location"
+                v-model="form.location"
+                maxlength="50"
+                placeholder="E.g. The kitchen..."
+              />
+            </div>
+            <div class="mb-3">
+              <label for="time" class="form-label">Date and Time</label>
+              <date-picker
+                id="time"
+                v-model="form.time"
+                color="blue"
+                mode="dateTime"
+                :min-date="new Date()"
+              >
+                <template v-slot="{ inputValue, inputEvents }">
+                  <input
+                    class="form-control"
+                    :value="inputValue"
+                    v-on="inputEvents"
+                    placeholder="Give your habit time to live in this world..."
+                  />
+                </template>
+              </date-picker>
+            </div>
+            <div class="d-flex justify-content-end">
+              <submit-button
+                :loading="formSubmitting"
+                :disabled="formInvalid"
+                color="primary"
+                @submit="onFormSubmit"
+              ></submit-button>
+            </div>
+          </form>
+        </div>
+      </transition>
       <div class="col-sm-12">
         <div
           class="

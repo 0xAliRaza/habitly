@@ -2,7 +2,7 @@ from django.utils import timezone
 from rest_framework import serializers
 from rest_framework.relations import PrimaryKeyRelatedField
 from rest_framework.validators import UniqueTogetherValidator
-
+from datetime import datetime
 
 from .models import Habit, Intention, Repetition, Stack
 
@@ -16,8 +16,19 @@ class HabitSerializer(serializers.HyperlinkedModelSerializer):
 
     def to_representation(self, instance):
 
+        try:
+            todays_repetition = Repetition.objects.get(
+                habit=instance, date=datetime.now().date())
+        except Repetition.DoesNotExist:
+            todays_repetition = None
+
         representation = super().to_representation(instance)
         repetitions_count = Repetition.objects.filter(habit=instance).count()
+        if todays_repetition:
+            representation['todays_repetition'] = {'id': todays_repetition.id, 'date': str(todays_repetition.date) + ' UTC', 'habit': {
+                'id': instance.id, 'title': instance.title}}
+        else:
+            representation['todays_repetition'] = None
         representation['repetitions'] = repetitions_count
         return representation
 

@@ -13,15 +13,41 @@
       </div>
     </router-link>
     <div class="habit__checkbox">
-      <input type="checkbox" class="form-check-input" />
+      <input
+        type="checkbox"
+        class="form-check-input"
+        @click.prevent="toggleRep"
+        :checked="habit.todays_repetition"
+        :disabled="repetitionLoading"
+        v-if="repetitionLoading !== habit.id"
+        title="Toggle today's repetition"
+      />
+      <span
+        v-else
+        class="spinner-border spinner-border-sm text-primary"
+        role="status"
+        aria-hidden="true"
+      ></span>
     </div>
   </div>
 </template>
 <script>
 export default {
   name: 'Habit',
+  emits: ['deleteRep', 'createRep'],
   props: {
+    repetitionLoading: Number,
     habit: { required: true, type: Object },
+  },
+  setup(props, { emit }) {
+    const toggleRep = () => {
+      if (props.habit.todays_repetition) {
+        emit('deleteRep', props.habit);
+      } else {
+        emit('createRep', props.habit);
+      }
+    };
+    return { toggleRep };
   },
 };
 </script>

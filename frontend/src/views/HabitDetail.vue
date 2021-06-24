@@ -55,15 +55,16 @@
           </submit-button>
         </div>
       </div>
-      <div v-if="habitForm.visible" class="col-lg-6 mb-5">
-        <habit-form
-          @onSubmit="updateHabit"
-          :loading="habitForm.loading"
-          :habit="habitForm.habit"
-        ></habit-form>
-      </div>
-
-      <div class="col-sm-12" v-if="!habitForm.visible">
+      <transition name="slide-in">
+        <div v-if="habitForm.visible" class="col-lg-6 mb-5">
+          <habit-form
+            @onSubmit="updateHabit"
+            :loading="habitForm.loading"
+            :habit="habitForm.habit"
+          ></habit-form>
+        </div>
+      </transition>
+      <div class="col-sm-12">
         <div
           class="
             py-2
@@ -108,8 +109,8 @@
                       <td>{{ habitForm.habit.description }}</td>
                     </tr>
                     <tr>
-                      <th scope="row">Total repetitions:</th>
-                      <td>$$$</td>
+                      <th scope="row">Repetitions:</th>
+                      <td>{{ habitForm.habit.repetitions }}</td>
                     </tr>
                     <tr>
                       <th scope="row">Created at:</th>
@@ -158,44 +159,47 @@
           Add repetition
         </toggle>
       </div>
-      <div class="col-sm-12 mb-5" v-if="repetitionForm.visible">
-        <form @submit.prevent>
-          <div class="row align-items-center justify-content-center">
-            <div class="col-sm-10 col-md-7 col-xl-4">
-              <date-picker
-                v-model="repetitionForm.date"
-                color="blue"
-                mode="date"
-                :max-date="new Date()"
+      <transition name="slide-in">
+        <div class="col-sm-12 mb-5" v-if="repetitionForm.visible">
+          <form @submit.prevent>
+            <div class="row align-items-center justify-content-center">
+              <div class="col-sm-10 col-md-7 col-xl-4">
+                <date-picker
+                  v-model="repetitionForm.date"
+                  color="blue"
+                  mode="date"
+                  :max-date="new Date()"
+                  :attributes="[{ dates: new Date(), highlight: true }]"
+                >
+                  <template v-slot="{ inputValue, inputEvents }">
+                    <input
+                      class="form-control"
+                      :value="inputValue"
+                      v-on="inputEvents"
+                      placeholder="Select a date when you repeated this habit..."
+                    />
+                  </template>
+                </date-picker>
+              </div>
+              <div
+                class="
+                  col-sm-2
+                  d-flex
+                  justify-content-sm-center justify-content-end
+                  mt-2 mt-sm-0
+                "
               >
-                <template v-slot="{ inputValue, inputEvents }">
-                  <input
-                    class="form-control"
-                    :value="inputValue"
-                    v-on="inputEvents"
-                    placeholder="Select a date when you repeated this habit..."
-                  />
-                </template>
-              </date-picker>
+                <submit-button
+                  :loading="repetitionForm.loading"
+                  color="primary"
+                  :disabled="!repetitionForm.date || !habitForm.habit"
+                  @submit="createRepetition"
+                ></submit-button>
+              </div>
             </div>
-            <div
-              class="
-                col-sm-2
-                d-flex
-                justify-content-sm-center justify-content-end
-                mt-2 mt-sm-0
-              "
-            >
-              <submit-button
-                :loading="repetitionForm.loading"
-                color="primary"
-                :disabled="!repetitionForm.date || !habitForm.habit"
-                @submit="createRepetition"
-              ></submit-button>
-            </div>
-          </div>
-        </form>
-      </div>
+          </form>
+        </div>
+      </transition>
       <div class="col-md-8 col-lg-6 col-xl-5 py-2" v-if="habitForm.habit">
         <h3 class="text-center mb-3">Repetitions</h3>
 
@@ -219,7 +223,7 @@
             ></span>
           </template>
           <template v-else>
-            Note: Click colored a date to delete its repetition.
+            Note: Click a date to delete its repetition.
           </template>
         </p>
       </div>
@@ -300,9 +304,12 @@ export default {
       const date = DateTime.fromJSDate(repetitionForm.date);
       repetitionForm.loading = true;
       try {
-        await repetitions.create({
-          date: date.toISODate(),
+        await store.dispatch('habits/createRepetition', {
           habit: habitForm.habit.id,
+          repetition: {
+            date: date.toISODate(),
+            habit: habitForm.habit.id,
+          },
         });
       } finally {
         await calendarEl.value.move({
@@ -318,7 +325,10 @@ export default {
       }
     };
     const calendarEl = ref(null);
-    const calendar = reactive({ loading: false, attributes: [] });
+    const calendar = reactive({
+      loading: false,
+      attributes: [],
+    });
     const deleteRepetition = async (day) => {
       if (
         !day.attributesMap.day ||
@@ -328,7 +338,10 @@ export default {
       }
       calendar.loading = 'Deleting';
       try {
-        await repetitions.delete(day.attributesMap.day.customData.repetition);
+        await store.dispatch('habits/deleteRepetition', {
+          habit: habitForm.habit.id,
+          pk: day.attributesMap.day.customData.repetition,
+        });
         refreshCalendarAttrs({ year: day.year, month: day.month });
       } finally {
         calendar.loading = null;
@@ -338,9 +351,12 @@ export default {
     let timeout;
     const refreshCalendarAttrs = async (page) => {
       clearTimeout(timeout);
+      calendar.loading = 'Updating';
       timeout = setTimeout(async () => {
-        calendar.loading = 'Updating';
         try {
+          if (!habitForm.habit) {
+            return;
+          }
           const res = (
             await repetitions.index({
               year: page.year,
@@ -348,6 +364,7 @@ export default {
               habit: habitForm.habit.id,
             })
           ).data;
+
           calendar.attributes = res.map((rep) => {
             const attr = {};
             attr.key = 'day';

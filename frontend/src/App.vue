@@ -1,7 +1,14 @@
 <template>
   <nav class="navbar navbar-expand navbar-dark bg-dark">
     <div class="container">
-      <a class="navbar-brand" href="#">Navbar</a>
+      <router-link
+        active-class="active"
+        to="/habits"
+        custom
+        v-slot="{ href, navigate }"
+      >
+        <a class="navbar-brand" :href="href" @click="navigate">Habitly</a>
+      </router-link>
       <ul class="navbar-nav">
         <li class="nav-item">
           <router-link class="nav-link" active-class="active" to="/"
@@ -9,8 +16,18 @@
           >
         </li>
         <li class="nav-item">
-          <router-link class="nav-link" active-class="active" to="/habits"
-            >Habits</router-link
+          <router-link
+            active-class="active"
+            to="/habits"
+            custom
+            v-slot="{ href, navigate, isActive }"
+            ><a
+              class="nav-link"
+              :href="href"
+              @click="navigate"
+              :class="{ active: isActive || currentRouteName == 'HabitDetail' }"
+              >Habits
+            </a></router-link
           >
         </li>
         <li class="nav-item">
@@ -61,11 +78,13 @@
 <script>
 import { computed, inject, provide, watchEffect } from 'vue';
 import { useStore } from 'vuex';
+import { useRoute } from 'vue-router';
 export default {
   name: 'app',
   setup() {
     const store = useStore();
     const auth = inject('auth');
+    const route = useRoute();
     watchEffect(() => {
       if (store.getters['user/isAuthenticated']) {
         store
@@ -101,6 +120,7 @@ export default {
       auth,
       loading: computed(() => store.state.user.loading),
       authenticated: computed(() => store.getters['user/isAuthenticated']),
+      currentRouteName: computed(() => route.name),
     };
   },
 };
@@ -144,5 +164,25 @@ body {
 *::-webkit-scrollbar-thumb {
   background-color: $gray-500;
   border-radius: pxToRem(6);
+}
+
+/* Vue transitions */
+.slide-in-enter-active,
+.slide-in-leave-active {
+  // transition: all 0.2s cubic-bezier(0.83, 0, 0.17, 1);
+  transition: all 0.1s ease-in-out;
+}
+.slide-in-enter-from,
+.slide-in-leave-to {
+  opacity: 0;
+  transform: translateY(pxToRem(-50px));
+}
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.2s ease-in-out;
+}
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
 }
 </style>

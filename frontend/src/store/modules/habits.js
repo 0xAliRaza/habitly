@@ -1,4 +1,6 @@
 import habits from '@/api/habits';
+import repetitions from '@/api/repetitions';
+import { DateTime } from 'luxon';
 
 export default {
   namespaced: true,
@@ -19,7 +21,10 @@ export default {
     },
     get: (state, getters) => (id) => {
       const i = getters.getIndex(id);
-      return state.models[i];
+      if (i >= 0) {
+        return state.models[i];
+      }
+      return null;
     },
   },
   mutations: {
@@ -37,6 +42,21 @@ export default {
     remove(state, payload) {
       if (payload.index >= 0) {
         state.models.splice(payload.index, 1);
+      }
+    },
+    incrementRepetitions(state, payload) {
+      if (payload.index >= 0) {
+        state.models[payload.index].repetitions++;
+      }
+    },
+    decrementRepetitions(state, payload) {
+      if (payload.index >= 0) {
+        state.models[payload.index].repetitions--;
+      }
+    },
+    updateTodaysRepetition(state, payload) {
+      if (payload.index >= 0) {
+        state.models[payload.index].todays_repetition = payload.repetition;
       }
     },
   },
@@ -67,6 +87,32 @@ export default {
       await dispatch('intentions/refresh', null, { root: true });
       await dispatch('stacks/refresh', null, { root: true });
       return i;
+    },
+    async createRepetition({ commit, getters }, payload) {
+      const repetition = (await repetitions.create(payload.repetition)).data;
+      const index = getters.getIndex(payload.habit);
+      commit('incrementRepetitions', { index });
+      if (
+        DateTime.fromJSDate(new Date(payload.repetition.date)).toISODate() ===
+        DateTime.now().toISODate()
+      ) {
+        commit('updateTodaysRepetition', {
+          repetition: repetition,
+          index: index,
+        });
+      }
+    },
+    async deleteRepetition({ commit, getters }, payload) {
+      await repetitions.delete(payload.pk);
+      const index = getters.getIndex(payload.habit);
+      commit('decrementRepetitions', { index });
+      if (
+        payload.repetition &&
+        DateTime.fromJSDate(new Date(payload.repetition.date)).toISODate() ===
+          DateTime.now().toISODate()
+      ) {
+        commit('updateTodaysRepetition', { repetition: null, index: index });
+      }
     },
   },
 };

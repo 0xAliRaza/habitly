@@ -14,14 +14,19 @@
       </div>
     </div>
 
-    <div v-if="habitFormVisible" class="row justify-content-center habit-form">
-      <div class="col-lg-6 mb-5">
-        <habit-form
-          @onSubmit="onHabitFormSubmit"
-          :loading="habitFormLoading"
-        ></habit-form>
+    <transition name="slide-in">
+      <div
+        v-if="habitFormVisible"
+        class="row justify-content-center habit-form"
+      >
+        <div class="col-lg-6 mb-5">
+          <habit-form
+            @onSubmit="onHabitFormSubmit"
+            :loading="habitFormLoading"
+          ></habit-form>
+        </div>
       </div>
-    </div>
+    </transition>
     <div class="row">
       <div class="col-sm-12">
         <div
@@ -48,7 +53,12 @@
               :key="habit.id"
               class="habit-wrapper mb-2"
             >
-              <habit :habit="habit"></habit>
+              <habit
+                :habit="habit"
+                @createRep="createHabitRep"
+                @deleteRep="deleteHabitRep"
+                :repetitionLoading="repetitionLoading"
+              ></habit>
             </div>
           </div>
           <div class="col-lg-6">
@@ -60,7 +70,12 @@
               :key="habit.id"
               class="habit-wrapper mb-2"
             >
-              <habit :habit="habit"></habit>
+              <habit
+                :habit="habit"
+                @createRep="createHabitRep"
+                @deleteRep="deleteHabitRep"
+                :repetitionLoading="repetitionLoading"
+              ></habit>
             </div>
           </div>
         </div>
@@ -76,6 +91,7 @@ import Toggle from '@/components/Toggle.vue';
 import { ref, computed } from 'vue';
 import { useStore } from 'vuex';
 import 'bootstrap/js/dist/alert';
+import { DateTime } from 'luxon';
 
 export default {
   name: 'Habits',
@@ -99,11 +115,39 @@ export default {
       habitFormVisible.value = !habitFormVisible.value;
     };
 
+    const repetitionLoading = ref(null);
+    const createHabitRep = async (habit) => {
+      repetitionLoading.value = habit.id;
+      try {
+        await store.dispatch('habits/createRepetition', {
+          habit: habit.id,
+          repetition: { date: DateTime.now().toISODate(), habit: habit.id },
+        });
+      } finally {
+        repetitionLoading.value = null;
+      }
+    };
+    const deleteHabitRep = async (habit) => {
+      repetitionLoading.value = habit.id;
+      try {
+        await store.dispatch('habits/deleteRepetition', {
+          habit: habit.id,
+          pk: habit.todays_repetition.id,
+          repetition: habit.todays_repetition,
+        });
+      } finally {
+        repetitionLoading.value = null;
+      }
+    };
+
     return {
       habitFormVisible,
       habitFormLoading,
       onHabitFormSubmit,
       toggleHabitsForm,
+      repetitionLoading,
+      createHabitRep,
+      deleteHabitRep,
       goodHabits: computed(() => store.getters['habits/good']),
       badHabits: computed(() => store.getters['habits/bad']),
       habits: computed(() => {
