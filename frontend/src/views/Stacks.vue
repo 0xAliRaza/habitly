@@ -36,10 +36,8 @@
                   @submit="onSubmit"
                 ></submit-button>
               </div>
-              <div class="col-12 mt-2" v-if="error">
-                <div class="">
-                  <p class="text-danger p-2 m-0">Error: {{ error }}</p>
-                </div>
+              <div class="col-sm-12 mt-2">
+                <errors v-if="error" :error="error"> </errors>
               </div>
             </div>
           </form>
@@ -58,9 +56,7 @@
         >
           <h1 class="">Habit Stacks</h1>
           <div class="py-3" v-if="stacks.length < 1">
-            <p class="alert alert-info p-2">
-              You haven't created any habit stacks yet.
-            </p>
+            <p class="alert alert-info p-2">No habit stacks found.</p>
           </div>
           <template v-else>
             <div class="my-2 align-self-end">
@@ -198,12 +194,13 @@ import { useStore } from 'vuex';
 import VueMultiselect from 'vue-multiselect';
 import SubmitButton from '@/components/SubmitButton.vue';
 import Toggle from '@/components/Toggle.vue';
-
+import Errors from '@/components/Errors.vue';
 export default {
   components: {
     VueMultiselect,
     SubmitButton,
     Toggle,
+    Errors,
   },
   setup() {
     const store = useStore();
@@ -218,46 +215,37 @@ export default {
       currentHabit.value = null;
       newHabit.value = null;
       formVisible.value = !formVisible.value;
+      error.value = null;
     };
-    const onSubmit = () => {
+    const onSubmit = async () => {
       error.value = null;
       submitting.value = true;
-      store
-        .dispatch('stacks/create', {
+      try {
+        await store.dispatch('stacks/create', {
           formData: {
             current_habit: currentHabit.value.id,
             new_habit: newHabit.value.id,
           },
-        })
-        .then((res) => {
-          submitting.value = false;
-          toggleForm();
-        })
-        .catch((e) => {
-          submitting.value = false;
-          console.log(
-            '%cStacks.vue line:159 e.response',
-            'color: white; background-color: #26bfa5;',
-            e.response
-          );
-          error.value =
-            e.response.data.Stack[0] ||
-            e.response.status + e.response.statusText;
         });
+      } catch (e) {
+        error.value = e;
+      } finally {
+        submitting.value = false;
+        if (!error.value) {
+          toggleForm();
+        }
+      }
     };
-    const onDelete = (pk) => {
+    const onDelete = async (pk) => {
       error.value = null;
       deleting.value = pk;
-      store
-        .dispatch('stacks/delete', {
+      try {
+        await store.dispatch('stacks/delete', {
           pk: pk,
-        })
-        .then((res) => {
-          deleting.value = null;
-        })
-        .catch((e) => {
-          deleting.value = null;
         });
+      } finally {
+        deleting.value = null;
+      }
     };
     return {
       formVisible,

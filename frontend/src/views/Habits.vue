@@ -23,6 +23,7 @@
           <habit-form
             @onSubmit="onHabitFormSubmit"
             :loading="habitFormLoading"
+            :error="habitFormError"
           ></habit-form>
         </div>
       </div>
@@ -40,9 +41,7 @@
         >
           <h1 class="">Habits</h1>
           <div class="py-3" v-if="habits.length < 1">
-            <p class="alert alert-info p-2">
-              You haven't created any habits yet.
-            </p>
+            <p class="alert alert-info p-2">No habits found.</p>
           </div>
         </div>
         <div class="row py-4" v-if="habits.length > 0">
@@ -102,24 +101,31 @@ export default {
     const store = useStore();
     const habitFormVisible = ref(false);
     const habitFormLoading = ref(false);
+    const habitFormError = ref(null);
     const onHabitFormSubmit = async (formData) => {
       habitFormLoading.value = true;
       try {
         await store.dispatch('habits/create', {
           formData: formData,
         });
+      } catch (error) {
+        habitFormError.value = error;
       } finally {
         habitFormLoading.value = false;
-        habitFormVisible.value = false;
+        if (!habitFormError.value) {
+          habitFormVisible.value = false;
+        }
       }
     };
     const toggleHabitsForm = () => {
       habitFormVisible.value = !habitFormVisible.value;
+      habitFormError.value = null;
     };
 
     const repetitionLoading = ref(null);
     const createHabitRep = async (habit) => {
       repetitionLoading.value = habit.id;
+      habitFormError.value = null;
       try {
         await store.dispatch('habits/createRepetition', {
           habit: habit.id,
@@ -150,6 +156,7 @@ export default {
       repetitionLoading,
       createHabitRep,
       deleteHabitRep,
+      habitFormError,
       goodHabits: computed(() => store.getters['habits/good']),
       badHabits: computed(() => store.getters['habits/bad']),
       habits: computed(() => {

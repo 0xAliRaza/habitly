@@ -31,7 +31,7 @@
       >
       </textarea>
     </div>
-    <div class="mb-4">
+    <div class="mb-3">
       <label for="type" class="form-label">Type</label>
       <select required class="form-select" id="type" v-model="form.type">
         <option selected disabled value>------</option>
@@ -40,7 +40,9 @@
       </select>
     </div>
 
-    <div class="d-flex justify-content-end">
+    <errors v-if="error" :error="error"> </errors>
+
+    <div class="d-flex justify-content-end mt-3">
       <button type="submit" class="btn btn-primary" :disabled="loading">
         <template v-if="loading">
           Submitting
@@ -60,8 +62,10 @@
 
 <script>
 import { reactive } from 'vue';
+import Errors from '@/components/Errors.vue';
 export default {
   name: 'HabitForm',
+  components: { Errors },
   props: {
     habit: {
       type: Object,
@@ -69,6 +73,7 @@ export default {
         return { title: '', ritual: '', description: '', type: '' };
       },
     },
+    error: Object,
     loading: { type: Boolean, required: true },
   },
   setup(props, { emit }) {

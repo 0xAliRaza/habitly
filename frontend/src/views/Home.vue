@@ -224,7 +224,7 @@ export default {
 </script>
 <style lang="scss" scoped>
 aside {
-  max-width: pxToRem(380);
+  max-width: pxToRem(420);
 }
 .list-group h5 {
   padding: pxToRem(12);

@@ -239,6 +239,12 @@
                   @submit="createRepetition"
                 ></submit-button>
               </div>
+              <div class="col-sm-8 mt-2">
+                <errors
+                  v-if="repetitionFormError"
+                  :error="repetitionFormError"
+                ></errors>
+              </div>
             </div>
           </form>
         </div>
@@ -278,6 +284,7 @@
 import Toggle from '@/components/Toggle.vue';
 import SubmitButton from '@/components/SubmitButton.vue';
 import HabitForm from '@/components/HabitForm.vue';
+import Errors from '@/components/Errors.vue';
 import { reactive, ref, computed, watch, watchEffect } from 'vue';
 import { DatePicker, Calendar } from 'v-calendar';
 import { DateTime } from 'luxon';
@@ -291,6 +298,7 @@ export default {
     DatePicker,
     Calendar,
     HabitForm,
+    Errors,
   },
   setup() {
     const route = useRoute();
@@ -338,9 +346,11 @@ export default {
       visible: false,
       loading: false,
     });
+    const repetitionFormError = ref(null);
 
     const toggleRepForm = () => {
       repetitionForm.date = null;
+      repetitionFormError.value = null;
       repetitionForm.visible = !repetitionForm.visible;
     };
 
@@ -362,17 +372,21 @@ export default {
             habit: habitForm.habit.id,
           },
         });
+      } catch (e) {
+        repetitionFormError.value = e;
       } finally {
-        await calendarEl.value.move({
-          year: date.year,
-          month: date.month,
-        });
-        refreshCalendarAttrs({
-          year: date.year,
-          month: date.month,
-        });
         repetitionForm.loading = false;
-        toggleRepForm();
+        if (!repetitionFormError.value) {
+          await calendarEl.value.move({
+            year: date.year,
+            month: date.month,
+          });
+          refreshCalendarAttrs({
+            year: date.year,
+            month: date.month,
+          });
+          toggleRepForm();
+        }
       }
     };
     const calendarEl = ref(null);
@@ -453,6 +467,7 @@ export default {
       deleting,
       deleteHabit,
       repetitionForm,
+      repetitionFormError,
       toggleRepForm,
       createRepetition,
       deleteRepetition,

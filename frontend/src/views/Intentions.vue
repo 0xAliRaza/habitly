@@ -3,7 +3,7 @@
     <div class="row justify-content-center">
       <div class="col-sm-12">
         <div class="d-flex align-items-center justify-content-end mb-4">
-          <toggle color="dark" @toggle="onFormToggle" :visibility="formVisible">
+          <toggle color="dark" @toggle="toggleForm" :visibility="formVisible">
             Create intention
           </toggle>
         </div>
@@ -54,6 +54,9 @@
                 </template>
               </date-picker>
             </div>
+            <div class="mb-3">
+              <errors v-if="formError" :error="formError"></errors>
+            </div>
             <div class="d-flex justify-content-end">
               <submit-button
                 :loading="formSubmitting"
@@ -77,9 +80,7 @@
         >
           <h1>Intentions</h1>
           <div class="py-3" v-if="intentions.length < 1">
-            <p class="alert alert-info p-2">
-              You haven't created any intentions yet.
-            </p>
+            <p class="alert alert-info p-2">No intentions found.</p>
           </div>
           <template v-else>
             <div class="my-2 align-self-end">
@@ -459,6 +460,7 @@
 import Toggle from '@/components/Toggle.vue';
 import VueMultiselect from 'vue-multiselect';
 import SubmitButton from '@/components/SubmitButton.vue';
+import Errors from '@/components/Errors.vue';
 import { ref, computed } from 'vue';
 import store from '@/store';
 import { DatePicker } from 'v-calendar';
@@ -469,6 +471,7 @@ export default {
     VueMultiselect,
     SubmitButton,
     DatePicker,
+    Errors,
   },
   setup() {
     const formInitialState = {
@@ -483,15 +486,18 @@ export default {
     const formInvalid = computed(
       () => !form.value.habit || !form.value.time || !form.value.location
     );
+    const formError = ref(null);
 
     const tableView = ref(false);
-    const onFormToggle = () => {
+    const toggleForm = () => {
       form.value = { ...formInitialState };
-      formVisible.value = !formVisible.value;
       editing.value = false;
+      formError.value = null;
+      formVisible.value = !formVisible.value;
     };
 
     const onFormSubmit = async () => {
+      formError.value = null;
       formSubmitting.value = true;
       // Make a non-reactive duplicate of form object
       const formData = { ...form.value };
@@ -506,10 +512,12 @@ export default {
           await store.dispatch('intentions/create', { formData });
         }
       } catch (e) {
-        console.log('%cIntentions.vue line:112 e', 'color: #007acc;', e);
+        formError.value = e;
       } finally {
-        onFormToggle();
         formSubmitting.value = false;
+        if (!formError.value) {
+          toggleForm();
+        }
       }
     };
 
@@ -526,8 +534,6 @@ export default {
         } else {
           await store.dispatch('intentions/delete', { pk });
         }
-      } catch (e) {
-        console.log('%cIntentions.vue line:245 e', 'color: #007acc;', e);
       } finally {
         deleting.value = null;
       }
@@ -551,8 +557,6 @@ export default {
           formData: formData,
           pk: formData.id,
         });
-      } catch (e) {
-        console.log(e);
       } finally {
         completing.value = null;
         toggleCompletedIntentions();
@@ -594,13 +598,14 @@ export default {
       formVisible,
       formSubmitting,
       formInvalid,
+      formError,
       tableView,
       onDelete,
       onEdit,
       editing,
       deleting,
       completing,
-      onFormToggle,
+      toggleForm,
       onFormSubmit,
       completeIntention,
       completedIntentionsVisible,

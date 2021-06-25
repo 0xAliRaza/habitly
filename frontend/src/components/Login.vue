@@ -15,19 +15,13 @@ export default {
   setup() {
     const store = useStore();
     const route = useRoute();
-    const router = useRouter();
     const auth = inject('auth');
+
     watchEffect(() => {
       if (!store.getters['user/isAuthenticated']) {
         auth.loginWithRedirect({
           appState: { targetUrl: route.query.redirectTo },
         });
-      } else {
-        if (route.query && route.query.redirectTo) {
-          router.push(route.query.redirectTo);
-        } else {
-          router.push({ name: 'Home' });
-        }
       }
     });
   },
