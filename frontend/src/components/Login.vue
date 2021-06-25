@@ -23,7 +23,11 @@ export default {
           appState: { targetUrl: route.query.redirectTo },
         });
       } else {
-        router.redirect(route.query.redirectTo);
+        if (route.query && route.query.redirectTo) {
+          router.push(route.query.redirectTo);
+        } else {
+          router.push({ name: 'Home' });
+        }
       }
     });
   },

@@ -48,11 +48,14 @@ class IntentionViewSet(viewsets.ModelViewSet):
         queryset = Intention.objects.all()
         queryset = queryset.filter(user_id=user_id, habit__user_id=user_id)
         completed = self.request.query_params.get('completed')
+        date = self.request.query_params.get('date')
         if completed:
             queryset = queryset.filter(done=True)
         else:
             queryset = queryset.filter(done=False)
 
+        if date:
+            queryset = queryset.filter(time__date=date)
         return queryset
 
     def perform_create(self, serializer):

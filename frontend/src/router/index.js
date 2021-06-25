@@ -7,6 +7,7 @@ const routes = [
     path: '/',
     name: 'Home',
     component: Home,
+    beforeEnter: guard,
   },
   {
     path: '/habits',

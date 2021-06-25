@@ -6,6 +6,7 @@ export default {
   namespaced: true,
 
   state: {
+    refreshed: false,
     models: [],
     errors: [],
   },
@@ -28,6 +29,9 @@ export default {
     },
   },
   mutations: {
+    markAsRefreshed(state) {
+      state.refreshed = true;
+    },
     reset(state, payload) {
       state.models = [];
     },
@@ -70,7 +74,20 @@ export default {
       commit('reset');
       const models = (await habits.index()).data;
       commit('add', { models: models });
+      commit('markAsRefreshed');
       return models;
+    },
+    async topFiveByRepetitions({ state }) {
+      const sorted = state.models.sort(
+        (a, b) => parseFloat(b.repetitions) - parseFloat(a.repetitions)
+      );
+      return sorted.slice(0, 5);
+    },
+    async topFiveByStreaks({ state }) {
+      const sorted = state.models.sort(
+        (a, b) => parseFloat(b.streak) - parseFloat(a.streak)
+      );
+      return sorted.slice(0, 5);
     },
     async create({ commit, getters }, payload) {
       const model = (await habits.create(payload.formData)).data;

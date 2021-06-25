@@ -99,10 +99,12 @@
                       <td>
                         <span
                           v-if="habitForm.habit.type == 'G'"
-                          class="badge bg-success"
+                          class="badge bg-success rounded-pill"
                           >Good</span
                         >
-                        <span v-else class="badge bg-danger">Bad</span>
+                        <span v-else class="badge bg-danger rounded-pill"
+                          >Bad</span
+                        >
                       </td>
                     </tr>
                     <tr v-if="habitForm.habit.ritual">
@@ -117,7 +119,7 @@
                       <th scope="row">Repetitions:</th>
                       <td>
                         <span
-                          class="badge"
+                          class="badge rounded-pill"
                           :class="{
                             'bg-success':
                               habitForm.habit.repetitions > 0 &&
@@ -136,7 +138,7 @@
                       <td>
                         <span
                           v-if="!needsReload"
-                          class="badge"
+                          class="badge rounded-pill"
                           :class="{
                             'bg-success':
                               habitForm.habit.streak > 0 &&
