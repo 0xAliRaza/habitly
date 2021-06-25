@@ -153,10 +153,6 @@ class IntentionSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError({'Intention': [
                 'Habit was not found.']})
 
-        # Verify if habit is good
-        if attrs['habit'].type == 'B':
-            raise serializers.ValidationError(
-                {'Intention': ['Can\'t create intention for a bad habit.']})
 
         # Check if intention already exists
         try:

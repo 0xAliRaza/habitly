@@ -92,7 +92,7 @@
               <div
                 v-for="intention in intentions"
                 :key="intention.id"
-                class="d-flex justify-content-between align-items-center mb-3"
+                class="d-flex justify-content-between align-items-start mb-3"
               >
                 <p class="m-0">
                   I will
@@ -113,6 +113,8 @@
                   class="
                     text-nowrap
                     px-2
+                    py-1
+                    ms-2
                     d-flex
                     align-items-center
                     justify-content-center
@@ -138,7 +140,7 @@
                       btn btn--intention-edit
                       d-inline-flex
                       align-items-center
-                      px-0
+                      p-0
                       ms-2
                     "
                     @click.prevent="onEdit(intention)"
@@ -166,7 +168,7 @@
                       btn btn--intention-delete
                       d-inline-flex
                       align-items-center
-                      px-0
+                      p-0
                       ms-2
                     "
                     @click.prevent="onDelete(intention.id)"
@@ -553,6 +555,7 @@ export default {
         console.log(e);
       } finally {
         completing.value = null;
+        toggleCompletedIntentions();
       }
     };
 

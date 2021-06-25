@@ -1,10 +1,7 @@
 import instance from './base';
 export default {
-  index() {
-    return instance.get('intentions/');
-  },
-  indexCompleted() {
-    return instance.get('intentions/?completed=1');
+  index(params = {}) {
+    return instance.get('intentions/', { params });
   },
   create(data) {
     return instance.post('intentions/', data);

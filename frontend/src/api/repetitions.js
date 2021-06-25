@@ -1,6 +1,6 @@
 import instance from './base';
 export default {
-  index(params) {
+  index(params = {}) {
     return instance.get(`repetitions/`, { params });
   },
   create(formData) {

@@ -1,4 +1,5 @@
 import intentions from '@/api/intentions';
+import { DateTime } from 'luxon';
 
 export default {
   namespaced: true,
@@ -16,6 +17,12 @@ export default {
     getCompletedIndex: (state) => (id) => {
       return state.completedModels.findIndex((model) => model.id === id);
     },
+    getTodays(state) {
+      return state.models.filter(
+        (model) =>
+          DateTime.fromISO(model.time).toISODate() == DateTime.now().toISODate()
+      );
+    },
   },
   mutations: {
     reset(state) {
@@ -24,6 +31,7 @@ export default {
     resetCompleted(state) {
       state.completedModels = [];
     },
+
     completedModelsRefreshed(state) {
       state.completedRefreshed = true;
     },
@@ -58,7 +66,7 @@ export default {
     },
     async refreshCompleted({ commit, state }) {
       commit('resetCompleted');
-      const models = (await intentions.indexCompleted()).data;
+      const models = (await intentions.index({ completed: 1 })).data;
       commit('addCompleted', { models: models });
       commit('completedModelsRefreshed');
 

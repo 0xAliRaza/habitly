@@ -48,7 +48,7 @@
         <div class="row py-4" v-if="habits.length > 0">
           <div class="col-lg-6 mb-4 mb-lg-0">
             <div class="text-center mb-3">
-              <h5 class="text-success">GOOD</h5>
+              <h4 class="">Good Habits</h4>
             </div>
             <div
               v-for="habit in goodHabits"
@@ -65,7 +65,7 @@
           </div>
           <div class="col-lg-6">
             <div class="text-center mb-3">
-              <h5 class="text-danger">BAD</h5>
+              <h4 class="">Bad Habits</h4>
             </div>
             <div
               v-for="habit in badHabits"
