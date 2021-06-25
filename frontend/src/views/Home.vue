@@ -11,12 +11,12 @@
             p-3
           "
         >
-          <h2>Today's Intentions</h2>
+          <h2>Intentions for Today</h2>
           <transition name="slide-in">
-            <div class="py-3" v-if="todaysIntentions.length < 1">
+            <div class="py-4" v-if="todaysIntentions.length < 1">
               <p class="alert alert-info p-2">No intentions for today!</p>
             </div>
-            <div class="py-3" v-else>
+            <div class="py-4" v-else>
               <div
                 v-for="intention in todaysIntentions"
                 :key="intention.id"
@@ -72,7 +72,7 @@
           </transition>
         </div>
       </div>
-      <aside class="my-3 col-12 col-lg-4 col-xl-4">
+      <aside class="my-3 py-3 col-12 col-lg-4">
         <div
           class="d-flex flex-column align-items-center justify-content-center"
         >
@@ -100,7 +100,7 @@
                     role="link"
                     @click="navigate"
                   >
-                    <div class="me-auto text-dark">{{ habit.title }}</div>
+                    <div class="me-auto">{{ habit.title }}</div>
                     <span
                       class="badge rounded-pill ms-2"
                       :class="{
@@ -138,7 +138,7 @@
                     role="link"
                     @click="navigate"
                   >
-                    <div class="me-auto text-dark">{{ habit.title }}</div>
+                    <div class="me-auto">{{ habit.title }}</div>
                     <span
                       class="badge rounded-pill ms-2"
                       :class="{
@@ -223,6 +223,9 @@ export default {
 };
 </script>
 <style lang="scss" scoped>
+aside {
+  max-width: pxToRem(380);
+}
 .list-group h5 {
   padding: pxToRem(12);
 }
