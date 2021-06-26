@@ -102,7 +102,6 @@ import InfoTooltip from '@/components/InfoTooltip.vue';
 import Toggle from '@/components/Toggle.vue';
 import { ref, computed } from 'vue';
 import { useStore } from 'vuex';
-import 'bootstrap/js/dist/alert';
 import { DateTime } from 'luxon';
 
 export default {
@@ -182,7 +181,6 @@ export default {
       goodHabits: computed(() => store.getters['habits/good']),
       badHabits: computed(() => store.getters['habits/bad']),
       habits: computed(() => {
-        console.log('habits>', store.state.habits.models);
         return store.state.habits.models;
       }),
     };

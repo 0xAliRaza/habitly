@@ -21,11 +21,6 @@ export default {
     },
     setAccessToken(state, payload) {
       state.access_token = payload.access_token;
-      console.log(
-        '%cuser.js line:19 payload.access_token',
-        'color: #007acc;',
-        payload.access_token
-      );
     },
     setLoading(state, payload) {
       state.loading = payload.loading;

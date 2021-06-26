@@ -76,10 +76,9 @@
 </template>
 
 <script>
-import { computed, inject, onMounted, watchEffect } from 'vue';
+import { computed, inject, watchEffect } from 'vue';
 import { useStore } from 'vuex';
 import { useRoute } from 'vue-router';
-import { Tooltip } from 'bootstrap';
 export default {
   name: 'app',
   setup() {
@@ -88,44 +87,10 @@ export default {
     const route = useRoute();
     watchEffect(() => {
       if (store.getters['user/isAuthenticated']) {
-        store
-          .dispatch('habits/refresh')
-          .catch((err) =>
-            console.log(
-              '%cerror App.vue (getHabits) line:71 ',
-              'color: red; display: block; width: 100%;',
-              err
-            )
-          );
-        store
-          .dispatch('stacks/refresh')
-          .catch((err) =>
-            console.log(
-              '%cerror App.vue (getStacks) line:79 ',
-              'color: red; display: block; width: 100%;',
-              err
-            )
-          );
-        store
-          .dispatch('intentions/refresh')
-          .catch((err) =>
-            console.log(
-              '%cerror App.vue (intentions) line:95 ',
-              'color: red; display: block; width: 100%;',
-              err
-            )
-          );
+        store.dispatch('habits/refresh').catch((err) => console.log(err));
+        store.dispatch('stacks/refresh').catch((err) => console.log(err));
+        store.dispatch('intentions/refresh').catch((err) => console.log(err));
       }
-    });
-    onMounted(() => {
-      // Initialize all boootstrap tooltips
-      var tooltipTriggerList = [].slice.call(
-        document.querySelectorAll('[data-bs-toggle="tooltip"]')
-      );
-
-      var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
-        return new Tooltip(tooltipTriggerEl);
-      });
     });
     return {
       auth,
@@ -138,7 +103,37 @@ export default {
 </script>
 <style lang="scss">
 @import url('https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300;0,400;0,600;0,700;1,300;1,400&display=swap');
-@import 'bootstrap/scss/bootstrap.scss';
+
+/* Import Bootstrap */
+
+// Configuration
+@import '~bootstrap/scss/functions';
+@import '~bootstrap/scss/variables';
+@import '~bootstrap/scss/mixins';
+@import '~bootstrap/scss/utilities';
+
+// Layout & components
+@import '~bootstrap/scss/root';
+@import '~bootstrap/scss/reboot';
+@import '~bootstrap/scss/containers';
+@import '~bootstrap/scss/grid';
+@import '~bootstrap/scss/tables';
+@import '~bootstrap/scss/forms';
+@import '~bootstrap/scss/buttons';
+@import '~bootstrap/scss/nav';
+@import '~bootstrap/scss/navbar';
+@import '~bootstrap/scss/badge';
+@import '~bootstrap/scss/alert';
+@import '~bootstrap/scss/list-group';
+@import '~bootstrap/scss/close';
+@import '~bootstrap/scss/tooltip';
+@import '~bootstrap/scss/spinners';
+
+// Helpers
+@import '~bootstrap/scss/helpers';
+
+// Utilities
+@import '~bootstrap/scss/utilities/api';
 
 html,
 body,
@@ -149,7 +144,6 @@ body,
 body {
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
     Oxygen-Sans, Ubuntu, Cantarell, 'Helvetica Neue', sans-serif;
-  // font-family: 'Open Sans', sans-serif;
   background-color: $color-body-bg;
 }
 
@@ -157,6 +151,8 @@ body {
   display: flex;
   flex-direction: column;
 }
+
+/* Customize Scrollbar */
 
 /* The emerging W3C standard
    that is currently Firefox-only */

@@ -9,6 +9,7 @@
         id="title"
         v-model="form.title"
         maxlength="50"
+        placeholder="E.g. Go for a run"
       />
     </div>
     <div class="mb-3">
@@ -32,6 +33,7 @@
         id="ritual"
         v-model="form.ritual"
         maxlength="50"
+        placeholder="E.g. Wearing running shorts"
       />
     </div>
     <div class="mb-3">
