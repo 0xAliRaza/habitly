@@ -27,7 +27,7 @@ export default {
   },
   actions: {
     async refresh({ commit, state }) {
-      commit('reset')
+      commit('reset');
       const models = (await stacks.index()).data;
       commit('add', { models: models });
       return models;

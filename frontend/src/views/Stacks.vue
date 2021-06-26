@@ -1,44 +1,74 @@
 <template>
   <div class="container">
-    <div class="row">
+    <div class="row align-items-center justify-content-center">
       <div class="d-flex justify-content-end align-items-center mb-4">
         <toggle color="dark" @toggle="toggleForm" :visibility="formVisible">
           Create stack
         </toggle>
       </div>
       <transition name="slide-in">
-        <div class="col-sm-12 mb-5" v-if="formVisible">
+        <div class="col-lg-6 mb-5" v-if="formVisible">
           <form @submit.prevent>
-            <div class="row align-items-center">
-              <div class="col-lg-5">
-                <VueMultiselect
-                  v-model="currentHabit"
-                  :options="goodHabits"
-                  placeholder="Select current habit"
-                  label="title"
-                  track-by="id"
-                />
-              </div>
-              <div class="col-lg-5 mt-2 mt-lg-0">
-                <VueMultiselect
-                  v-model="newHabit"
-                  :options="goodHabits"
-                  placeholder="Select new habit"
-                  label="title"
-                  trackBy="id"
-                />
-              </div>
-              <div class="col-lg-2 text-lg-center text-end mt-2 mt-lg-0">
-                <submit-button
-                  :loading="submitting"
-                  color="primary"
-                  :disabled="!currentHabit || !newHabit"
-                  @submit="onSubmit"
-                ></submit-button>
-              </div>
-              <div class="col-sm-12 mt-2">
-                <errors v-if="error" :error="error"> </errors>
-              </div>
+            <div class="mb-3">
+              <label
+                for="current-habit"
+                class="
+                  form-label
+                  d-inline-flex
+                  justify-content-center
+                  align-items-center
+                "
+                >Current habit
+                <info-tooltip
+                  placement="bottom"
+                  title="Existing habit that is already atomic."
+                ></info-tooltip
+              ></label>
+              <vue-multiselect
+                v-model="currentHabit"
+                :options="goodHabits"
+                placeholder="Select current habit"
+                label="title"
+                track-by="id"
+                id="current-habit"
+              />
+            </div>
+            <div class="mb-3">
+              <label
+                for="new-habit"
+                class="
+                  form-label
+                  d-inline-flex
+                  justify-content-center
+                  align-items-center
+                "
+                >New habit
+                <info-tooltip
+                  placement="right"
+                  title="New habit that you want to make atomic."
+                ></info-tooltip
+              ></label>
+              <vue-multiselect
+                v-model="newHabit"
+                :options="goodHabits"
+                placeholder="Select new habit"
+                label="title"
+                track-by="id"
+                id="new-habit"
+              />
+            </div>
+
+            <div class="mb-3">
+              <errors v-if="error" :error="error"> </errors>
+            </div>
+
+            <div class="d-flex justify-content-end">
+              <submit-button
+                :loading="submitting"
+                color="primary"
+                :disabled="!currentHabit || !newHabit"
+                @submit="onSubmit"
+              ></submit-button>
             </div>
           </form>
         </div>
@@ -54,7 +84,13 @@
             py-2
           "
         >
-          <h1 class="">Habit Stacks</h1>
+          <div class="d-flex align-itemc-center justify-content-center">
+            <h1 class="m-0">Habit Stacks</h1>
+            <info-tooltip
+              title="Assign new habits with existing habits to make them atomic."
+              placement="right"
+            ></info-tooltip>
+          </div>
           <div class="py-3" v-if="stacks.length < 1">
             <p class="alert alert-info p-2">No habit stacks found.</p>
           </div>
@@ -195,12 +231,14 @@ import VueMultiselect from 'vue-multiselect';
 import SubmitButton from '@/components/SubmitButton.vue';
 import Toggle from '@/components/Toggle.vue';
 import Errors from '@/components/Errors.vue';
+import InfoTooltip from '@/components/InfoTooltip.vue';
 export default {
   components: {
     VueMultiselect,
     SubmitButton,
     Toggle,
     Errors,
+    InfoTooltip,
   },
   setup() {
     const store = useStore();

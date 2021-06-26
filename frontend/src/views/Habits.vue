@@ -42,7 +42,13 @@
             py-2
           "
         >
-          <h1 class="">Habits</h1>
+          <div class="d-flex justify-content-center align-items-center">
+            <h1 class="m-0">Habits</h1>
+            <info-tooltip
+              title="Your existing habits."
+              placement="right"
+            ></info-tooltip>
+          </div>
           <div class="py-3" v-if="habits.length < 1">
             <p class="alert alert-info p-2">No habits found.</p>
           </div>
@@ -92,6 +98,7 @@
 import Yayy from '@/components/Yayy.vue';
 import Habit from '@/components/Habit.vue';
 import HabitForm from '@/components/HabitForm.vue';
+import InfoTooltip from '@/components/InfoTooltip.vue';
 import Toggle from '@/components/Toggle.vue';
 import { ref, computed } from 'vue';
 import { useStore } from 'vuex';
@@ -100,7 +107,7 @@ import { DateTime } from 'luxon';
 
 export default {
   name: 'Habits',
-  components: { Yayy, Habit, HabitForm, Toggle },
+  components: { Yayy, Habit, HabitForm, Toggle, InfoTooltip },
   setup() {
     const store = useStore();
     const habitFormVisible = ref(false);

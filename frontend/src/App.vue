@@ -76,9 +76,10 @@
 </template>
 
 <script>
-import { computed, inject, provide, watchEffect } from 'vue';
+import { computed, inject, onMounted, watchEffect } from 'vue';
 import { useStore } from 'vuex';
 import { useRoute } from 'vue-router';
+import { Tooltip } from 'bootstrap';
 export default {
   name: 'app',
   setup() {
@@ -115,6 +116,16 @@ export default {
             )
           );
       }
+    });
+    onMounted(() => {
+      // Initialize all boootstrap tooltips
+      var tooltipTriggerList = [].slice.call(
+        document.querySelectorAll('[data-bs-toggle="tooltip"]')
+      );
+
+      var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+        return new Tooltip(tooltipTriggerEl);
+      });
     });
     return {
       auth,

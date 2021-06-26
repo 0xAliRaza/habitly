@@ -15,7 +15,20 @@
         <div v-if="formVisible" class="col-lg-6 mb-5">
           <form @submit.prevent>
             <div class="mb-3">
-              <label for="habit" class="form-label">Habit</label>
+              <label
+                for="habit"
+                class="
+                  form-label
+                  d-inline-flex
+                  justify-content-center
+                  align-items-center
+                "
+                >Habit
+                <info-tooltip
+                  title="Habit that you intend to repeat."
+                  placement="right"
+                ></info-tooltip>
+              </label>
               <vue-multiselect
                 v-model="form.habit"
                 :options="goodHabits"
@@ -27,7 +40,20 @@
             </div>
 
             <div class="mb-3">
-              <label for="location" class="form-label">Location</label>
+              <label
+                for="location"
+                class="
+                  form-label
+                  d-inline-flex
+                  justify-content-center
+                  align-items-center
+                "
+                >Location
+                <info-tooltip
+                  title="Location where you will perform this habit."
+                  placement="right"
+                ></info-tooltip>
+              </label>
               <input
                 required
                 type="text"
@@ -39,7 +65,20 @@
               />
             </div>
             <div class="mb-3">
-              <label for="time" class="form-label">Date and Time</label>
+              <label
+                for="time"
+                class="
+                  form-label
+                  d-inline-flex
+                  justify-content-center
+                  align-items-center
+                "
+                >Date and Time
+                <info-tooltip
+                  title="Time when you will perform this habit."
+                  placement="right"
+                ></info-tooltip>
+              </label>
               <date-picker
                 id="time"
                 v-model="form.time"
@@ -81,7 +120,13 @@
             justify-content-center
           "
         >
-          <h1>Intentions</h1>
+          <div class="d-flex align-itemc-center justify-content-center">
+            <h1 class="m-0">Intentions</h1>
+            <info-tooltip
+              title="Tasks that you intend to perform in the near future."
+              placement="right"
+            ></info-tooltip>
+          </div>
           <div class="py-3" v-if="intentions.length < 1">
             <p class="alert alert-info p-2">No intentions found.</p>
           </div>
@@ -469,6 +514,7 @@ import { ref, computed } from 'vue';
 import store from '@/store';
 import { DatePicker } from 'v-calendar';
 import { DateTime } from 'luxon';
+import InfoTooltip from '@/components/InfoTooltip.vue';
 export default {
   components: {
     Yayy,
@@ -477,6 +523,7 @@ export default {
     SubmitButton,
     DatePicker,
     Errors,
+    InfoTooltip,
   },
   setup() {
     const formInitialState = {

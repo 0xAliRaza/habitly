@@ -14,7 +14,13 @@
             p-3
           "
         >
-          <h2>Intentions for Today</h2>
+          <div class="d-flex align-items-center justify-content-center mb-2">
+            <h2 class="m-0">Intentions for Today</h2>
+            <info-tooltip
+              title="Intentions that you have planned for today."
+              placement="right"
+            ></info-tooltip>
+          </div>
           <transition name="slide-in">
             <div class="py-4" v-if="todaysIntentions.length < 1">
               <p class="alert alert-info p-2">No intentions for today!</p>
@@ -81,9 +87,22 @@
         >
           <transition name="fade">
             <ul class="list-group" v-if="topRepeated.length > 0">
-              <h5 class="text-center list-group-item m-0 bg-light text-dark">
-                Top Repeated Habits
-              </h5>
+              <div
+                class="
+                  d-flex
+                  align-items-center
+                  justify-content-center
+                  list-group-item
+                  bg-light
+                  sidebar-card-header
+                "
+              >
+                <h5 class="text-dark m-0">Top Repeated Habits</h5>
+                <info-tooltip
+                  title="Habits that have the most repetitions."
+                  placement="bottom"
+                ></info-tooltip>
+              </div>
               <template v-for="habit in topRepeated" :key="habit.id">
                 <router-link
                   v-if="habit.repetitions > 0"
@@ -119,9 +138,22 @@
           </transition>
           <transition name="fade">
             <ul class="list-group mt-3" v-if="topStreaked.length > 0">
-              <h5 class="text-center list-group-item m-0 bg-light text-dark">
-                Top Streaked Habits
-              </h5>
+              <div
+                class="
+                  sidebar-card-header
+                  d-flex
+                  align-items-center
+                  justify-content-center
+                  list-group-item
+                  bg-light
+                "
+              >
+                <h5 class="m-0 text-dark">Top Streaked Habits</h5>
+                <info-tooltip
+                  title="Habits that have the longeset streak."
+                  placement="top"
+                ></info-tooltip>
+              </div>
               <template v-for="habit in topStreaked" :key="habit.id">
                 <router-link
                   v-if="habit.streak > 0"
@@ -166,11 +198,13 @@ import { useStore } from 'vuex';
 import { computed, ref, watchEffect } from '@vue/runtime-core';
 import { DateTime } from 'luxon';
 import Yayy from '@/components/Yayy.vue';
+import InfoTooltip from '@/components/InfoTooltip.vue';
 
 export default {
   name: 'Home',
   components: {
     Yayy,
+    InfoTooltip,
   },
   setup() {
     const store = useStore();
@@ -245,8 +279,8 @@ export default {
 aside {
   max-width: pxToRem(420);
 }
-.list-group h5 {
-  padding: pxToRem(12);
+.sidebar-card-header {
+  padding: pxToRem(12) !important;
 }
 .intention-done-checkbox {
   border-color: $gray-400;

@@ -1,5 +1,5 @@
 <template>
-  <form @submit.prevent="onSubmit">
+  <form @submit.prevent>
     <div class="mb-3">
       <label for="title" class="form-label">Title</label>
       <input
@@ -12,7 +12,20 @@
       />
     </div>
     <div class="mb-3">
-      <label for="ritual" class="form-label">Ritual</label>
+      <label
+        for="ritual"
+        class="
+          form-label
+          d-inline-flex
+          justify-content-center
+          align-items-center
+        "
+        >Ritual
+        <info-tooltip
+          placement="right"
+          title="Action that your habit starts with."
+        ></info-tooltip>
+      </label>
       <input
         type="text"
         class="form-control"
@@ -39,21 +52,16 @@
         <option value="B">Bad</option>
       </select>
     </div>
+    <div class="mb-3">
+      <errors v-if="error" :error="error"> </errors>
+    </div>
 
-    <errors v-if="error" :error="error"> </errors>
-
-    <div class="d-flex justify-content-end mt-3">
-      <button type="submit" class="btn btn-primary" :disabled="loading">
-        <template v-if="loading">
-          Submitting
-          <span
-            class="spinner-border spinner-border-sm ms-1"
-            role="status"
-            aria-hidden="true"
-          ></span>
-        </template>
-        <template v-else> Submit </template>
-      </button>
+    <div class="d-flex justify-content-end">
+      <submit-button
+        :loading="loading"
+        color="primary"
+        @submit="onSubmit"
+      ></submit-button>
     </div>
   </form>
 </template>
@@ -63,9 +71,11 @@
 <script>
 import { reactive } from 'vue';
 import Errors from '@/components/Errors.vue';
+import SubmitButton from '@/components/SubmitButton.vue';
+import InfoTooltip from './InfoTooltip.vue';
 export default {
   name: 'HabitForm',
-  components: { Errors },
+  components: { Errors, InfoTooltip, SubmitButton },
   props: {
     habit: {
       type: Object,
