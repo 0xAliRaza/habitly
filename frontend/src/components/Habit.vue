@@ -42,6 +42,7 @@ export default {
   setup(props, { emit }) {
     const toggleRep = () => {
       if (props.habit.todays_repetition) {
+        // Delete only if already exists
         emit('deleteRep', props.habit);
       } else {
         emit('createRep', props.habit);

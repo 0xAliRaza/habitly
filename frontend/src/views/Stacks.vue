@@ -1,6 +1,7 @@
 <template>
   <div class="container">
     <div class="row align-items-center justify-content-center">
+      <!-- CREATE STACK -->
       <div class="d-flex justify-content-end align-items-center mb-4">
         <toggle color="dark" @toggle="toggleForm" :visibility="formVisible">
           Create stack
@@ -73,7 +74,9 @@
           </form>
         </div>
       </transition>
+      <!--/ CREATE STACK -->
 
+      <!-- INDEX STACKS -->
       <div class="col-sm-12">
         <div
           class="
@@ -101,6 +104,7 @@
                 <option :value="true">Table</option>
               </select>
             </div>
+            <!-- PARAGRAPH VIEW -->
             <div v-if="!tableView" class="py-3">
               <div
                 v-for="stack in stacks"
@@ -156,6 +160,9 @@
                 </button>
               </div>
             </div>
+            <!--/ PARAGRAPH VIEW -->
+
+            <!-- TABLE VIEW -->
             <div class="table-responsive py-3" v-else>
               <table class="table text-center table-bordered">
                 <thead class="">
@@ -218,9 +225,11 @@
                 </tbody>
               </table>
             </div>
+            <!--/ TABLE VIEW -->
           </template>
         </div>
       </div>
+      <!--/ INDEX STACKS -->
     </div>
   </div>
 </template>

@@ -4,6 +4,7 @@
   </transition>
   <div class="container">
     <div class="row justify-content-center">
+      <!-- CREATE INTENTION -->
       <div class="col-sm-12">
         <div class="d-flex align-items-center justify-content-end mb-4">
           <toggle color="dark" @toggle="toggleForm" :visibility="formVisible">
@@ -110,6 +111,8 @@
           </form>
         </div>
       </transition>
+      <!--/ CREATE INTENTION -->
+
       <div class="col-sm-12">
         <div
           class="
@@ -130,6 +133,8 @@
           <div class="py-3" v-if="intentions.length < 1">
             <p class="alert alert-info p-2">No intentions found.</p>
           </div>
+
+          <!-- INDEX INTENTIONS -->
           <template v-else>
             <div class="my-2 align-self-end">
               <select v-model="tableView" class="form-select">
@@ -137,6 +142,7 @@
                 <option :value="true">Table</option>
               </select>
             </div>
+            <!-- PARAGRAPH VIEW -->
             <div v-if="!tableView" class="py-3">
               <div
                 v-for="intention in intentions"
@@ -252,6 +258,9 @@
                 </div>
               </div>
             </div>
+            <!--/ PARAGRAPH VIEW -->
+
+            <!-- TABLE VIEW -->
             <div class="table-responsive py-3" v-else>
               <table class="table text-center table-bordered">
                 <thead class="">
@@ -371,7 +380,12 @@
                 </tbody>
               </table>
             </div>
+            <!-- TABLE VIEW -->
           </template>
+          <!--/ INDEX INTENTIONS  -->
+
+
+          <!-- COMPLETED INTENTIONS -->
           <div class="my-2 align-self-start">
             <button
               class="
@@ -498,6 +512,7 @@
               </div>
             </template>
           </transition>
+          <!--/ COMPLETED INTENTIONS -->
         </div>
       </div>
     </div>
@@ -542,6 +557,7 @@ export default {
 
     const tableView = ref(false);
     const toggleForm = () => {
+      // Reset form everytime it toggles
       form.value = { ...formInitialState };
       editing.value = false;
       formError.value = null;
@@ -549,13 +565,17 @@ export default {
     };
 
     const onFormSubmit = async () => {
+      // Reset errors (if any)
       formError.value = null;
+
       formSubmitting.value = true;
+
       // Make a non-reactive duplicate of form object
       const formData = { ...form.value };
       formData.habit = formData.habit.id;
       try {
         if (formData.id) {
+          // If id exsits then update existing habit
           await store.dispatch('intentions/update', {
             formData: formData,
             pk: formData.id,
@@ -603,7 +623,10 @@ export default {
       const formData = { ...intention };
       completing.value = formData.id;
       formData.habit = formData.habit.id;
+
+      // This fat function, just for this one property 🙄
       formData.done = true;
+      
       let error;
       try {
         await store.dispatch('intentions/update', {

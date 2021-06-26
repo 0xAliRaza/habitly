@@ -20,9 +20,12 @@ export default {
     bad(state) {
       return state.models.filter((model) => model.type === 'B');
     },
+
+    // Get model's index
     getIndex: (state) => (id) => {
       return state.models.findIndex((model) => model.id == id);
     },
+    // Get model
     get: (state, getters) => (id) => {
       const i = getters.getIndex(id);
       if (i >= 0) {
@@ -90,13 +93,21 @@ export default {
     },
     async refreshTopRepeated({ state, commit }) {
       const models = state.models;
+
+      // Sort models in descending order based on repetitions
       let sorted = models.sort((a, b) => b.repetitions - a.repetitions);
+
+      // Get top five
       sorted = sorted.slice(0, 5);
       commit('setTopRepeated', { models: sorted });
     },
     async refreshTopStreaked({ state, commit }) {
       const models = state.models;
+
+      // Sort models in descending order based on streak
       let sorted = models.sort((a, b) => b.streak - a.streak);
+
+      // Get top five
       sorted = sorted.slice(0, 5);
       commit('setTopStreaked', { models: sorted });
     },
@@ -126,8 +137,7 @@ export default {
       const index = getters.getIndex(payload.habit);
 
       if (
-        new Date(payload.repetition.date).toISOString().substring(0, 10) ===
-        new Date().toISOString().substring(0, 10)
+        new Date(payload.repetition.date).getDate() === new Date().getDate()
       ) {
         commit('updateTodaysRepetition', {
           repetition: repetition,
@@ -142,8 +152,7 @@ export default {
       const index = getters.getIndex(payload.habit);
       if (
         payload.repetition &&
-        new Date(payload.repetition.date).toISOString().substring(0, 10) ===
-          new Date().toISOString().substring(0, 10)
+        new Date(payload.repetition.date).getDate() === new Date().getDate()
       ) {
         commit('updateTodaysRepetition', { repetition: null, index: index });
       } else {

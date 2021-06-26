@@ -8,7 +8,7 @@ const instance = axios.create({
   },
 });
 
-// Add a request interceptor
+// Request interceptor to append jwt token from store on every request
 instance.interceptors.request.use(function (config) {
   if (store.getters['user/isAuthenticated']) {
     config.headers.Authorization = `Bearer ${store.state.user.access_token}`;

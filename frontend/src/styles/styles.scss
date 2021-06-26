@@ -1,6 +1,8 @@
 @import 'functions';
 @import 'variables';
 @import 'mixins';
+
+// Just to access some default bootstrap variables while styling components
 @import '~bootstrap/scss/functions';
 @import '~bootstrap/scss/variables';
 @import '~bootstrap/scss/mixins';

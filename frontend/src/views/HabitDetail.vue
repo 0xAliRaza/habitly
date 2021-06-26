@@ -1,6 +1,7 @@
 <template>
   <div class="container">
     <div class="row justify-content-center">
+      <!-- EDIT HABIT -->
       <template v-if="habitForm.habit">
         <div class="col-sm-12">
           <div class="d-flex align-items-center justify-content-end mb-4">
@@ -69,6 +70,9 @@
           </div>
         </transition>
       </template>
+      <!--/ EDIT HABIT -->
+
+      <!-- HABIT DETAILS -->
       <div class="col-sm-12">
         <div
           class="
@@ -182,6 +186,8 @@
           </template>
         </div>
       </div>
+      <!--/ HABIT DETAILS -->
+
       <div
         class="
           d-flex
@@ -202,6 +208,8 @@
           Add repetition
         </toggle>
       </div>
+
+      <!-- ADD REPETITION -->
       <transition name="slide-in">
         <div class="col-sm-12 mb-5" v-if="repetitionForm.visible">
           <form @submit.prevent>
@@ -249,9 +257,12 @@
           </form>
         </div>
       </transition>
+      <!--/ ADD REPETITION -->
+
       <div class="col-md-8 col-lg-6 col-xl-5 py-2" v-if="habitForm.habit">
         <h3 class="text-center mb-3">Repetitions</h3>
 
+        <!-- SHOW ALL REPETITION -->
         <calendar
           ref="calendarEl"
           class="calendar"
@@ -262,6 +273,9 @@
           @dayclick="deleteRepetition"
         >
         </calendar>
+        <!--/ SHOW ALL REPETITIONS -->
+
+        <!-- LOADING MESSAGE -->
         <p class="calendar__loading">
           <template v-if="calendar.loading">
             {{ calendar.loading }}
@@ -275,6 +289,7 @@
             Note: Click a date to delete its repetition.
           </template>
         </p>
+        <!--/ LOADING MESSAGE -->
       </div>
     </div>
   </div>
@@ -306,12 +321,19 @@ export default {
     const store = useStore();
     let pk = computed(() => route.params.id);
     const habitForm = reactive({ habit: null, visible: false, loading: false });
+
+    // Just to tell user that habit streak needs to recalculated by the server
+    const needsReload = ref(false);
+
+    // Watch for route primary-key (:id) param
     watchEffect(() => {
       if (pk.value) {
+        // Get habit using the given param id
         const habit = store.getters['habits/get'](pk.value);
         if (habit) {
           habitForm.habit = habit;
         } else {
+          // Redirect to all habits if not found
           router.push({ name: 'Habits' });
         }
       }
@@ -320,6 +342,8 @@ export default {
       if (!habitForm.habit) {
         return;
       }
+
+      // Get date in YYYY-MM-DD format
       const today = new Date().toISOString().substring(0, 10);
       habitForm.loading = true;
       try {
@@ -328,6 +352,7 @@ export default {
           formData: formData,
         });
       } finally {
+        // Refresh all repetitions calendar
         await refreshCalendarAttrs({ year: today.year, month: today.month });
         habitForm.loading = false;
         habitForm.visible = false;
@@ -354,13 +379,12 @@ export default {
       repetitionForm.visible = !repetitionForm.visible;
     };
 
-    const needsReload = ref(false);
-
     const createRepetition = async () => {
       // If Form is empty, return
       if (!repetitionForm.date || !habitForm.habit) {
         return;
       }
+      repetitionFormError.value = null;
       needsReload.value = true;
       const date = new Date(repetitionForm.date);
       repetitionForm.loading = true;
@@ -368,6 +392,7 @@ export default {
         await store.dispatch('habits/createRepetition', {
           habit: habitForm.habit.id,
           repetition: {
+            // Convert date to YYYY-MM-DD format
             date: date.toISOString().substring(0, 10),
             habit: habitForm.habit.id,
           },
@@ -377,18 +402,23 @@ export default {
       } finally {
         repetitionForm.loading = false;
         if (!repetitionFormError.value) {
+          // Move repetitions calendar to the recently mutated page
           await calendarEl.value.move({
             year: date.getFullYear(),
             month: date.getMonth() + 1,
           });
+
+          // Refresh all the repetitions to update calendar
           refreshCalendarAttrs({
             year: date.getFullYear(),
+            // Increment month by one because `.getMonth()` starts from 0
             month: date.getMonth() + 1,
           });
           toggleRepForm();
         }
       }
     };
+
     const calendarEl = ref(null);
     const calendar = reactive({
       loading: false,
@@ -408,14 +438,18 @@ export default {
           habit: habitForm.habit.id,
           pk: day.attributesMap.day.customData.repetition,
         });
+
+        // Get new repetitions after deletion
         await refreshCalendarAttrs({ year: day.year, month: day.month }, 1500);
       } finally {
         calendar.loading = null;
       }
     };
 
+    // Timeout to create a debounce effect
     let timeout;
     const refreshCalendarAttrs = async (page, defaultTimeoutMs = 500) => {
+      // clear existing timeout so request don't get sent multiple times
       clearTimeout(timeout);
       calendar.loading = 'Updating';
       timeout = setTimeout(async () => {
@@ -435,11 +469,12 @@ export default {
           calendar.attributes = res.map((rep) => {
             const attr = {};
             attr.key = 'day';
-            attr.dates = new Date(rep.date);
+            attr.dates = rep.date;
             attr.highlight = {
               color: habitForm.habit.type == 'G' ? 'green' : 'red',
               fillMode: 'solid',
             };
+            // Add repetition's id for later use while deletion
             attr.customData = { repetition: rep.id };
             return attr;
           });

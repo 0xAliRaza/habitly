@@ -4,6 +4,7 @@
   </transition>
   <div class="container">
     <div class="row justify-content-center">
+      <!-- SHOW TODAY'S INTENTIONS -->
       <div class="col-12 col-lg-8 my-3">
         <div
           class="
@@ -81,10 +82,13 @@
           </transition>
         </div>
       </div>
+      <!--/ SHOW TODAY'S INTENTIONS -->
+
       <aside class="my-3 py-3 col-12 col-lg-4">
         <div
           class="d-flex flex-column align-items-center justify-content-center"
         >
+          <!-- TOP FIVE REPEATED HABITS -->
           <transition name="fade">
             <ul class="list-group" v-if="topRepeated.length > 0">
               <div
@@ -136,6 +140,9 @@
               </template>
             </ul>
           </transition>
+          <!--/ TOP FIVE REPEATED HABITS -->
+
+          <!-- TOP FIVE STREAKED HABITS -->
           <transition name="fade">
             <ul class="list-group mt-3" v-if="topStreaked.length > 0">
               <div
@@ -187,6 +194,7 @@
               </template>
             </ul>
           </transition>
+          <!-- TOP FIVE STREAKED HABITS -->
         </div>
       </aside>
     </div>
@@ -210,7 +218,10 @@ export default {
     const store = useStore();
     const topRepeated = computed(() => store.state.habits.topRepeated);
     const topStreaked = computed(() => store.state.habits.topStreaked);
+
+    // Wait for habits to refresh
     watchEffect(() => {
+      // Refresh only once
       if (
         store.state.habits.refreshed &&
         !store.state.habits.topRepeatedRefreshed &&
@@ -228,6 +239,7 @@ export default {
     const completing = ref(null);
     const yayy = ref(false);
     const completeIntention = async (intention) => {
+      // Don't want any further reactivity bugs so, being careful, derefrence intentions obj 😛
       const formData = { ...intention };
       completing.value = formData.id;
       formData.habit = formData.habit.id;

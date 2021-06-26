@@ -3,6 +3,7 @@
     <yayy v-show="yayy"></yayy>
   </transition>
   <div class="container">
+    <!-- CREATE HABIT -->
     <div class="row">
       <div class="col-sm-12">
         <div class="d-flex justify-content-end align-items-center mb-4">
@@ -31,6 +32,9 @@
         </div>
       </div>
     </transition>
+    <!--/ CREATE HABIT -->
+
+    <!-- INDEX HABITS -->
     <div class="row">
       <div class="col-sm-12">
         <div
@@ -54,6 +58,7 @@
           </div>
         </div>
         <div class="row py-4" v-if="habits.length > 0">
+          <!-- INDEX GOOD HABITS -->
           <div class="col-lg-6 mb-4 mb-lg-0">
             <div class="text-center mb-3">
               <h4 class="">Good Habits</h4>
@@ -71,6 +76,9 @@
               ></habit>
             </div>
           </div>
+          <!--/ INDEX GOOD HABITS -->
+
+          <!-- INDEX BAD HABITS -->
           <div class="col-lg-6">
             <div class="text-center mb-3">
               <h4 class="">Bad Habits</h4>
@@ -88,9 +96,11 @@
               ></habit>
             </div>
           </div>
+          <!--/ INDEX BAD HABITS -->
         </div>
       </div>
     </div>
+    <!-- INDEX HABITS -->
   </div>
 </template>
 <style lang="scss" scoped></style>
@@ -141,6 +151,7 @@ export default {
         await store.dispatch('habits/createRepetition', {
           habit: habit.id,
           repetition: {
+            // Get today(UTC) in YYYY-MM-DD fromat
             date: new Date().toISOString().substring(0, 10),
             habit: habit.id,
           },
@@ -150,6 +161,7 @@ export default {
       } finally {
         repetitionLoading.value = null;
         if (!error && habit.type == 'G') {
+          // Show success message only when a good habit is completed
           yayy.value = true;
           setTimeout(() => {
             yayy.value = false;

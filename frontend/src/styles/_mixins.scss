@@ -1,8 +1,0 @@
-// @mixin success-gradient {
-//   background: #00f260; /* fallback for old browsers */
-//   background: linear-gradient(to right, #0575e6, #00f260);
-// }
-@mixin success-gradient {
-  background: $color-green; /* fallback for old browsers */
-  background: linear-gradient(to right, $color-primary, $color-green);
-}

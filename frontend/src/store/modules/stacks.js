@@ -26,13 +26,13 @@ export default {
     },
   },
   actions: {
-    async refresh({ commit, state }) {
+    async refresh({ commit }) {
       commit('reset');
       const models = (await stacks.index()).data;
       commit('add', { models: models });
       return models;
     },
-    async create({ commit, getters }, payload) {
+    async create({ commit }, payload) {
       const model = (await stacks.create(payload.formData)).data;
       commit('add', { models: [model] });
       return model;

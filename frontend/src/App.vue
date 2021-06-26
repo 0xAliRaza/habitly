@@ -98,11 +98,16 @@ export default {
     const store = useStore();
     const auth = inject('auth');
     const route = useRoute();
+
+    /* Navbar inner div ref to make it collapsable */
     const navbarMenu = ref(null);
+    
+    /* Bootstrap Collapse instance */
     const bsCollapse = ref(null);
     const toggleNavbar = () => {
       bsCollapse.value.toggle();
     };
+    
     watchEffect(() => {
       if (store.getters['user/isAuthenticated']) {
         store.dispatch('habits/refresh').catch((err) => console.log(err));
@@ -112,6 +117,7 @@ export default {
     });
 
     onMounted(() => {
+      // Make navbar collapsable using bootstrap's `Collapse`
       bsCollapse.value = new Collapse(navbarMenu.value, { toggle: false });
     });
     return {

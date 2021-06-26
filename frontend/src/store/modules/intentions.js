@@ -18,9 +18,7 @@ export default {
     },
     getTodays(state) {
       return state.models.filter(
-        (model) =>
-          new Date(model.time).toISOString().substring(0, 10) ==
-          new Date().toISOString().substring(0, 10)
+        (model) => new Date(model.time).getDate() == new Date().getDate()
       );
     },
   },

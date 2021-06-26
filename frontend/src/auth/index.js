@@ -5,6 +5,7 @@ export const setupAuth = async function (options, callbackRedirect) {
   store.commit('user/setLoading', { loading: true });
   let client;
   try {
+    /* Crate Auth0 client using provided config */
     client = await createAuth0Client({ ...options });
   } catch (e) {
     alert('Connection error occurred!');
@@ -29,6 +30,8 @@ export const setupAuth = async function (options, callbackRedirect) {
   } finally {
     // Initialize our internal authentication state
     const authenticated = await client.isAuthenticated();
+
+    // Mutate vuex store
     store.commit('user/setAuthentication', { authenticated: authenticated });
     if (authenticated === true) {
       const user = await client.getUser();
@@ -36,9 +39,12 @@ export const setupAuth = async function (options, callbackRedirect) {
       const access_token = await client.getTokenSilently();
       store.commit('user/setAccessToken', { access_token: access_token });
     } else {
+      // If user is not authenticated, reset all the store data related to the user
       store.commit('user/resetAuthentication');
     }
     store.commit('user/setLoading', { loading: false });
   }
+
+  // Return auth0 spa-js client
   return client;
 };
