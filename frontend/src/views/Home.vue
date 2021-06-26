@@ -167,12 +167,16 @@ export default {
   name: 'Home',
   setup() {
     const store = useStore();
-    const topRepeated = ref([]);
-    const topStreaked = ref([]);
-    watchEffect(async () => {
-      if (store.state.habits.refreshed) {
-        topRepeated.value = await store.dispatch('habits/topFiveByRepetitions');
-        topStreaked.value = await store.dispatch('habits/topFiveByStreaks');
+    const topRepeated = computed(() => store.state.habits.topRepeated);
+    const topStreaked = computed(() => store.state.habits.topStreaked);
+    watchEffect(() => {
+      if (
+        store.state.habits.refreshed &&
+        !store.state.habits.topRepeatedRefreshed &&
+        !store.state.habits.topStreakedRefreshed
+      ) {
+        store.dispatch('habits/refreshTopRepeated');
+        store.dispatch('habits/refreshTopStreaked');
       }
     });
 
@@ -181,7 +185,6 @@ export default {
     );
 
     const completing = ref(null);
-
     const completeIntention = async (intention) => {
       const formData = { ...intention };
       completing.value = formData.id;
@@ -233,8 +236,5 @@ aside {
   border-color: $gray-400;
   margin: 0;
   cursor: pointer;
-  // height: 1.1em;
-  // width: 1.1em;
-  // border-radius: 0.27em;
 }
 </style>

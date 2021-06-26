@@ -7,7 +7,11 @@ export default {
 
   state: {
     refreshed: false,
+    topRepeatedRefreshed: false,
+    topStreakedRefreshed: false,
     models: [],
+    topRepeated: [],
+    topStreaked: [],
     errors: [],
   },
   getters: {
@@ -68,6 +72,14 @@ export default {
         }
       }
     },
+    setTopRepeated(state, payload) {
+      state.topRepeated = payload.models;
+      state.topRepeatedRefreshed = true;
+    },
+    setTopStreaked(state, payload) {
+      state.topStreaked = payload.models;
+      state.topRepeatedRefreshed = true;
+    },
   },
   actions: {
     async refresh({ commit, state }) {
@@ -77,17 +89,18 @@ export default {
       commit('markAsRefreshed');
       return models;
     },
-    async topFiveByRepetitions({ state }) {
-      const sorted = state.models.sort(
-        (a, b) => parseFloat(b.repetitions) - parseFloat(a.repetitions)
-      );
-      return sorted.slice(0, 5);
+    async refreshTopRepeated({ state, commit }) {
+      const models = state.models;
+      let sorted = models.sort((a, b) => b.repetitions - a.repetitions);
+      sorted = sorted.slice(0, 5);
+      commit('setTopRepeated', { models: sorted });
+
     },
-    async topFiveByStreaks({ state }) {
-      const sorted = state.models.sort(
-        (a, b) => parseFloat(b.streak) - parseFloat(a.streak)
-      );
-      return sorted.slice(0, 5);
+    async refreshTopStreaked({ state, commit }) {
+      const models = state.models;
+      let sorted = models.sort((a, b) => b.streak - a.streak);
+      sorted = sorted.slice(0, 5);
+      commit('setTopStreaked', { models: sorted });
     },
     async create({ commit, getters }, payload) {
       const model = (await habits.create(payload.formData)).data;
