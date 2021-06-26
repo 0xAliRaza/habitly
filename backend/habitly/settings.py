@@ -76,8 +76,12 @@ WSGI_APPLICATION = 'habitly.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'habitly',
+        'USER': 'root',
+        'PASSWORD': 'password',  # Default password in `docker-compose.yml` is 'password'
+        'HOST': 'db',   # Docker container's name is 'db'
+        'PORT': '3306',
     }
 }
 
@@ -126,14 +130,12 @@ STATIC_URL = '/static/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 
-
-
 REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': (
         'rest_framework.permissions.IsAuthenticated',
     ),
     'DEFAULT_AUTHENTICATION_CLASSES': (
-       'rest_framework_jwt.authentication.JSONWebTokenAuthentication',
+        'rest_framework_jwt.authentication.JSONWebTokenAuthentication',
     ),
 }
 

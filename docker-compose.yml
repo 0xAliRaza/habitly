@@ -1,0 +1,66 @@
+version: "3.7"
+services:
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: habitly-frontend
+    restart: unless-stopped
+    ports:
+      - 8080:8080
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: habitly-backend
+    restart: unless-stopped
+    command: python manage.py runserver 0.0.0.0:8000
+    ports:
+      - 8000:8000
+    working_dir: /app/
+    depends_on:
+      - db
+    volumes:
+      - ./backend:/app
+    networks:
+      - habitly
+
+  db:
+    image: mysql:5.7
+    container_name: habitly-db
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: 'habitly'
+      MYSQL_ROOT_PASSWORD: 'password'
+      MYSQL_PASSWORD: 'password'
+      MYSQL_USER: 'root'
+      SERVICE_TAGS: dev
+      SERVICE_NAME: mysql
+    volumes:
+      - db:/var/lib/mysql
+    ports:
+      - 3600:3600
+    networks:
+      - habitly
+
+  phpmyadmin:
+      image: phpmyadmin
+      container_name: phpmyadmin
+      environment:
+      - PMA_HOST=db
+      - MYSQL_USERNAME=root
+      - MYSQL_PASSWORD=password
+      - MYSQL_ROOT_PASSWORD=password
+      restart: unless-stopped
+      ports:
+      - 8081:80
+      networks:
+      - habitly
+
+volumes:
+  db:
+
+networks:
+  habitly:
+    driver: bridge
