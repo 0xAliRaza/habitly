@@ -3,9 +3,12 @@ import store from '@/store/index.js';
 import createAuth0Client from '@auth0/auth0-spa-js';
 export const setupAuth = async function (options, callbackRedirect) {
   store.commit('user/setLoading', { loading: true });
-
-  const client = await createAuth0Client({ ...options });
-
+  let client;
+  try {
+    client = await createAuth0Client({ ...options });
+  } catch (e) {
+    alert('Connection error occurred!');
+  }
   try {
     // If the user is returning to the app after authentication
     if (

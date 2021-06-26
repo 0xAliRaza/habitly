@@ -1,5 +1,5 @@
 <template>
-  <nav class="navbar navbar-expand navbar-dark bg-dark">
+  <nav class="navbar navbar-expand-md navbar-dark bg-dark">
     <div class="container">
       <router-link
         active-class="active"
@@ -9,58 +9,69 @@
       >
         <a class="navbar-brand" :href="href" @click="navigate">Habitly</a>
       </router-link>
-      <ul class="navbar-nav">
-        <li class="nav-item">
-          <router-link class="nav-link" active-class="active" to="/"
-            >Home</router-link
-          >
-        </li>
-        <li class="nav-item">
-          <router-link
-            active-class="active"
-            to="/habits"
-            custom
-            v-slot="{ href, navigate, isActive }"
-            ><a
-              class="nav-link"
-              :href="href"
-              @click="navigate"
-              :class="{ active: isActive || currentRouteName == 'HabitDetail' }"
-              >Habits
-            </a></router-link
-          >
-        </li>
-        <li class="nav-item">
-          <router-link class="nav-link" active-class="active" to="/stacks"
-            >Stacks</router-link
-          >
-        </li>
-        <li class="nav-item">
-          <router-link class="nav-link" active-class="active" to="/intentions"
-            >Intentions</router-link
-          >
-        </li>
-      </ul>
-      <ul class="navbar-nav ms-auto" v-if="!loading">
-        <li class="nav-item">
-          <button
-            class="btn btn-primary"
-            v-if="!authenticated"
-            @click="auth.loginWithRedirect"
-          >
-            Log in
-          </button>
-        </li>
-        <li class="nav-item">
-          <button
-            class="btn btn-link"
-            v-if="authenticated"
-            @click="auth.logout"
-          >
-            Log out
-          </button>
-        </li>
-      </ul>
+      <button
+        class="navbar-toggler"
+        type="button"
+        @click.prevent="toggleNavbar"
+      >
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" ref="navbarMenu">
+        <ul class="navbar-nav">
+          <li class="nav-item">
+            <router-link class="nav-link" active-class="active" to="/"
+              >Home</router-link
+            >
+          </li>
+          <li class="nav-item">
+            <router-link
+              active-class="active"
+              to="/habits"
+              custom
+              v-slot="{ href, navigate, isActive }"
+              ><a
+                class="nav-link"
+                :href="href"
+                @click="navigate"
+                :class="{
+                  active: isActive || currentRouteName == 'HabitDetail',
+                }"
+                >Habits
+              </a></router-link
+            >
+          </li>
+          <li class="nav-item">
+            <router-link class="nav-link" active-class="active" to="/stacks"
+              >Stacks</router-link
+            >
+          </li>
+          <li class="nav-item">
+            <router-link class="nav-link" active-class="active" to="/intentions"
+              >Intentions</router-link
+            >
+          </li>
+        </ul>
+        <ul class="navbar-nav ms-auto" v-if="!loading">
+          <li class="nav-item">
+            <button
+              class="btn btn-primary"
+              v-if="!authenticated"
+              @click="auth.loginWithRedirect"
+            >
+              Log in
+            </button>
+          </li>
+          <li class="nav-item">
+            <button
+              class="btn btn-outline-primary"
+              v-if="authenticated"
+              @click="auth.logout"
+            >
+              Log out
+            </button>
+          </li>
+        </ul>
+      </div>
     </div>
   </nav>
 
@@ -76,15 +87,22 @@
 </template>
 
 <script>
-import { computed, inject, watchEffect } from 'vue';
+import { computed, inject, onMounted, ref, watchEffect } from 'vue';
 import { useStore } from 'vuex';
 import { useRoute } from 'vue-router';
+import 'bootstrap/js/dist/collapse';
+import Collapse from 'bootstrap/js/dist/collapse';
 export default {
   name: 'app',
   setup() {
     const store = useStore();
     const auth = inject('auth');
     const route = useRoute();
+    const navbarMenu = ref(null);
+    const bsCollapse = ref(null);
+    const toggleNavbar = () => {
+      bsCollapse.value.toggle();
+    };
     watchEffect(() => {
       if (store.getters['user/isAuthenticated']) {
         store.dispatch('habits/refresh').catch((err) => console.log(err));
@@ -92,8 +110,14 @@ export default {
         store.dispatch('intentions/refresh').catch((err) => console.log(err));
       }
     });
+
+    onMounted(() => {
+      bsCollapse.value = new Collapse(navbarMenu.value, { toggle: false });
+    });
     return {
       auth,
+      navbarMenu,
+      toggleNavbar,
       loading: computed(() => store.state.user.loading),
       authenticated: computed(() => store.getters['user/isAuthenticated']),
       currentRouteName: computed(() => route.name),
@@ -122,6 +146,7 @@ export default {
 @import '~bootstrap/scss/buttons';
 @import '~bootstrap/scss/nav';
 @import '~bootstrap/scss/navbar';
+@import '~bootstrap/scss/transitions';
 @import '~bootstrap/scss/badge';
 @import '~bootstrap/scss/alert';
 @import '~bootstrap/scss/list-group';
