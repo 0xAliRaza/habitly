@@ -1,5 +1,7 @@
 <template>
-  <yayy v-show="yayy"></yayy>
+  <transition name="fade">
+    <yayy v-show="yayy"></yayy>
+  </transition>
   <div class="container">
     <div class="row">
       <div class="col-sm-12">
@@ -139,7 +141,7 @@ export default {
         error = e;
       } finally {
         repetitionLoading.value = null;
-        if (!error) {
+        if (!error && habit.type == 'G') {
           yayy.value = true;
           setTimeout(() => {
             yayy.value = false;

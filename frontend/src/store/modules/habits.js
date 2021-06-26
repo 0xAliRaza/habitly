@@ -94,7 +94,6 @@ export default {
       let sorted = models.sort((a, b) => b.repetitions - a.repetitions);
       sorted = sorted.slice(0, 5);
       commit('setTopRepeated', { models: sorted });
-
     },
     async refreshTopStreaked({ state, commit }) {
       const models = state.models;
