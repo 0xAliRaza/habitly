@@ -1,4 +1,5 @@
 <template>
+  <yayy v-show="yayy"></yayy>
   <div class="container">
     <div class="row justify-content-center">
       <div class="col-sm-12">
@@ -457,6 +458,7 @@
 </template>
 
 <script>
+import Yayy from '@/components/Yayy.vue';
 import Toggle from '@/components/Toggle.vue';
 import VueMultiselect from 'vue-multiselect';
 import SubmitButton from '@/components/SubmitButton.vue';
@@ -467,6 +469,7 @@ import { DatePicker } from 'v-calendar';
 import { DateTime } from 'luxon';
 export default {
   components: {
+    Yayy,
     Toggle,
     VueMultiselect,
     SubmitButton,
@@ -524,7 +527,7 @@ export default {
     const deleting = ref(null);
     const completing = ref(null);
     const editing = ref(false);
-
+    const yayy = ref(false);
     const onDelete = async (pk, completed = false) => {
       deleting.value = pk;
 
@@ -552,14 +555,22 @@ export default {
       completing.value = formData.id;
       formData.habit = formData.habit.id;
       formData.done = true;
+      let error;
       try {
         await store.dispatch('intentions/update', {
           formData: formData,
           pk: formData.id,
         });
+      } catch (e) {
+        error = e;
       } finally {
         completing.value = null;
-        toggleCompletedIntentions();
+        if (!error) {
+          yayy.value = true;
+          setTimeout(() => {
+            yayy.value = false;
+          }, 1000);
+        }
       }
     };
 
@@ -604,6 +615,7 @@ export default {
       onEdit,
       editing,
       deleting,
+      yayy,
       completing,
       toggleForm,
       onFormSubmit,

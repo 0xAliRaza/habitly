@@ -1,4 +1,5 @@
 <template>
+    <yayy v-show="yayy"></yayy>
   <div class="container">
     <div class="row justify-content-center">
       <div class="col-12 col-lg-8 my-3">
@@ -162,9 +163,13 @@
 import { useStore } from 'vuex';
 import { computed, ref, watchEffect } from '@vue/runtime-core';
 import { DateTime } from 'luxon';
+import Yayy from '@/components/Yayy.vue';
 
 export default {
   name: 'Home',
+  components: {
+    Yayy,
+  },
   setup() {
     const store = useStore();
     const topRepeated = computed(() => store.state.habits.topRepeated);
@@ -185,20 +190,28 @@ export default {
     );
 
     const completing = ref(null);
+    const yayy = ref(false);
     const completeIntention = async (intention) => {
       const formData = { ...intention };
       completing.value = formData.id;
       formData.habit = formData.habit.id;
       formData.done = true;
+      let error;
       try {
         await store.dispatch('intentions/update', {
           formData: formData,
           pk: formData.id,
         });
       } catch (e) {
-        console.log(e);
+        error = e;
       } finally {
         completing.value = null;
+        if (!error) {
+          yayy.value = true;
+          setTimeout(() => {
+            yayy.value = false;
+          }, 1000);
+        }
       }
     };
 
@@ -219,6 +232,7 @@ export default {
       topStreaked,
       todaysIntentions,
       completing,
+      yayy,
       completeIntention,
       getFormattedDate,
     };

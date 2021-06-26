@@ -1,4 +1,5 @@
 <template>
+  <yayy v-show="yayy"></yayy>
   <div class="container">
     <div class="row">
       <div class="col-sm-12">
@@ -86,6 +87,7 @@
 </template>
 <style lang="scss" scoped></style>
 <script>
+import Yayy from '@/components/Yayy.vue';
 import Habit from '@/components/Habit.vue';
 import HabitForm from '@/components/HabitForm.vue';
 import Toggle from '@/components/Toggle.vue';
@@ -96,12 +98,13 @@ import { DateTime } from 'luxon';
 
 export default {
   name: 'Habits',
-  components: { Habit, HabitForm, Toggle },
+  components: { Yayy, Habit, HabitForm, Toggle },
   setup() {
     const store = useStore();
     const habitFormVisible = ref(false);
     const habitFormLoading = ref(false);
     const habitFormError = ref(null);
+    const yayy = ref(false);
     const onHabitFormSubmit = async (formData) => {
       habitFormLoading.value = true;
       try {
@@ -126,13 +129,22 @@ export default {
     const createHabitRep = async (habit) => {
       repetitionLoading.value = habit.id;
       habitFormError.value = null;
+      let error;
       try {
         await store.dispatch('habits/createRepetition', {
           habit: habit.id,
           repetition: { date: DateTime.now().toISODate(), habit: habit.id },
         });
+      } catch (e) {
+        error = e;
       } finally {
         repetitionLoading.value = null;
+        if (!error) {
+          yayy.value = true;
+          setTimeout(() => {
+            yayy.value = false;
+          }, 1000);
+        }
       }
     };
     const deleteHabitRep = async (habit) => {
@@ -157,6 +169,7 @@ export default {
       createHabitRep,
       deleteHabitRep,
       habitFormError,
+      yayy,
       goodHabits: computed(() => store.getters['habits/good']),
       badHabits: computed(() => store.getters['habits/bad']),
       habits: computed(() => {
