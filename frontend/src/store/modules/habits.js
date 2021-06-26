@@ -1,6 +1,5 @@
 import habits from '@/api/habits';
 import repetitions from '@/api/repetitions';
-import { DateTime } from 'luxon';
 
 export default {
   namespaced: true,
@@ -36,7 +35,7 @@ export default {
     markAsRefreshed(state) {
       state.refreshed = true;
     },
-    reset(state, payload) {
+    reset(state) {
       state.models = [];
     },
     add(state, payload) {
@@ -82,7 +81,7 @@ export default {
     },
   },
   actions: {
-    async refresh({ commit, state }) {
+    async refresh({ commit }) {
       commit('reset');
       const models = (await habits.index()).data;
       commit('add', { models: models });
@@ -101,7 +100,7 @@ export default {
       sorted = sorted.slice(0, 5);
       commit('setTopStreaked', { models: sorted });
     },
-    async create({ commit, getters }, payload) {
+    async create({ commit }, payload) {
       const model = (await habits.create(payload.formData)).data;
       commit('add', { models: [model] });
       return model;
@@ -127,8 +126,8 @@ export default {
       const index = getters.getIndex(payload.habit);
 
       if (
-        DateTime.fromJSDate(new Date(payload.repetition.date)).toISODate() ===
-        DateTime.now().toISODate()
+        new Date(payload.repetition.date).toISOString().substring(0, 10) ===
+        new Date().toISOString().substring(0, 10)
       ) {
         commit('updateTodaysRepetition', {
           repetition: repetition,
@@ -143,8 +142,8 @@ export default {
       const index = getters.getIndex(payload.habit);
       if (
         payload.repetition &&
-        DateTime.fromJSDate(new Date(payload.repetition.date)).toISODate() ===
-          DateTime.now().toISODate()
+        new Date(payload.repetition.date).toISOString().substring(0, 10) ===
+          new Date().toISOString().substring(0, 10)
       ) {
         commit('updateTodaysRepetition', { repetition: null, index: index });
       } else {

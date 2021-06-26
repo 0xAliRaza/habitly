@@ -39,8 +39,6 @@ services:
       SERVICE_NAME: mysql
     volumes:
       - db:/var/lib/mysql
-    ports:
-      - 3600:3600
     networks:
       - habitly
 

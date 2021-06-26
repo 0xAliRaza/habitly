@@ -102,7 +102,6 @@ import InfoTooltip from '@/components/InfoTooltip.vue';
 import Toggle from '@/components/Toggle.vue';
 import { ref, computed } from 'vue';
 import { useStore } from 'vuex';
-import { DateTime } from 'luxon';
 
 export default {
   name: 'Habits',
@@ -141,7 +140,10 @@ export default {
       try {
         await store.dispatch('habits/createRepetition', {
           habit: habit.id,
-          repetition: { date: DateTime.now().toISODate(), habit: habit.id },
+          repetition: {
+            date: new Date().toISOString().substring(0, 10),
+            habit: habit.id,
+          },
         });
       } catch (e) {
         error = e;

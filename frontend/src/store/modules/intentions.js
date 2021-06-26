@@ -1,5 +1,4 @@
 import intentions from '@/api/intentions';
-import { DateTime } from 'luxon';
 
 export default {
   namespaced: true,
@@ -20,7 +19,8 @@ export default {
     getTodays(state) {
       return state.models.filter(
         (model) =>
-          DateTime.fromISO(model.time).toISODate() == DateTime.now().toISODate()
+          new Date(model.time).toISOString().substring(0, 10) ==
+          new Date().toISOString().substring(0, 10)
       );
     },
   },
@@ -58,13 +58,13 @@ export default {
     },
   },
   actions: {
-    async refresh({ commit, state }) {
+    async refresh({ commit }) {
       commit('reset');
       const models = (await intentions.index()).data;
       commit('add', { models: models });
       return models;
     },
-    async refreshCompleted({ commit, state }) {
+    async refreshCompleted({ commit }) {
       commit('resetCompleted');
       const models = (await intentions.index({ completed: 1 })).data;
       commit('addCompleted', { models: models });
@@ -72,7 +72,7 @@ export default {
 
       return models;
     },
-    async create({ commit, getters }, payload) {
+    async create({ commit }, payload) {
       const model = (await intentions.create(payload.formData)).data;
       commit('add', { models: [model] });
       return model;

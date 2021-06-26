@@ -285,7 +285,7 @@ import Toggle from '@/components/Toggle.vue';
 import SubmitButton from '@/components/SubmitButton.vue';
 import HabitForm from '@/components/HabitForm.vue';
 import Errors from '@/components/Errors.vue';
-import { reactive, ref, computed, watch, watchEffect } from 'vue';
+import { reactive, ref, computed, watchEffect } from 'vue';
 import { DatePicker, Calendar } from 'v-calendar';
 import { DateTime } from 'luxon';
 import { useRoute, useRouter } from 'vue-router';
@@ -320,7 +320,7 @@ export default {
       if (!habitForm.habit) {
         return;
       }
-      const today = DateTime.now();
+      const today = new Date().toISOString().substring(0, 10);
       habitForm.loading = true;
       try {
         await store.dispatch('habits/update', {
@@ -362,13 +362,13 @@ export default {
         return;
       }
       needsReload.value = true;
-      const date = DateTime.fromJSDate(repetitionForm.date);
+      const date = new Date(repetitionForm.date);
       repetitionForm.loading = true;
       try {
         await store.dispatch('habits/createRepetition', {
           habit: habitForm.habit.id,
           repetition: {
-            date: date.toISODate(),
+            date: date.toISOString().substring(0, 10),
             habit: habitForm.habit.id,
           },
         });
@@ -378,12 +378,12 @@ export default {
         repetitionForm.loading = false;
         if (!repetitionFormError.value) {
           await calendarEl.value.move({
-            year: date.year,
-            month: date.month,
+            year: date.getFullYear(),
+            month: date.getMonth() + 1,
           });
           refreshCalendarAttrs({
-            year: date.year,
-            month: date.month,
+            year: date.getFullYear(),
+            month: date.getMonth() + 1,
           });
           toggleRepForm();
         }
