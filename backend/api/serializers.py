@@ -24,7 +24,7 @@ class HabitSerializer(serializers.HyperlinkedModelSerializer):
         representation = super().to_representation(instance)
         repetitions_count = Repetition.objects.filter(habit=instance).count()
         if todays_repetition:
-            representation['todays_repetition'] = {'id': todays_repetition.id, 'date': str(todays_repetition.date) + ' UTC', 'habit': {
+            representation['todays_repetition'] = {'id': todays_repetition.id, 'date': todays_repetition.date, 'habit': {
                 'id': instance.id, 'title': instance.title}}
         else:
             representation['todays_repetition'] = None
@@ -33,7 +33,7 @@ class HabitSerializer(serializers.HyperlinkedModelSerializer):
         # Calculate streak for habit
         total_streak = 0
         current_streak = 0
-        today = datetime.date.today()
+        today = datetime.datetime.now(timezone.utc)
         compareDate = today + datetime.timedelta(1)  # Tomorrow
 
         # Using list() here pulls all the entries from the DB at once
@@ -153,7 +153,6 @@ class IntentionSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError({'Intention': [
                 'Habit was not found.']})
 
-
         # Check if intention already exists
         try:
             Intention.objects.get(user_id=user_id,
@@ -203,8 +202,8 @@ class RepetitionSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError({'Repetition': [
                 'Repetition with the given fields already exists.']})
 
-        # Validate if given time is in the past
-        if timezone.now().date() < attrs['date']:
+        # Validate if given date is in the past
+        if datetime.datetime.now().date() < attrs['date'].date():
             raise serializers.ValidationError(
                 {'Repetition': ['Repetition date cannot be in the future.']})
 
@@ -219,5 +218,4 @@ class RepetitionSerializer(serializers.ModelSerializer):
         habit = instance.habit
         representation['habit'] = {
             "id": habit.id, "title": habit.title}
-        representation['date'] = representation['date'] + ' UTC'
         return representation

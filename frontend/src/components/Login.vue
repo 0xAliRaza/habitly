@@ -8,7 +8,7 @@
 
 <script>
 import { inject, watchEffect } from '@vue/runtime-core';
-import { useRoute, useRouter } from 'vue-router';
+import { useRoute } from 'vue-router';
 import { useStore } from 'vuex';
 export default {
   name: 'Login',

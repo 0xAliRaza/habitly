@@ -24,7 +24,7 @@
           </div>
           <transition name="slide-in">
             <div class="py-4" v-if="todaysIntentions.length < 1">
-              <p class="alert alert-info p-2">No intentions for today!</p>
+              <p class="alert alert-info p-2">No intentions for today.</p>
             </div>
             <div class="py-4" v-else>
               <div
@@ -107,7 +107,7 @@
                   placement="bottom"
                 ></info-tooltip>
               </div>
-              <template v-for="habit in topRepeated" :key="habit.id">
+              <template v-for="(habit, index) in topRepeated" :key="habit.id">
                 <router-link
                   v-if="habit.repetitions > 0"
                   :to="`/habits/${habit.id}`"
@@ -137,6 +137,13 @@
                     >
                   </li>
                 </router-link>
+                <li
+                  v-else-if="index == 0"
+                  class="list-group-item sidebar-list-item"
+                  @click.prevent
+                >
+                  <p class="m-0 alert alert-info p-2">No streaks found.</p>
+                </li>
               </template>
             </ul>
           </transition>
@@ -161,7 +168,7 @@
                   placement="top"
                 ></info-tooltip>
               </div>
-              <template v-for="habit in topStreaked" :key="habit.id">
+              <template v-for="(habit, index) in topStreaked" :key="habit.id">
                 <router-link
                   v-if="habit.streak > 0"
                   :to="`/habits/${habit.id}`"
@@ -191,6 +198,13 @@
                     >
                   </li>
                 </router-link>
+                <li
+                  v-else-if="index == 0"
+                  class="list-group-item sidebar-list-item"
+                  @click.prevent
+                >
+                  <p class="m-0 alert alert-info p-2">No streaks found.</p>
+                </li>
               </template>
             </ul>
           </transition>

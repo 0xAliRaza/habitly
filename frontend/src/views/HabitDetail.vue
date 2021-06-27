@@ -343,8 +343,7 @@ export default {
         return;
       }
 
-      // Get date in YYYY-MM-DD format
-      const today = new Date().toISOString().substring(0, 10);
+      const today = new Date();
       habitForm.loading = true;
       try {
         await store.dispatch('habits/update', {
@@ -353,7 +352,10 @@ export default {
         });
       } finally {
         // Refresh all repetitions calendar
-        await refreshCalendarAttrs({ year: today.year, month: today.month });
+        await refreshCalendarAttrs({
+          year: today.getFullYear(),
+          month: today.getMonth() + 1,
+        });
         habitForm.loading = false;
         habitForm.visible = false;
       }
@@ -386,14 +388,13 @@ export default {
       }
       repetitionFormError.value = null;
       needsReload.value = true;
-      const date = new Date(repetitionForm.date);
+      const date = repetitionForm.date;
       repetitionForm.loading = true;
       try {
         await store.dispatch('habits/createRepetition', {
           habit: habitForm.habit.id,
           repetition: {
-            // Convert date to YYYY-MM-DD format
-            date: date.toISOString().substring(0, 10),
+            date: date,
             habit: habitForm.habit.id,
           },
         });

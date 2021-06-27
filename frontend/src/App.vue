@@ -1,14 +1,7 @@
 <template>
   <nav class="navbar navbar-expand-md navbar-dark bg-dark">
     <div class="container">
-      <router-link
-        active-class="active"
-        to="/habits"
-        custom
-        v-slot="{ href, navigate }"
-      >
-        <a class="navbar-brand" :href="href" @click="navigate">Habitly</a>
-      </router-link>
+      <a class="navbar-brand" href="/">Habitly</a>
       <button
         class="navbar-toggler"
         type="button"
@@ -53,21 +46,8 @@
         </ul>
         <ul class="navbar-nav ms-auto" v-if="!loading">
           <li class="nav-item">
-            <button
-              class="btn btn-primary"
-              v-if="!authenticated"
-              @click="auth.loginWithRedirect"
-            >
-              Log in
-            </button>
-          </li>
-          <li class="nav-item">
-            <button
-              class="btn btn-outline-primary"
-              v-if="authenticated"
-              @click="auth.logout"
-            >
-              Log out
+            <button class="btn btn-link" v-if="authenticated" @click.prevent>
+              {{ user.nickname }}
             </button>
           </li>
         </ul>
@@ -96,23 +76,30 @@ export default {
   name: 'app',
   setup() {
     const store = useStore();
-    const auth = inject('auth');
     const route = useRoute();
 
     /* Navbar inner div ref to make it collapsable */
     const navbarMenu = ref(null);
-    
+
     /* Bootstrap Collapse instance */
     const bsCollapse = ref(null);
     const toggleNavbar = () => {
       bsCollapse.value.toggle();
     };
-    
-    watchEffect(() => {
+
+    watchEffect(async () => {
       if (store.getters['user/isAuthenticated']) {
-        store.dispatch('habits/refresh').catch((err) => console.log(err));
-        store.dispatch('stacks/refresh').catch((err) => console.log(err));
-        store.dispatch('intentions/refresh').catch((err) => console.log(err));
+        try {
+          await store.dispatch('habits/refresh');
+          await store.dispatch('stacks/refresh');
+          await store.dispatch('intentions/refresh');
+        } catch (error) {
+          if (error.toJSON().message === 'Network Error') {
+            alert(
+              'Network error, please check your internet or API server status.'
+            );
+          }
+        }
       }
     });
 
@@ -121,12 +108,12 @@ export default {
       bsCollapse.value = new Collapse(navbarMenu.value, { toggle: false });
     });
     return {
-      auth,
       navbarMenu,
       toggleNavbar,
       loading: computed(() => store.state.user.loading),
       authenticated: computed(() => store.getters['user/isAuthenticated']),
       currentRouteName: computed(() => route.name),
+      user: computed(() => store.state.user.model),
     };
   },
 };

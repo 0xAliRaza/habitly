@@ -152,7 +152,7 @@ export default {
           habit: habit.id,
           repetition: {
             // Get today(UTC) in YYYY-MM-DD fromat
-            date: new Date().toISOString().substring(0, 10),
+            date: new Date(),
             habit: habit.id,
           },
         });
