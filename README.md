@@ -22,7 +22,9 @@ This repository consists of a SPA frontend powered by [VueJS 3](https://v3.vuejs
 
 ## Features
 Everything that you need to maintain healthy habits and get rid of bad ones is what habitly is all about. It has a beautiful frontend user interface built using [Bootstrap 5.0](https://getbootstrap.com/docs/5.0) and [SCSS](https://sass-lang.com/). The RESTful API that the frontend SPA consumes is built using Django Rest Serializers.
+
 Authentication and authorization is done using [jwt](https://jwt.io/) tokens and handled using [Auth0](https://auth0.com/). [Auth0 SPA JS](https://github.com/auth0/auth0-spa-js) was used in the frontend authentication service.
+
 The jwt tokens aren't stored in local storage or cookies but rather auth0 server sessions are used to persist user logins. Tokens are silently refreshed by Auth0-SPA-JS (a redirect is required when running in localhost).
 The frontend Single Page APP consists of the following main views and components;
 - **Home**
