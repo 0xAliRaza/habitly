@@ -39,11 +39,11 @@ class HabitSerializer(serializers.HyperlinkedModelSerializer):
         # Using list() here pulls all the entries from the DB at once
         # Gets all repetition dates for this habit and whose dates are <= today
         entry_dates = list(Repetition.objects.values("date").filter(
-            habit=instance, date__lte=today).order_by("-date"))
+            habit=instance, date__date__lte=today).order_by("-date"))
 
         for date in entry_dates:
             # Get the difference btw the dates
-            delta = compareDate - date.get('date')
+            delta = compareDate.date() - date.get('date').date()
 
             if delta.days == 1:  # Keep the streak going!
                 current_streak += 1
@@ -195,7 +195,8 @@ class RepetitionSerializer(serializers.ModelSerializer):
 
         # Validate if repetition doesn't already exist
         try:
-            Repetition.objects.get(habit=attrs['habit'], date__date=attrs['date'].date())
+            Repetition.objects.get(
+                habit=attrs['habit'], date__date=attrs['date'].date())
         except Repetition.DoesNotExist:
             pass
         else:
