@@ -216,3 +216,6 @@ Feel free to contact me for any kind of help or information. Let's get connected
 - [Medium](https://0xali.medium.com)
 
 - [Linkedin](https://www.linkedin.com/in/ali-raza-061130202/)
+
+## License
+See the [LICENSE](https://github.com/0xAliRaza/habitly/blob/master/LICENSE) file for license rights and limitations (MIT).
