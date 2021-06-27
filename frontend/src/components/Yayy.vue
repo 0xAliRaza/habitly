@@ -1,6 +1,6 @@
 <template>
   <div>
-    <h1 class="mb-5 text-success">Yayyyyyyyyyy! 🥳🥳🎉!</h1>
+    <h1 class="mb-5 text-success">Yayyyyyyyyyy! 🥳🥳🎉</h1>
   </div>
 </template>
 

@@ -63,6 +63,7 @@
         :loading="loading"
         color="primary"
         @submit="onSubmit"
+        :disabled="!form.type || !form.title"
       ></submit-button>
     </div>
   </form>

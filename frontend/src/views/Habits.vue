@@ -151,7 +151,6 @@ export default {
         await store.dispatch('habits/createRepetition', {
           habit: habit.id,
           repetition: {
-            // Get today(UTC) in YYYY-MM-DD fromat
             date: new Date(),
             habit: habit.id,
           },

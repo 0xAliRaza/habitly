@@ -12,7 +12,11 @@
       <div class="collapse navbar-collapse" ref="navbarMenu">
         <ul class="navbar-nav">
           <li class="nav-item">
-            <router-link class="nav-link" active-class="active" to="/"
+            <router-link
+              @click="hideNavbar"
+              class="nav-link"
+              active-class="active"
+              to="/"
               >Home</router-link
             >
           </li>
@@ -21,11 +25,14 @@
               active-class="active"
               to="/habits"
               custom
-              v-slot="{ href, navigate, isActive }"
+              v-slot="{ navigate, isActive }"
               ><a
+                style="cursor: pointer"
                 class="nav-link"
-                :href="href"
-                @click="navigate"
+                @click="
+                  hideNavbar();
+                  navigate();
+                "
                 :class="{
                   active: isActive || currentRouteName == 'HabitDetail',
                 }"
@@ -34,12 +41,20 @@
             >
           </li>
           <li class="nav-item">
-            <router-link class="nav-link" active-class="active" to="/stacks"
+            <router-link
+              @click="hideNavbar"
+              class="nav-link"
+              active-class="active"
+              to="/stacks"
               >Stacks</router-link
             >
           </li>
           <li class="nav-item">
-            <router-link class="nav-link" active-class="active" to="/intentions"
+            <router-link
+              @click="hideNavbar"
+              class="nav-link"
+              active-class="active"
+              to="/intentions"
               >Intentions</router-link
             >
           </li>
@@ -86,6 +101,9 @@ export default {
     const toggleNavbar = () => {
       bsCollapse.value.toggle();
     };
+    const hideNavbar = () => {
+      bsCollapse.value.hide();
+    };
 
     watchEffect(async () => {
       if (store.getters['user/isAuthenticated']) {
@@ -110,6 +128,7 @@ export default {
     return {
       navbarMenu,
       toggleNavbar,
+      hideNavbar,
       loading: computed(() => store.state.user.loading),
       authenticated: computed(() => store.getters['user/isAuthenticated']),
       currentRouteName: computed(() => route.name),

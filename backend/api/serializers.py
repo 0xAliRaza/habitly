@@ -17,7 +17,7 @@ class HabitSerializer(serializers.HyperlinkedModelSerializer):
 
         try:
             todays_repetition = Repetition.objects.get(
-                habit=instance, date=datetime.datetime.now().date())
+                habit=instance, date__date=datetime.datetime.now().date())
         except Repetition.DoesNotExist:
             todays_repetition = None
 
@@ -195,7 +195,7 @@ class RepetitionSerializer(serializers.ModelSerializer):
 
         # Validate if repetition doesn't already exist
         try:
-            Repetition.objects.get(habit=attrs['habit'], date=attrs['date'])
+            Repetition.objects.get(habit=attrs['habit'], date__date=attrs['date'].date())
         except Repetition.DoesNotExist:
             pass
         else:

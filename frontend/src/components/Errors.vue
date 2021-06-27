@@ -2,7 +2,7 @@
   <div>
     <template v-if="error.response && error.response.data">
       <p
-        class="alert alert-danger p-2 m-0"
+        class="alert alert-danger p-2 mb-1"
         v-for="(value, key) in error.response.data"
         :key="key"
       >

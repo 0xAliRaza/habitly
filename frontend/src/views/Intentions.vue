@@ -261,7 +261,7 @@
             <!--/ PARAGRAPH VIEW -->
 
             <!-- TABLE VIEW -->
-            <div class="table-responsive py-3" v-else>
+            <div class="table-responsive w-100 py-3" v-else>
               <table class="table text-center table-bordered">
                 <thead class="">
                   <tr>
@@ -273,15 +273,18 @@
                 </thead>
                 <tbody>
                   <tr v-for="intention in intentions" :key="intention.id">
-                    <td style="min-width: 200px">
+                    <td style="min-width: 100px">
                       <router-link :to="`/habits/${intention.habit.id}`">{{
                         intention.habit.title
                       }}</router-link>
                     </td>
-                    <td :title="getFormattedDate(intention.time, true)">
+                    <td
+                      style="min-width: 100px"
+                      :title="getFormattedDate(intention.time, true)"
+                    >
                       {{ getFormattedDate(intention.time) }}
                     </td>
-                    <td style="min-width: 300px">
+                    <td style="min-width: 100px">
                       {{ intention.location }}
                     </td>
                     <td class="text-nowrap">
@@ -383,7 +386,6 @@
             <!-- TABLE VIEW -->
           </template>
           <!--/ INDEX INTENTIONS  -->
-
 
           <!-- COMPLETED INTENTIONS -->
           <div class="my-2 align-self-start">
@@ -626,7 +628,7 @@ export default {
 
       // This fat function, just for this one property 🙄
       formData.done = true;
-      
+
       let error;
       try {
         await store.dispatch('intentions/update', {

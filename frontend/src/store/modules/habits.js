@@ -135,7 +135,6 @@ export default {
     async createRepetition({ commit, getters }, payload) {
       const repetition = (await repetitions.create(payload.repetition)).data;
       const index = getters.getIndex(payload.habit);
-
       if (
         new Date(payload.repetition.date).getDate() === new Date().getDate()
       ) {
