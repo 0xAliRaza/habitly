@@ -65,6 +65,8 @@ And that's about it. Hope this convinces you to give it a try (have added docker
 
 These instructions will get you a copy of this project running on your local machine in dev mode.
 
+Note: For demo purpose I have places `frontend/auth_config.json` and `backend/auth_config.py` which uses my auth0 tenant that I created for demo purposes. Consider changing these files if you ever end up deploying this web app.
+
 ### Using Docker (recommended)
 
 **Prerequisites:**
@@ -88,7 +90,7 @@ Change directory to the project folder:
 cd habitly
 ```
 
-Build and run using docker-compose in detached mood
+Build and run using docker-compose in detached mode
 
 ```
 docker-compose up -d
@@ -96,7 +98,7 @@ docker-compose up -d
 
 Running the above commands will give you the following instances;
 - *Backend Django app* running at http://localhost:8000/
-- *Frontend Vue 3 app* served at http://localhost:8080/
+- *Frontend Vue 3 app* served (hot-reload enabled 😌) at http://localhost:8080/
 - *PHPMyAdmin*(just for your convenience 😉) running at http://localhost:8081/
 
 The database is persisted using a docker volume so you won't ever lose your databases.

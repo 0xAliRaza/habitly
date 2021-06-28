@@ -86,7 +86,7 @@
 
       <aside class="my-3 py-3 col-12 col-lg-4">
         <div
-          class="d-flex flex-column align-items-center justify-content-center"
+          class="d-flex flex-column justify-content-center"
         >
           <!-- TOP FIVE REPEATED HABITS -->
           <transition name="fade">

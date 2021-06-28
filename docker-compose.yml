@@ -5,7 +5,12 @@ services:
       context: ./frontend
       dockerfile: Dockerfile
     container_name: habitly-frontend
+    working_dir: /app/
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
     restart: unless-stopped
+    command: yarn serve
     ports:
       - 8080:8080
     networks:
