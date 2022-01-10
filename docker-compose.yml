@@ -10,7 +10,7 @@ services:
       - ./frontend:/app
       - /app/node_modules
     restart: unless-stopped
-    command: yarn serve
+    command: npm run serve
     ports:
       - 8080:8080
     networks:
