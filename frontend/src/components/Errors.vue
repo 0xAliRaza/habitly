@@ -7,7 +7,7 @@
         :key="key"
       >
         <span class="text-capitalize"> {{ key }}: </span>
-        <span class="ms-1" v-for="msg in value" :key="msg"> {{ msg }} </span>
+        <span v-for="msg in value" :key="msg"> {{ msg }} </span>
       </p>
     </template>
     <p class="alert alert-danger p-2 mb-1" v-else-if="error.status">

@@ -107,7 +107,7 @@ export default {
   setup() {
     const store = useStore();
     const route = useRoute();
-
+    const auth = inject('auth');
     /* Navbar inner div ref to make it collapsable */
     const navbarMenu = ref(null);
 
@@ -121,7 +121,7 @@ export default {
     };
 
     watchEffect(async () => {
-      if (store.getters['user/isAuthenticated']) {
+      if (auth.authenticated) {
         try {
           await store.dispatch('habits/refresh');
           await store.dispatch('stacks/refresh');
@@ -144,10 +144,10 @@ export default {
       navbarMenu,
       toggleNavbar,
       hideNavbar,
-      loading: computed(() => store.state.user.loading),
-      authenticated: computed(() => store.getters['user/isAuthenticated']),
+      loading: computed(() => auth.loading),
+      authenticated: computed(() => auth.authenticated),
       currentRouteName: computed(() => route.name),
-      user: computed(() => store.state.user.model),
+      user: computed(() => auth.user),
     };
   },
 };
