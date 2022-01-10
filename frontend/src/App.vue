@@ -61,9 +61,10 @@
         </ul>
         <ul class="navbar-nav ms-auto" v-if="!loading">
           <li class="nav-item">
-            <button class="btn btn-link" v-if="authenticated" @click.prevent>
-              {{ user.nickname }}
-            </button>
+            <span class="text-light" v-if="authenticated" @click.prevent>
+              {{ user.nickname }} 
+            </span>
+            <button class="btn btn-link btn-sm" @click.prevent="logout">Logout</button>
           </li>
         </ul>
       </div>
@@ -120,6 +121,9 @@ export default {
       bsCollapse.value.hide();
     };
 
+    const logout = () => {
+      auth.logout();
+      }
     watchEffect(async () => {
       if (auth.authenticated) {
         try {
@@ -148,6 +152,7 @@ export default {
       authenticated: computed(() => auth.authenticated),
       currentRouteName: computed(() => route.name),
       user: computed(() => auth.user),
+      logout: logout
     };
   },
 };
