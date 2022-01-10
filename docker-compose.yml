@@ -41,7 +41,7 @@ services:
       MYSQL_DATABASE: 'habitly'
       MYSQL_ROOT_PASSWORD: 'password'
       MYSQL_PASSWORD: 'password'
-      MYSQL_USER: 'root'
+      MYSQL_USER: 'habitly'
       SERVICE_TAGS: dev
       SERVICE_NAME: mysql
     volumes:

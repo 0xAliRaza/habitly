@@ -1,6 +1,6 @@
 FROM node:lts-alpine
 
-RUN yarn global add @vue/cli-service
+RUN npm install -g @vue/cli
 # make the 'app' folder the current working directory
 WORKDIR /app
 
@@ -8,7 +8,7 @@ WORKDIR /app
 COPY package*.json ./
 
 # install project dependencies
-RUN yarn install
+RUN npm install
 
 # copy project files and folders to the current working directory (i.e. 'app' folder)
 COPY . .

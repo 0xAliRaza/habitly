@@ -102,7 +102,7 @@ Running the above commands will give you the following instances;
 - *PHPMyAdmin*(just for your convenience 😉) running at http://localhost:8081/
 
 The database is persisted using a docker volume so you won't ever lose your databases.
-Also, by now, a database user with the username  `root` and password `password` is already created in django. Visit http://localhost:8000/admin and interact with all the models.
+Also, by now, a database user with the username  `habitly` and password `password` is already created in django. Visit http://localhost:8000/admin and interact with all the models.
 
 Note: Ports used by above instances might already be busy in your machine so make sure you stop already running services or change `docker-compose.yml` according to your needs.
 
