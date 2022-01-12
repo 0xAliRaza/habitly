@@ -1,0 +1,41 @@
+# This workflow will do a clean install of node dependencies, cache/restore them, build the source code and run tests across different versions of node
+# For more information see: https://help.github.com/actions/language-and-framework-guides/using-nodejs-with-github-actions
+
+name: Build
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [16.x]
+        # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Build
+      uses: actions/setup-node@v2
+      working-directory: ./frontend
+      with:
+        node-version: ${{ matrix.node-version }}
+        cache: 'npm'
+      run: |
+          NODE_ENV=production
+          npm ci
+          npm run build
+    - name: copy index to 404
+      run: cp frontend/dist/index.html frontend/dist/404.html
+    - name: Deploy to GitHub Pages
+      uses: JamesIves/github-pages-deploy-action@releases/v3
+      with:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        BRANCH: gh-pages
+        FOLDER: frontend/dist/
