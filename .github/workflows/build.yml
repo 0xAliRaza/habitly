@@ -27,6 +27,8 @@ jobs:
       with:
         node-version: ${{ matrix.node-version }}
         cache: 'npm'
+    - name: Generate prod files
+      working-directory: ./frontend
       run: |
           NODE_ENV=production
           npm ci
