@@ -1,3 +1,5 @@
+from decouple import config
+
 from pathlib import Path
 import auth_config
 
@@ -9,12 +11,20 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/3.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-dt)jxs-heeq+x$@@m6j%dxy*seqdm@8wk_%y7le_4ai8w4d%uf'
+#SECRET_KEY = 'django-insecure-dt)jxs-heeq+x$@@m6j%dxy*seqdm@8wk_%y7le_4ai8w4d%uf'
+
+""" Note: Secret key is being loaded from .env file """
+
+
+try:
+     SECRET_KEY = config('SECRET_KEY')
+except KeyError as e:
+    raise RuntimeError("Could not find a SECRET_KEY in environment") from e
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [".0xali.com"]
 
 
 # Application definition
@@ -74,14 +84,17 @@ WSGI_APPLICATION = 'habitly.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
 
+
+""" Note: Credentials are being loaded from .env file """
+
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'habitly',
-        'USER': 'root',
-        'PASSWORD': 'password',  # Default password in `docker-compose.yml` is 'password'
-        'HOST': 'db',   # Docker container's name is 'db'
-        'PORT': '3306',
+        'NAME': config('DB_NAME'),
+        'USER': config('DB_USERNAME'),
+        'PASSWORD': config('DB_PASSWORD'),  # Default password in `docker-compose.yml` is 'password'
+        'HOST': config('DB_HOST'),   # Docker container's name is 'db'
+        'PORT': config('DB_PORT'),
     }
 }
 
@@ -151,5 +164,5 @@ JWT_AUTH = {
 
 
 CORS_ORIGIN_WHITELIST = (
-    'http://localhost:8080',
+    'https://0xali.com',
 )
