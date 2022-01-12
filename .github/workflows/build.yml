@@ -33,9 +33,10 @@ jobs:
         cache-dependency-path: '**/package-lock.json'
     - name: Generate prod files
       run: |
-          NODE_ENV=production
           npm ci
           npm run build
+      env:
+          NODE_ENV: production
     - name: copy index to 404
       run: cp dist/index.html dist/404.html
     - name: Deploy to GitHub Pages
