@@ -84,7 +84,7 @@
       </div>
       <!--/ SHOW TODAY'S INTENTIONS -->
 
-      <aside class="my-3 py-3 col-12 col-lg-4">
+      <aside v-if="topRepeated.length > 0 || topStreaked.length > 0" class="my-3 py-3 col-12 col-lg-4">
         <div
           class="d-flex flex-column justify-content-center"
         >
