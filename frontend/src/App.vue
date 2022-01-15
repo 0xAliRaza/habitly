@@ -1,5 +1,6 @@
 <template>
-  <nav class="navbar navbar-expand-md navbar-dark bg-dark">
+  <div id="content">
+    <nav class="navbar navbar-expand-md navbar-dark bg-dark">
     <div class="container">
       <a class="navbar-brand" href="/">Habitly</a>
       <button
@@ -59,23 +60,23 @@
             >
           </li>
         </ul>
-        <ul class="navbar-nav ms-auto" v-if="!loading">
+        <ul class="navbar-nav ms-auto" v-if="!loading && authenticated">
           <li class="nav-item">
-            <span class="text-light" v-if="authenticated" @click.prevent>
-              {{ user.nickname }} 
-            </span>
-            <button class="btn btn-link btn-sm" @click.prevent="logout">Logout</button>
+            <div class="navbar-text">
+              <span class="text-light">{{ user.nickname }}</span>
+              <button class="btn btn-link btn-sm ms-1" @click.prevent="logout">Logout</button>
+            </div>
           </li>
         </ul>
       </div>
     </div>
-  </nav>
+    </nav>
 
-  <main class="my-5">
-    <router-view></router-view>
-  </main>
+    <main class="my-5">
+      <router-view></router-view> 
+    </main>
 
-  <footer class="bg-dark mt-auto py-3">
+    <footer class="bg-dark mt-auto py-3">
     <div class="container">
       <div class="text-center text-light">
         Coded with<span class="text-danger mx-1"
@@ -94,7 +95,8 @@
         >by <a href="https://0xali.com" class="text-decoration-none">Ali Raza</a>.
       </div>
     </div>
-  </footer>
+    </footer>
+  </div>
 </template>
 
 <script>
@@ -194,7 +196,7 @@ export default {
 
 html,
 body,
-#app {
+#app, #content {
   height: 100%;
 }
 
@@ -204,7 +206,7 @@ body {
   background-color: $color-body-bg;
 }
 
-#app {
+#app, #content {
   display: flex;
   flex-direction: column;
 }
