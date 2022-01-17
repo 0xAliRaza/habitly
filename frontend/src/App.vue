@@ -1,5 +1,5 @@
 <template>
-  <div id="content">
+  <div id="content" v-if="!loading && authenticated">
     <nav class="navbar navbar-expand-md navbar-dark bg-dark">
     <div class="container">
       <a class="navbar-brand" href="/">Habitly</a>
@@ -96,6 +96,13 @@
       </div>
     </div>
     </footer>
+  </div>
+  <div id="loading" v-else>
+    <div class="d-flex justify-content-center align-items-center" style="height: 100vh">
+      <div class="spinner-border text-dark" role="status">
+        <span class="visually-hidden">Loading...</span>
+      </div>
+    </div>
   </div>
 </template>
 
