@@ -136,20 +136,13 @@ export default {
     const logout = () => {
       auth.logout();
       }
+    /* Load API Data */
     watchEffect(async () => {
       if (!auth.loading && auth.authenticated) {
         try {
-          /* Load API Data */
           await store.dispatch('habits/refresh');
           await store.dispatch('stacks/refresh');
           await store.dispatch('intentions/refresh');
-          
-          // Wait for conditional elements to be rendered
-          await nextTick();
-
-          /* Make navbar collapsable using bootstrap's `Collapse` */
-          bsCollapse.value = new Collapse(navbarMenu.value, { toggle: false });
-
         } catch (error) {
           if (error.toJSON().message === 'Network Error') {
             alert(
@@ -161,6 +154,16 @@ export default {
         finally {
           APIDataInit.value = true;
         }
+      }
+    });
+
+    /* Set bootstrap collapse */
+    watchEffect(async () => {
+      if (APIDataInit.value) {
+        // Wait for conditional elements to be rendered
+        await nextTick();
+        /* Make navbar collapsable using bootstrap's `Collapse` */
+        bsCollapse.value = new Collapse(navbarMenu.value, { toggle: false });
       }
     });
 
