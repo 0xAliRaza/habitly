@@ -15,8 +15,10 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
+from django.http import HttpResponse
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path(r'api/', include('api.urls')),
+    path('', lambda request: HttpResponse("<h1 style='font-size: 24px; font-family: system-ui; padding: 20px; font-weight: 600; text-align: center;'>This is a live demo 🚀 of <a href='https://github.com/0xaliraza/habitly'>Habitly (backend)</a> coded with ❤️ by <a href='https://0xali.com/'>Ali Raza</a>.</h1>")),
 ]
