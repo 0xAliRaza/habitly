@@ -1,5 +1,5 @@
 <template>
-  <div id="content" v-if="!loading && authenticated">
+  <div id="content" v-if="!loading && authenticated && APIDataInit">
     <nav class="navbar navbar-expand-md navbar-dark bg-dark">
     <div class="container">
       <a class="navbar-brand" href="/">Habitly</a>
@@ -107,7 +107,7 @@
 </template>
 
 <script>
-import { computed, inject, onMounted, ref, watchEffect } from 'vue';
+import { computed, inject, ref, watchEffect, nextTick } from 'vue';
 import { useStore } from 'vuex';
 import { useRoute } from 'vue-router';
 import 'bootstrap/js/dist/collapse';
@@ -118,6 +118,9 @@ export default {
     const store = useStore();
     const route = useRoute();
     const auth = inject('auth');
+
+    const APIDataInit = ref(false);
+
     /* Navbar inner div ref to make it collapsable */
     const navbarMenu = ref(null);
 
@@ -134,29 +137,38 @@ export default {
       auth.logout();
       }
     watchEffect(async () => {
-      if (auth.authenticated) {
+      if (!auth.loading && auth.authenticated) {
         try {
+          /* Load API Data */
           await store.dispatch('habits/refresh');
           await store.dispatch('stacks/refresh');
           await store.dispatch('intentions/refresh');
+          
+          // Wait for conditional elements to be rendered
+          await nextTick();
+
+          /* Make navbar collapsable using bootstrap's `Collapse` */
+          bsCollapse.value = new Collapse(navbarMenu.value, { toggle: false });
+
         } catch (error) {
           if (error.toJSON().message === 'Network Error') {
             alert(
               'Network error, please check your internet or API server status.'
             );
           }
+          console.error(error);
+        }
+        finally {
+          APIDataInit.value = true;
         }
       }
     });
 
-    onMounted(() => {
-      // Make navbar collapsable using bootstrap's `Collapse`
-      bsCollapse.value = new Collapse(navbarMenu.value, { toggle: false });
-    });
     return {
       navbarMenu,
       toggleNavbar,
       hideNavbar,
+      APIDataInit,
       loading: computed(() => auth.loading),
       authenticated: computed(() => auth.authenticated),
       currentRouteName: computed(() => route.name),
