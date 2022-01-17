@@ -1,9 +1,18 @@
 <h1 align="center"> Habitly </h1>
+
+<p align="center">
+  <a href="https://github.com/0xAliRaza/habitly/blob/master/LICENSE"><img src="https://img.shields.io/github/license/0xaliraza/habitly?sanitize=true" alt="License"></a>
+  <a href="https://github.com/0xAliRaza/habitly/actions/workflows/build.yml"><img src="https://github.com/0xAliRaza/habitly/actions/workflows/build.yml/badge.svg" alt="Build Status"></a>
+  <a href="https://github.com/0xAliRaza/habitly/actions/workflows/pages/pages-build-deployment"><img src="https://github.com/0xAliRaza/habitly/actions/workflows/pages/pages-build-deployment/badge.svg" alt="Pages Deployment Status"></a>
+  
+</p>
+
 <p align="center">
 	<a href="#using-docker-recommended">Quick Install (docker)</a> |
 	<a href="#about">About</a> |
 	<a href="#features">Features</a> |
-	<a href="#authors">Authors</a>
+	<a href="#authors">Authors</a> |
+	<a href="https://0xali.com/habitly">Live Demo</a>
 </p>
 
 <p align="center">A fully featured, full-stack web app that helps users build atomic habits.</p>
