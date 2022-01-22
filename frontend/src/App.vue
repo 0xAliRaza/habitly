@@ -98,10 +98,11 @@
     </footer>
   </div>
   <div id="loading" v-else>
-    <div class="d-flex justify-content-center align-items-center" style="height: 100vh">
+    <div class="d-flex flex-column justify-content-center align-items-center" style="height: 100vh">
       <div class="spinner-border text-dark" role="status">
-        <span class="visually-hidden">Loading...</span>
+        <span class="visually-hidden">{{ loadingMessage ? loadingMessage : "Loading..." }}</span>
       </div>
+      <div class="mt-1"><span role="alert" class="text-dark">{{ loadingMessage ? loadingMessage : "Loading..." }}</span></div>
     </div>
   </div>
 </template>
@@ -121,6 +122,8 @@ export default {
 
     const APIDataInit = ref(false);
 
+    const loadingMessage = ref(null);
+
     /* Navbar inner div ref to make it collapsable */
     const navbarMenu = ref(null);
 
@@ -136,31 +139,36 @@ export default {
     const logout = () => {
       auth.logout();
       }
+    /* Load API Data */
     watchEffect(async () => {
       if (!auth.loading && auth.authenticated) {
+        loadingMessage.value = "Loading existing data from server...";
         try {
-          /* Load API Data */
           await store.dispatch('habits/refresh');
           await store.dispatch('stacks/refresh');
           await store.dispatch('intentions/refresh');
-          
-          // Wait for conditional elements to be rendered
-          await nextTick();
-
-          /* Make navbar collapsable using bootstrap's `Collapse` */
-          bsCollapse.value = new Collapse(navbarMenu.value, { toggle: false });
-
         } catch (error) {
           if (error.toJSON().message === 'Network Error') {
             alert(
-              'Network error, please check your internet or API server status.'
+              'Network error, please check your internet or habitly API server status.'
             );
           }
           console.error(error);
         }
         finally {
           APIDataInit.value = true;
+          loadingMessage.value = null;
         }
+      }
+    });
+
+    /* Set bootstrap collapse */
+    watchEffect(async () => {
+      if (APIDataInit.value) {
+        // Wait for conditional elements to be rendered
+        await nextTick();
+        /* Make navbar collapsable using bootstrap's `Collapse` */
+        bsCollapse.value = new Collapse(navbarMenu.value, { toggle: false });
       }
     });
 
@@ -169,6 +177,7 @@ export default {
       toggleNavbar,
       hideNavbar,
       APIDataInit,
+      loadingMessage,
       loading: computed(() => auth.loading),
       authenticated: computed(() => auth.authenticated),
       currentRouteName: computed(() => route.name),
