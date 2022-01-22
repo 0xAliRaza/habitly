@@ -2,7 +2,7 @@
   <div id="content" v-if="!loading && authenticated && APIDataInit">
     <nav class="navbar navbar-expand-md navbar-dark bg-dark">
     <div class="container">
-      <a class="navbar-brand" href="/">Habitly</a>
+      <router-link @click="hideNavbar" class="navbar-brand" to="/" >Habitly</router-link>
       <button
         class="navbar-toggler"
         type="button"
