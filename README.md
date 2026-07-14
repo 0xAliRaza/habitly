@@ -12,7 +12,6 @@
 	<a href="#about">About</a> |
 	<a href="#features">Features</a> |
 	<a href="#authors">Authors</a> |
-	<a href="https://0xali.com/habitly">Live Demo</a>
 </p>
 
 <p align="center">A fully featured, full-stack web app that helps users build atomic habits.</p>
